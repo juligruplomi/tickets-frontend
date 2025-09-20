@@ -1,3 +1,230 @@
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
+
+function UsersPage() {
+  const { user } = useAuth();
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState('todos');
+  const [newUser, setNewUser] = useState({
+    email: '',
+    password: '',
+    nombre: '',
+    apellidos: '',
+    codigo_empleado: '',
+    telefono: '',
+    direccion: '',
+    fecha_nacimiento: '',
+    fecha_contratacion: new Date().toISOString().split('T')[0],
+    foto_url: '/avatars/default.jpg',
+    role: 'operario',
+    departamento: '',
+    supervisor_id: null,
+    activo: true,
+    idioma_preferido: 'es',
+    permisos_especiales: []
+  });
+
+  useEffect(() => {
+    if (user?.role === 'administrador') {
+      loadUsers();
+    }
+  }, [user]);
+
+  const loadUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/usuarios');
+      setUsers(response.data);
+    } catch (error) {
+      console.error('Error loading users:', error);
+      alert('Error al cargar usuarios: ' + (error.response?.data?.error || 'Error desconocido'));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createUser = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const response = await api.post('/usuarios', newUser);
+      setUsers([...users, response.data]);
+      setNewUser({
+        email: '',
+        password: '',
+        nombre: '',
+        apellidos: '',
+        codigo_empleado: '',
+        telefono: '',
+        direccion: '',
+        fecha_nacimiento: '',
+        fecha_contratacion: new Date().toISOString().split('T')[0],
+        foto_url: '/avatars/default.jpg',
+        role: 'operario',
+        departamento: '',
+        supervisor_id: null,
+        activo: true,
+        idioma_preferido: 'es',
+        permisos_especiales: []
+      });
+      setShowCreateModal(false);
+      alert('Usuario creado correctamente');
+    } catch (error) {
+      console.error('Error creating user:', error);
+      alert('Error al crear usuario: ' + (error.response?.data?.error || 'Error desconocido'));
+    }
+  };
+
+  const updateUser = async (userId, updates) => {
+    try {
+      const response = await api.put(`/usuarios/${userId}`, updates);
+      setUsers(users.map(u => u.id === userId ? response.data : u));
+      setEditingUser(null);
+      alert('Usuario actualizado correctamente');
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert('Error al actualizar usuario: ' + (error.response?.data?.error || 'Error desconocido'));
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este usuario? Esta acción no se puede deshacer.')) {
+      try {
+        await api.delete(`/usuarios/${userId}`);
+        setUsers(users.filter(u => u.id !== userId));
+        alert('Usuario eliminado correctamente');
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert('Error al eliminar usuario: ' + (error.response?.data?.error || 'Error desconocido'));
+      }
+    }
+  };
+
+  const toggleUserStatus = async (userId, currentStatus) => {
+    try {
+      const response = await api.put(`/usuarios/${userId}`, { activo: !currentStatus });
+      setUsers(users.map(u => u.id === userId ? response.data : u));
+      alert(`Usuario ${!currentStatus ? 'activado' : 'desactivado'} correctamente`);
+    } catch (error) {
+      console.error('Error toggling user status:', error);
+      alert('Error al cambiar estado del usuario: ' + (error.response?.data?.error || 'Error desconocido'));
+    }
+  };
+
+  const getRoleDisplayName = (role) => {
+    const roles = {
+      'administrador': 'Administrador',
+      'supervisor': 'Supervisor',
+      'operario': 'Operario',
+      'contabilidad': 'Contabilidad'
+    };
+    return roles[role] || role;
+  };
+
+  const getRoleColor = (role) => {
+    const colors = {
+      'administrador': '#dc3545',
+      'supervisor': '#fd7e14',
+      'operario': '#28a745',
+      'contabilidad': '#0066CC'
+    };
+    return colors[role] || '#6c757d';
+  };
+
+  const getAvailableRoles = () => {
+    return [
+      { value: 'administrador', label: 'Administrador' },
+      { value: 'supervisor', label: 'Supervisor' },
+      { value: 'operario', label: 'Operario' },
+      { value: 'contabilidad', label: 'Contabilidad' }
+    ];
+  };
+
+  const getSupervisors = () => {
+    return users.filter(u => u.role === 'supervisor' || u.role === 'administrador');
+  };
+
+  const filteredUsers = users.filter(userData => {
+    const matchesRole = roleFilter === 'todos' || userData.role === roleFilter;
+    const matchesSearch = 
+      userData.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      userData.apellidos.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      userData.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (userData.codigo_empleado && userData.codigo_empleado.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (userData.departamento && userData.departamento.toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesRole && matchesSearch;
+  });
+
+  if (user?.role !== 'administrador') {
+    return (
+      <div className="container">
+        <div className="card">
+          <div className="card-body">
+            <h2>Acceso Denegado</h2>
+            <p>Solo los administradores pueden acceder a la gestión de usuarios.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="card">
+          <div className="card-body">
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Cargando usuarios...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container">
+      <div className="card dashboard-card">
+        <div className="card-header dashboard-header">
+          <div className="dashboard-title-section">
+            <h2 className="card-title">
+              👥 Gestión de Usuarios ({filteredUsers.length})
+            </h2>
+          </div>
+          <div className="dashboard-controls">
+            <button 
+              className="button button-primary"
+              onClick={() => setShowCreateModal(true)}
+            >
+              + Nuevo Usuario
+            </button>
+          </div>
+        </div>
+        
+        <div className="card-body">
+          {/* Filtros y búsqueda */}
+          <div className="users-filters">
+            <div className="filter-group">
+              <select 
+                value={roleFilter} 
+                onChange={(e) => setRoleFilter(e.target.value)}
+                className="form-control"
+                style={{ maxWidth: '200px' }}
+              >
+                <option value="todos">Todos los roles</option>
+                <option value="administrador">Administradores</option>
+                <option value="supervisor">Supervisores</option>
+                <option value="operario">Operarios</option>
+                <option value="contabilidad">Contabilidad</option>
+              </select>
+            </div>
+            
             <div className="search-group">
               <input
                 type="text"
