@@ -10,6 +10,7 @@ function UsersPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('todos');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'list'
   const [newUser, setNewUser] = useState({
     email: '',
     password: '',
@@ -220,10 +221,26 @@ function UsersPage() {
         <div className="card-header dashboard-header">
           <div className="dashboard-title-section">
             <h2 className="card-title">
-              👥 Gestión de Usuarios ({filteredUsers.length})
+              👥 Gestión de Usuarios
             </h2>
           </div>
           <div className="dashboard-controls">
+            <div className="view-toggle">
+              <button 
+                className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                onClick={() => setViewMode('grid')}
+                title="Vista Cuadrícula"
+              >
+                🗓️
+              </button>
+              <button 
+                className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                onClick={() => setViewMode('list')}
+                title="Vista Lista"
+              >
+                📋
+              </button>
+            </div>
             <button 
               className="button button-primary"
               onClick={() => setShowCreateModal(true)}
@@ -269,71 +286,157 @@ function UsersPage() {
               <p>No hay usuarios que coincidan con los filtros aplicados.</p>
             </div>
           ) : (
-            <div className="users-grid">
-              {filteredUsers.map(userData => (
-                <div key={userData.id} className="user-card">
-                  <div className="user-header">
-                    <div className="user-avatar">
-                      <img 
-                        src={userData.foto_url || '/avatars/default.jpg'} 
-                        alt={`${userData.nombre} ${userData.apellidos}`}
-                        className="avatar-image"
-                      />
-                      <div className={`user-status ${userData.activo ? 'active' : 'inactive'}`}>
-                        {userData.activo ? '🟢' : '🔴'}
+            <div className={viewMode === 'grid' ? 'users-grid' : 'users-list'}>
+              {viewMode === 'grid' ? (
+                // Vista de cuadrícula (actual)
+                filteredUsers.map(userData => (
+                  <div key={userData.id} className="user-card">
+                    <div className="user-header">
+                      <div className="user-avatar">
+                        <img 
+                          src={userData.foto_url || '/avatars/default.jpg'} 
+                          alt={`${userData.nombre} ${userData.apellidos}`}
+                          className="avatar-image"
+                        />
+                        <div className={`user-status ${userData.activo ? 'active' : 'inactive'}`}>
+                          {userData.activo ? '🟢' : '🔴'}
+                        </div>
+                      </div>
+                      <div className="user-info">
+                        <h4 className="user-name">{userData.nombre} {userData.apellidos}</h4>
+                        <p className="user-email">{userData.email}</p>
+                        <span 
+                          className="role-badge"
+                          style={{ backgroundColor: getRoleColor(userData.role) }}
+                        >
+                          {getRoleDisplayName(userData.role)}
+                        </span>
                       </div>
                     </div>
-                    <div className="user-info">
-                      <h4 className="user-name">{userData.nombre} {userData.apellidos}</h4>
-                      <p className="user-email">{userData.email}</p>
-                      <span 
-                        className="role-badge"
-                        style={{ backgroundColor: getRoleColor(userData.role) }}
+                    
+                    <div className="user-details">
+                      <div className="detail-item">
+                        <strong>Código:</strong> {userData.codigo_empleado || 'N/A'}
+                      </div>
+                      <div className="detail-item">
+                        <strong>Departamento:</strong> {userData.departamento || 'N/A'}
+                      </div>
+                      <div className="detail-item">
+                        <strong>Supervisor:</strong> {userData.supervisor_nombre || 'N/A'}
+                      </div>
+                      <div className="detail-item">
+                        <strong>Teléfono:</strong> {userData.telefono || 'N/A'}
+                      </div>
+                    </div>
+                    
+                    <div className="user-actions">
+                      <button
+                        className="button button-secondary"
+                        onClick={() => setEditingUser(userData)}
                       >
-                        {getRoleDisplayName(userData.role)}
-                      </span>
+                        ✏️ Editar
+                      </button>
+                      
+                      <button
+                        className={`button ${userData.activo ? 'button-warning' : 'button-success'}`}
+                        onClick={() => toggleUserStatus(userData.id, userData.activo)}
+                      >
+                        {userData.activo ? '⏸️ Desactivar' : '▶️ Activar'}
+                      </button>
+                      
+                      <button
+                        className="button button-danger"
+                        onClick={() => deleteUser(userData.id)}
+                      >
+                        🗑️ Eliminar
+                      </button>
                     </div>
                   </div>
-                  
-                  <div className="user-details">
-                    <div className="detail-item">
-                      <strong>Código:</strong> {userData.codigo_empleado || 'N/A'}
-                    </div>
-                    <div className="detail-item">
-                      <strong>Departamento:</strong> {userData.departamento || 'N/A'}
-                    </div>
-                    <div className="detail-item">
-                      <strong>Supervisor:</strong> {userData.supervisor_nombre || 'N/A'}
-                    </div>
-                    <div className="detail-item">
-                      <strong>Teléfono:</strong> {userData.telefono || 'N/A'}
+                ))
+              ) : (
+                // Vista de lista
+                <div className="users-table">
+                  <div className="table-header">
+                    <div className="table-row header-row">
+                      <div className="table-cell avatar-cell">Foto</div>
+                      <div className="table-cell name-cell">Nombre</div>
+                      <div className="table-cell email-cell">Email</div>
+                      <div className="table-cell role-cell">Rol</div>
+                      <div className="table-cell department-cell">Departamento</div>
+                      <div className="table-cell status-cell">Estado</div>
+                      <div className="table-cell actions-cell">Acciones</div>
                     </div>
                   </div>
-                  
-                  <div className="user-actions">
-                    <button
-                      className="button button-secondary"
-                      onClick={() => setEditingUser(userData)}
-                    >
-                      ✏️ Editar
-                    </button>
-                    
-                    <button
-                      className={`button ${userData.activo ? 'button-warning' : 'button-success'}`}
-                      onClick={() => toggleUserStatus(userData.id, userData.activo)}
-                    >
-                      {userData.activo ? '⏸️ Desactivar' : '▶️ Activar'}
-                    </button>
-                    
-                    <button
-                      className="button button-danger"
-                      onClick={() => deleteUser(userData.id)}
-                    >
-                      🗑️ Eliminar
-                    </button>
+                  <div className="table-body">
+                    {filteredUsers.map(userData => (
+                      <div key={userData.id} className="table-row">
+                        <div className="table-cell avatar-cell">
+                          <div className="user-avatar-small">
+                            <img 
+                              src={userData.foto_url || '/avatars/default.jpg'} 
+                              alt={`${userData.nombre} ${userData.apellidos}`}
+                              className="avatar-image-small"
+                            />
+                            <div className={`user-status-small ${userData.activo ? 'active' : 'inactive'}`}>
+                              {userData.activo ? '🟢' : '🔴'}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="table-cell name-cell">
+                          <strong>{userData.nombre} {userData.apellidos}</strong>
+                          <small>{userData.codigo_empleado || 'Sin código'}</small>
+                        </div>
+                        <div className="table-cell email-cell">
+                          {userData.email}
+                        </div>
+                        <div className="table-cell role-cell">
+                          <span 
+                            className="role-badge-small"
+                            style={{ backgroundColor: getRoleColor(userData.role) }}
+                          >
+                            {getRoleDisplayName(userData.role)}
+                          </span>
+                        </div>
+                        <div className="table-cell department-cell">
+                          {userData.departamento || 'N/A'}
+                        </div>
+                        <div className="table-cell status-cell">
+                          <span className={`status-badge ${userData.activo ? 'status-active' : 'status-inactive'}`}>
+                            {userData.activo ? 'Activo' : 'Inactivo'}
+                          </span>
+                        </div>
+                        <div className="table-cell actions-cell">
+                          <div className="table-actions">
+                            <button
+                              className="table-btn edit-btn"
+                              onClick={() => setEditingUser(userData)}
+                              title="Editar"
+                            >
+                              ✏️
+                            </button>
+                            
+                            <button
+                              className={`table-btn ${userData.activo ? 'deactivate-btn' : 'activate-btn'}`}
+                              onClick={() => toggleUserStatus(userData.id, userData.activo)}
+                              title={userData.activo ? 'Desactivar' : 'Activar'}
+                            >
+                              {userData.activo ? '⏸️' : '▶️'}
+                            </button>
+                            
+                            <button
+                              className="table-btn delete-btn"
+                              onClick={() => deleteUser(userData.id)}
+                              title="Eliminar"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

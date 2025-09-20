@@ -228,7 +228,7 @@ function GastosPage() {
         <div className="card-header dashboard-header">
           <div className="dashboard-title-section">
             <h2 className="card-title">
-              💰 Gestión de Gastos ({filteredGastos.length})
+              💰 Gestión de Gastos
             </h2>
           </div>
           <div className="dashboard-controls">

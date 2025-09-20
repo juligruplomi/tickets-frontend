@@ -37,7 +37,7 @@ function ConfigPage() {
   };
 
   useEffect(() => {
-    if (user?.role === 'admin') {
+    if (user?.role === 'administrador') {
       loadAdminConfig().then(config => {
         setAdminConfig(config);
         setFormData(JSON.parse(JSON.stringify(config))); // Deep copy
@@ -137,7 +137,7 @@ function ConfigPage() {
     setSaving(false);
   };
 
-  if (user?.role !== 'admin') {
+  if (user?.role !== 'administrador') {
     return (
       <div className="container">
         <div className="card">

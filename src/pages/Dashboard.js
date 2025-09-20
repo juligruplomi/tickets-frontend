@@ -96,7 +96,7 @@ function Dashboard() {
       <div className="card dashboard-card">
         <div className="card-header dashboard-header">
           <div className="dashboard-title-section">
-            <h2 className="card-title">🏢 Panel de Control - {config?.empresa?.nombre || 'GrupLomi'}</h2>
+            <h2 className="card-title">📊 Panel de Control</h2>
           </div>
         </div>
         
