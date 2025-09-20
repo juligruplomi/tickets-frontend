@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api } from '../services/api';
+import { api, authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -21,8 +21,15 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('token');
     if (token) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser({ email: 'admin@gruplomi.com', first_name: 'Admin' });
-      setIsAuthenticated(true);
+      // Intentar obtener info del usuario
+      authAPI.me().then(response => {
+        setUser(response.data);
+        setIsAuthenticated(true);
+      }).catch(() => {
+        // Token inválido, limpiar
+        localStorage.removeItem('token');
+        delete api.defaults.headers.common['Authorization'];
+      });
     }
     setLoading(false);
   }, []);
@@ -30,21 +37,14 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     setLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('username', email);
-      formData.append('password', password);
-      
-      const response = await api.post('/auth/login', formData, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      });
+      // Usar la función del authAPI que ya corregimos
+      const response = await authAPI.login(email, password);
 
       if (response.data && response.data.access_token) {
         const token = response.data.access_token;
         localStorage.setItem('token', token);
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setUser({ email, first_name: email.split('@')[0] });
+        setUser(response.data.user);
         setIsAuthenticated(true);
         setLoading(false);
         return { success: true };
@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return { 
         success: false, 
-        error: error.response?.data?.detail || 'Credenciales incorrectas' 
+        error: error.response?.data?.error || 'Credenciales incorrectas' 
       };
     }
   };
