@@ -171,10 +171,10 @@ body {
   opacity: 0.8;
 }
 
-/* Selectores minimalistas */
+/* Selectores minimalistas mejorados para modo oscuro */
 .navbar-select, .control-select {
-  background: rgba(0, 0, 0, 0.05);
-  border: none;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius-small);
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
@@ -182,20 +182,26 @@ body {
   cursor: pointer;
   transition: var(--transition);
   min-width: 60px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
-.dark-mode .navbar-select,
-.dark-mode .control-select {
-  background: rgba(255, 255, 255, 0.1);
+.navbar-select:focus, .control-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
 }
 
 .navbar-select:hover, .control-select:hover {
-  background: rgba(0, 0, 0, 0.1);
+  border-color: var(--primary-color);
 }
 
-.dark-mode .navbar-select:hover,
-.dark-mode .control-select:hover {
-  background: rgba(255, 255, 255, 0.2);
+/* Estilos específicos para las opciones en modo oscuro */
+.dark-mode .navbar-select option,
+.dark-mode .control-select option {
+  background: var(--card-background);
+  color: var(--text-color);
 }
 
 /* Toggle Switch estilo Apple */
@@ -212,6 +218,11 @@ body {
   position: relative;
   cursor: pointer;
   transition: var(--transition);
+}
+
+.dark-mode .toggle-label,
+.dark-mode .navbar-toggle-label {
+  background-color: #555;
 }
 
 .toggle-slider, .navbar-toggle-slider {
@@ -474,7 +485,7 @@ body {
   box-shadow: var(--shadow);
 }
 
-/* Form styles */
+/* Form styles mejorados */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -497,12 +508,27 @@ body {
   color: var(--text-color);
   transition: var(--transition);
   font-family: var(--font-family);
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 .form-control:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+/* Estilos específicos para select en formularios */
+.form-control[type="select"],
+.form-control select {
+  background-color: var(--card-background);
+  color: var(--text-color);
+}
+
+.dark-mode .form-control option {
+  background-color: var(--card-background);
+  color: var(--text-color);
 }
 
 /* Config tabs */

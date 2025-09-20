@@ -84,6 +84,7 @@ function Navbar() {
                 value={currentLanguage} 
                 onChange={(e) => changeLanguage(e.target.value)}
                 className="navbar-select"
+                title="Cambiar idioma"
               >
                 <option value="es">🇪🇸</option>
                 <option value="en">🇬🇧</option>
@@ -103,14 +104,22 @@ function Navbar() {
                 onChange={toggleDarkMode}
                 className="navbar-toggle-checkbox"
               />
-              <label htmlFor="navbarDarkModeToggle" className="navbar-toggle-label">
+              <label 
+                htmlFor="navbarDarkModeToggle" 
+                className="navbar-toggle-label"
+                title={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              >
                 <span className="navbar-toggle-slider"></span>
               </label>
             </div>
           </div>
           
           <span className="user-name">Hola, {user?.nombre || user?.email}</span>
-          <button className="logout-button" onClick={logout}>
+          <button 
+            className="logout-button" 
+            onClick={logout}
+            title="Cerrar sesión"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"/>
             </svg>

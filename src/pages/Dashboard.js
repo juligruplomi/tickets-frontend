@@ -4,7 +4,7 @@ import { useConfig } from '../context/ConfigContext';
 
 function Dashboard() {
   const { user } = useAuth();
-  const { config, t, toggleDarkMode, darkMode, changeLanguage, currentLanguage } = useConfig();
+  const { config, t, darkMode, currentLanguage } = useConfig();
   
   // Obtener la URL de la API desde la configuración
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
@@ -15,38 +15,6 @@ function Dashboard() {
         <div className="card-header dashboard-header">
           <div className="dashboard-title-section">
             <h2 className="card-title">{t('dashboard')} - {config.empresa.nombre}</h2>
-          </div>
-          
-          {/* Controles integrados en el header */}
-          <div className="dashboard-controls">
-            <div className="language-selector">
-              <select 
-                value={currentLanguage} 
-                onChange={(e) => changeLanguage(e.target.value)}
-                className="control-select"
-              >
-                <option value="es">🇪🇸</option>
-                <option value="en">🇬🇧</option>
-                <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿</option>
-                <option value="de">🇩🇪</option>
-                <option value="it">🇮🇹</option>
-                <option value="pt">🇵🇹</option>
-              </select>
-            </div>
-            
-            {/* Toggle switch estilo Apple */}
-            <div className="theme-toggle">
-              <input
-                type="checkbox"
-                id="darkModeToggle"
-                checked={darkMode}
-                onChange={toggleDarkMode}
-                className="toggle-checkbox"
-              />
-              <label htmlFor="darkModeToggle" className="toggle-label">
-                <span className="toggle-slider"></span>
-              </label>
-            </div>
           </div>
         </div>
         
@@ -125,7 +93,8 @@ function Dashboard() {
               <h4 className="admin-title">Panel de Administrador</h4>
               <p className="admin-text">
                 Como administrador, puedes personalizar mensajes, colores, categorías de tickets y más 
-                desde la sección de {t('configuracion').toLowerCase()}.
+                desde la sección de {t('configuracion').toLowerCase()}. Los controles de idioma y tema 
+                están disponibles en la barra de navegación superior.
               </p>
             </div>
           )}
