@@ -1436,13 +1436,48 @@ body {
 }
 
 .calculated-amount {
-  text-align: center;
-  padding: 0.75rem;
-  background: var(--primary-color);
-  color: white;
-  border-radius: var(--border-radius-small);
   margin-top: 1rem;
+}
+
+.calculated-amount-field {
+  background: var(--secondary-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-small);
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.calculated-amount-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Estilo alternativo más sutil */
+.calculated-display {
+  background: rgba(0, 102, 204, 0.05);
+  border: 1px solid rgba(0, 102, 204, 0.2);
+  border-radius: var(--border-radius-small);
+  padding: 0.875rem 1rem;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calculated-label {
+  font-weight: 500;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.calculated-value {
   font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary-color);
 }
 
 .combustible-details {
@@ -1550,9 +1585,15 @@ body {
     padding: 0.75rem;
   }
   
-  .calculated-amount {
-    font-size: 1rem;
-    padding: 0.5rem;
+  .calculated-amount-field {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+  
+  .calculated-display {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
   }
   
   .gasto-obra {

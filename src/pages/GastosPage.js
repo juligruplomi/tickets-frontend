@@ -508,7 +508,14 @@ function GastosPage() {
                     
                     {newGasto.kilometros && newGasto.precio_km && (
                       <div className="calculated-amount">
-                        <strong>Importe calculado: {calculateCombustibleImporte(newGasto.kilometros, newGasto.precio_km)}€</strong>
+                        <label className="form-label">Importe calculado:</label>
+                        <input
+                          type="text"
+                          value={`${calculateCombustibleImporte(newGasto.kilometros, newGasto.precio_km)}€`}
+                          className="calculated-amount-field"
+                          readOnly
+                          disabled
+                        />
                       </div>
                     )}
                   </div>
@@ -690,7 +697,14 @@ function GastosPage() {
                     
                     {editingGasto.kilometros && editingGasto.precio_km && (
                       <div className="calculated-amount">
-                        <strong>Importe calculado: {calculateCombustibleImporte(editingGasto.kilometros, editingGasto.precio_km)}€</strong>
+                        <label className="form-label">Importe calculado:</label>
+                        <input
+                          type="text"
+                          value={`${calculateCombustibleImporte(editingGasto.kilometros, editingGasto.precio_km)}€`}
+                          className="calculated-amount-field"
+                          readOnly
+                          disabled
+                        />
                       </div>
                     )}
                   </div>
