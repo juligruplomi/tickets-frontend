@@ -197,10 +197,14 @@ function GastosPage() {
 
   // Calcular importe automáticamente para combustible
   const calculateCombustibleImporte = (km, precio) => {
-    if (km && precio) {
-      return (parseFloat(km) * parseFloat(precio)).toFixed(2);
+    if (km && precio && km.toString().trim() !== '' && precio.toString().trim() !== '') {
+      const kmNum = parseFloat(km);
+      const precioNum = parseFloat(precio);
+      if (!isNaN(kmNum) && !isNaN(precioNum)) {
+        return (kmNum * precioNum).toFixed(2);
+      }
     }
-    return '';
+    return '0.00';
   };
 
   if (loading) {
@@ -506,7 +510,8 @@ function GastosPage() {
                       </div>
                     </div>
                     
-                    {newGasto.kilometros && newGasto.precio_km && (
+                    {/* Campo calculado - aparece cuando hay ambos valores */}
+                    {newGasto.kilometros && newGasto.precio_km && newGasto.kilometros.trim() !== '' && newGasto.precio_km.trim() !== '' && (
                       <div className="calculated-amount">
                         <label className="form-label">Importe calculado:</label>
                         <input
@@ -695,7 +700,8 @@ function GastosPage() {
                       </div>
                     </div>
                     
-                    {editingGasto.kilometros && editingGasto.precio_km && (
+                    {/* Campo calculado - aparece cuando hay ambos valores */}
+                    {editingGasto.kilometros && editingGasto.precio_km && editingGasto.kilometros.toString().trim() !== '' && editingGasto.precio_km.toString().trim() !== '' && (
                       <div className="calculated-amount">
                         <label className="form-label">Importe calculado:</label>
                         <input
