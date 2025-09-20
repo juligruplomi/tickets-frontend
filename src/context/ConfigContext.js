@@ -22,27 +22,39 @@ export function ConfigProvider({ children }) {
         acento: "#28a745"
       }
     },
+    gastos: {
+      tipos_gasto: [
+        { id: "dieta", nombre: "Dietas", icon: "🍽️" },
+        { id: "aparcamiento", nombre: "Aparcamiento", icon: "🅿️" },
+        { id: "gasolina", nombre: "Combustible", icon: "⛽" },
+        { id: "otros", nombre: "Otros gastos", icon: "📎" }
+      ],
+      estados: [
+        { id: "pendiente", nombre: "Pendiente", color: "#ffc107" },
+        { id: "aprobado", nombre: "Aprobado", color: "#28a745" },
+        { id: "rechazado", nombre: "Rechazado", color: "#dc3545" },
+        { id: "pagado", nombre: "Pagado", color: "#0066CC" }
+      ]
+    },
     idioma: {
       actual: "es",
       disponibles: ["es", "en", "ca", "de", "it", "pt"],
       traducciones: {
-        bienvenida: "Bienvenido al sistema de tickets",
-        footer: "© 2025 - Sistema de gestión de tickets",
+        gastos: "Gastos",
+        nuevo_gasto: "Nuevo Gasto",
+        mis_gastos: "Mis Gastos",
         dashboard: "Panel de Control",
-        tickets: "Tickets",
         usuarios: "Usuarios",
         configuracion: "Configuración",
-        cerrar_sesion: "Cerrar Sesión"
+        cerrar_sesion: "Cerrar Sesión",
+        hola: "Hola",
+        bienvenida: "Bienvenido al sistema de gastos",
+        footer: "© 2025 - Sistema de gestión de gastos"
       }
     },
     apariencia: {
       modo_oscuro: false,
       tema: "default"
-    },
-    tickets: {
-      estados: ["abierto", "en_progreso", "pendiente", "resuelto", "cerrado"],
-      prioridades: ["baja", "media", "alta", "urgente"],
-      categorias: ["hardware", "software", "red", "acceso", "otro"]
     }
   });
 
@@ -61,8 +73,10 @@ export function ConfigProvider({ children }) {
     try {
       setLoading(true);
       const response = await api.get(`/config?lang=${lang}`);
+      
+      // Actualizar configuración con los datos de la API
       setConfig(response.data);
-      setCurrentLanguage(lang);
+      setCurrentLanguage(response.data.idioma?.actual || lang);
       
       // Aplicar modo oscuro si está configurado
       if (response.data.apariencia?.modo_oscuro !== darkMode) {
@@ -80,6 +94,7 @@ export function ConfigProvider({ children }) {
       
     } catch (err) {
       console.error('Error loading config:', err);
+      // Mantener configuración por defecto en caso de error
     } finally {
       setLoading(false);
     }

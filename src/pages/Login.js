@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function Login() {
   const [formData, setFormData] = useState({
     email: 'admin@gruplomi.com',
-    password: 'AdminSecure123!'
+    password: 'admin123'
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,11 +40,25 @@ function Login() {
     setLoading(false);
   };
 
+  const testUsers = [
+    { email: 'admin@gruplomi.com', password: 'admin123', role: 'Administrador' },
+    { email: 'supervisor@gruplomi.com', password: 'super123', role: 'Supervisor' },
+    { email: 'operario@gruplomi.com', password: 'opera123', role: 'Operario' },
+    { email: 'contabilidad@gruplomi.com', password: 'conta123', role: 'Contabilidad' }
+  ];
+
+  const setTestUser = (user) => {
+    setFormData({
+      email: user.email,
+      password: user.password
+    });
+  };
+
   return (
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>Sistema de Tickets</h1>
+          <h1>💰 Sistema de Gastos</h1>
           <h2>GrupLomi</h2>
           <p>Inicia sesión para continuar</p>
         </div>
@@ -67,7 +81,7 @@ function Login() {
               className="form-input"
               required
               disabled={loading}
-              placeholder="admin@gruplomi.com"
+              placeholder="usuario@gruplomi.com"
             />
           </div>
           
@@ -95,8 +109,26 @@ function Login() {
           </button>
         </form>
         
+        <div className="test-users">
+          <p><strong>Usuarios de prueba:</strong></p>
+          <div className="test-users-grid">
+            {testUsers.map((user, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setTestUser(user)}
+                className="test-user-btn"
+                disabled={loading}
+              >
+                <div className="test-user-role">{user.role}</div>
+                <div className="test-user-email">{user.email}</div>
+              </button>
+            ))}
+          </div>
+        </div>
+        
         <div className="login-footer">
-          <p><small>Credenciales por defecto ya están cargadas</small></p>
+          <p><small>Haz clic en cualquier usuario para cargar sus credenciales</small></p>
         </div>
       </div>
     </div>
