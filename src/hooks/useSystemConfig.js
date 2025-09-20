@@ -2,7 +2,40 @@ import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
 export function useSystemConfig() {
-  const [config, setConfig] = useState(null);
+  const [config, setConfig] = useState({
+    empresa: {
+      nombre: "GrupLomi",
+      logo_url: "/logo.png",
+      colores: {
+        primario: "#0066CC",
+        secundario: "#f8f9fa",
+        acento: "#28a745"
+      }
+    },
+    idioma: {
+      actual: "es",
+      disponibles: ["es", "en", "ca"],
+      traducciones: {
+        bienvenida: "Bienvenido al sistema de tickets",
+        footer: "© 2025 - Sistema de gestión de tickets",
+        dashboard: "Panel de Control",
+        tickets: "Tickets",
+        usuarios: "Usuarios",
+        configuracion: "Configuración",
+        cerrar_sesion: "Cerrar Sesión"
+      }
+    },
+    apariencia: {
+      modo_oscuro: false,
+      tema: "default"
+    },
+    tickets: {
+      estados: ["abierto", "en_progreso", "pendiente", "resuelto", "cerrado"],
+      prioridades: ["baja", "media", "alta", "urgente"],
+      categorias: ["hardware", "software", "red", "acceso", "otro"]
+    }
+  });
+  
   const [adminConfig, setAdminConfig] = useState(null);
   const [currentLanguage, setCurrentLanguage] = useState('es');
   const [loading, setLoading] = useState(true);
@@ -18,6 +51,7 @@ export function useSystemConfig() {
     } catch (err) {
       console.error('Error loading config:', err);
       setError('Error al cargar la configuración');
+      // Mantener configuración por defecto si falla
     } finally {
       setLoading(false);
     }
