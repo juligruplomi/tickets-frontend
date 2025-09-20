@@ -25,13 +25,13 @@ api.interceptors.response.use(
 // Funciones específicas para la API
 export const authAPI = {
   login: (email, password) => {
-    const formData = new FormData();
-    formData.append('username', email);
-    formData.append('password', password);
-    
-    return api.post('/auth/login', formData, {
+    // Cambiar a JSON en lugar de FormData
+    return api.post('/auth/login', {
+      username: email,
+      password: password
+    }, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
       },
     });
   },
