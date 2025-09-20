@@ -274,7 +274,160 @@ function TicketsPage() {
                     value={newTicket.titulo}
                     onChange={(e) => setNewTicket({...newTicket, titulo: e.target.value})}
                     className="form-control"
-                    placeholder="Describe brevemente el problema"
+                    placeholder="0.00"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Observaciones (opcional):</label>
+                  <textarea
+                    value={newGasto.observaciones}
+                    onChange={(e) => setNewGasto({...newGasto, observaciones: e.target.value})}
+                    className="form-control"
+                    rows="2"
+                    placeholder="Información adicional..."
+                  />
+                </div>
+              </div>
+              
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="button button-secondary"
+                  onClick={() => setShowCreateModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="button button-primary">
+                  Crear Gasto
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para editar gasto */}
+      {editingGasto && (
+        <div className="modal-overlay" onClick={() => setEditingGasto(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Editar Gasto #{editingGasto.id}</h3>
+              <button 
+                className="modal-close"
+                onClick={() => setEditingGasto(null)}
+              >
+                ×
+              </button>
+            </div>
+            
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              updateGasto(editingGasto.id, {
+                tipo_gasto: editingGasto.tipo_gasto,
+                concepto: editingGasto.concepto,
+                descripcion: editingGasto.descripcion,
+                importe: parseFloat(editingGasto.importe),
+                fecha_gasto: editingGasto.fecha_gasto,
+                observaciones: editingGasto.observaciones
+              });
+            }}>
+              <div className="modal-body">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Tipo de gasto:</label>
+                    <select
+                      value={editingGasto.tipo_gasto}
+                      onChange={(e) => setEditingGasto({...editingGasto, tipo_gasto: e.target.value})}
+                      className="form-control"
+                      required
+                    >
+                      <option value="dieta">🍽️ Dietas</option>
+                      <option value="aparcamiento">🅿️ Aparcamiento</option>
+                      <option value="gasolina">⛽ Combustible</option>
+                      <option value="otros">📎 Otros gastos</option>
+                    </select>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Fecha del gasto:</label>
+                    <input
+                      type="date"
+                      required
+                      value={editingGasto.fecha_gasto}
+                      onChange={(e) => setEditingGasto({...editingGasto, fecha_gasto: e.target.value})}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Concepto:</label>
+                  <input
+                    type="text"
+                    required
+                    value={editingGasto.concepto}
+                    onChange={(e) => setEditingGasto({...editingGasto, concepto: e.target.value})}
+                    className="form-control"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Descripción:</label>
+                  <textarea
+                    required
+                    value={editingGasto.descripcion}
+                    onChange={(e) => setEditingGasto({...editingGasto, descripcion: e.target.value})}
+                    className="form-control"
+                    rows="3"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Importe (€):</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    required
+                    value={editingGasto.importe}
+                    onChange={(e) => setEditingGasto({...editingGasto, importe: e.target.value})}
+                    className="form-control"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Observaciones:</label>
+                  <textarea
+                    value={editingGasto.observaciones}
+                    onChange={(e) => setEditingGasto({...editingGasto, observaciones: e.target.value})}
+                    className="form-control"
+                    rows="2"
+                  />
+                </div>
+              </div>
+              
+              <div className="modal-footer">
+                <button 
+                  type="button" 
+                  className="button button-secondary"
+                  onClick={() => setEditingGasto(null)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="button button-primary">
+                  Actualizar Gasto
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default GastosPage;="Describe brevemente el problema"
                   />
                 </div>
                 

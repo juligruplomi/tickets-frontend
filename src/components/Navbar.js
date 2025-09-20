@@ -24,14 +24,14 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-content">
         <Link to="/dashboard" className="navbar-brand">
-          {config.empresa.logo_url ? (
+          {config?.empresa?.logo_url ? (
             <img 
               src={config.empresa.logo_url} 
               alt={config.empresa.nombre}
               className="navbar-logo"
             />
           ) : (
-            `${t('tickets')} ${config.empresa.nombre}`
+            `💰 ${config?.empresa?.nombre || 'GrupLomi'}`
           )}
         </Link>
         
@@ -40,7 +40,7 @@ function Navbar() {
             <Link 
               to="/dashboard" 
               className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
-              title={t('dashboard')}
+              title="Dashboard"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
@@ -49,21 +49,23 @@ function Navbar() {
           </li>
           <li>
             <Link 
-              to="/tickets" 
-              className={`nav-link ${isActive('/tickets') ? 'active' : ''}`}
-              title={t('tickets')}
+              to="/gastos" 
+              className={`nav-link ${isActive('/gastos') ? 'active' : ''}`}
+              title="Gastos"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M22,10 C22.5522847,10 23,10.4477153 23,11 L23,13 C23,13.5522847 22.5522847,14 22,14 L2,14 C1.44771525,14 1,13.5522847 1,13 L1,11 C1,10.4477153 1.44771525,10 2,10 L22,10 Z M21,12 L3,12 L3,12 L21,12 Z M22,4 C22.5522847,4 23,4.44771525 23,5 L23,7 C23,7.55228475 22.5522847,8 22,8 L2,8 C1.44771525,8 1,7.55228475 1,7 L1,5 C1,4.44771525 1.44771525,4 2,4 L22,4 Z M21,6 L3,6 L3,6 L21,6 Z M22,16 C22.5522847,16 23,16.4477153 23,17 L23,19 C23,19.5522847 22.5522847,20 22,20 L2,20 C1.44771525,20 1,19.5522847 1,19 L1,17 C1,16.4477153 1.44771525,16 2,16 L22,16 Z M21,18 L3,18 L3,18 L21,18 Z"/>
+                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2M21 9V7L15 1H5C3.9 1 3 1.9 3 3V21C3 22.1 3.9 23 5 23H19C20.1 23 21 22.1 21 21V9M19 21H5V3H13V9H19Z"/>
               </svg>
             </Link>
           </li>
-          {user?.role === 'admin' && (
+          
+          {/* Solo administradores ven usuarios */}
+          {user?.role === 'administrador' && (
             <li>
               <Link 
                 to="/users" 
                 className={`nav-link ${isActive('/users') ? 'active' : ''}`}
-                title={t('usuarios')}
+                title="Usuarios"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
@@ -71,12 +73,29 @@ function Navbar() {
               </Link>
             </li>
           )}
-          {user?.role === 'admin' && (
+          
+          {/* Reportes para supervisores, contabilidad y administradores */}
+          {(user?.role === 'supervisor' || user?.role === 'contabilidad' || user?.role === 'administrador') && (
+            <li>
+              <Link 
+                to="/reportes" 
+                className={`nav-link ${isActive('/reportes') ? 'active' : ''}`}
+                title="Reportes"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19,3H5C3.9,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.9 20.1,3 19,3M9,17H7V10H9V17M13,17H11V7H13V17M17,17H15V13H17V17Z"/>
+                </svg>
+              </Link>
+            </li>
+          )}
+          
+          {/* Solo administradores ven configuración */}
+          {user?.role === 'administrador' && (
             <li>
               <Link 
                 to="/config" 
                 className={`nav-link ${isActive('/config') ? 'active' : ''}`}
-                title={t('configuracion')}
+                title="Configuración"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.37-2.65A.506.506 0 0 0 14 2h-4c-.25 0-.46.18-.5.42l-.37 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1.01c.52.4 1.06.74 1.69.99l.37 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.37-2.65c.63-.26 1.17-.59 1.69-.99l2.49 1.01c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/>
@@ -121,11 +140,21 @@ function Navbar() {
             </div>
           </div>
           
-          <span className="user-name">{t('hola') || 'Hola'}, {user?.nombre || user?.email}</span>
+          <span className="user-name">
+            Hola, {user?.nombre || user?.email}
+            {user?.role && (
+              <small style={{ display: 'block', opacity: 0.7, fontSize: '0.75rem' }}>
+                {user.role === 'administrador' ? 'Admin' :
+                 user.role === 'supervisor' ? 'Supervisor' :
+                 user.role === 'operario' ? 'Operario' :
+                 user.role === 'contabilidad' ? 'Contabilidad' : user.role}
+              </small>
+            )}
+          </span>
           <button 
             className="logout-button" 
             onClick={logout}
-            title={t('cerrar_sesion')}
+            title="Cerrar sesión"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"/>
