@@ -5,6 +5,7 @@ import { ConfigProvider } from './context/ConfigContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import GastosPage from './pages/GastosPage';
+import UsersPage from './pages/UsersPage';
 import CreateTicket from './pages/CreateTicket';
 import Users from './pages/Users';
 import ConfigPage from './pages/ConfigPage';
@@ -44,7 +45,7 @@ function AdminRoute({ children }) {
     return <Navigate to="/login" />;
   }
   
-  if (user?.role !== 'admin') {
+  if (user?.role !== 'administrador') {
     return <Navigate to="/dashboard" />;
   }
   
@@ -91,7 +92,7 @@ function AppContent() {
             path="/users" 
             element={
               <AdminRoute>
-                <Users />
+                <UsersPage />
               </AdminRoute>
             } 
           />
