@@ -4,7 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { ConfigProvider } from './context/ConfigContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
-import Tickets from './pages/Tickets';
+import TicketsPage from './pages/TicketsPage';
 import CreateTicket from './pages/CreateTicket';
 import Users from './pages/Users';
 import ConfigPage from './pages/ConfigPage';
@@ -75,7 +75,7 @@ function AppContent() {
             path="/tickets" 
             element={
               <ProtectedRoute>
-                <Tickets />
+                <TicketsPage />
               </ProtectedRoute>
             } 
           />
