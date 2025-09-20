@@ -1,19 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useSystemConfig } from '../hooks/useSystemConfig';
+import { useConfig } from '../context/ConfigContext';
+import { api } from '../services/api';
 
 function ConfigPage() {
   const { user } = useAuth();
-  const { adminConfig, loadAdminConfig, updateConfig, currentLanguage, changeLanguage, t } = useSystemConfig();
+  const { config, t, reloadConfig } = useConfig();
+  const [adminConfig, setAdminConfig] = useState(null);
   const [formData, setFormData] = useState(null);
   const [activeTab, setActiveTab] = useState('empresa');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
 
+  const loadAdminConfig = async () => {
+    try {
+      const response = await api.get('/config/admin');
+      return response.data;
+    } catch (err) {
+      console.error('Error loading admin config:', err);
+      throw err;
+    }
+  };
+
+  const updateConfig = async (newConfig) => {
+    try {
+      const response = await api.put('/config/admin', newConfig);
+      setAdminConfig(response.data.config);
+      // Recargar la configuración global para aplicar los cambios
+      reloadConfig();
+      return { success: true };
+    } catch (err) {
+      console.error('Error updating config:', err);
+      return { success: false, error: err.response?.data?.error || 'Error al actualizar configuración' };
+    }
+  };
+
   useEffect(() => {
     if (user?.role === 'admin') {
       loadAdminConfig().then(config => {
+        setAdminConfig(config);
         setFormData(JSON.parse(JSON.stringify(config))); // Deep copy
         setLoading(false);
       }).catch(() => {
@@ -83,7 +109,7 @@ function ConfigPage() {
     setSaving(true);
     const result = await updateConfig(formData);
     if (result.success) {
-      setMessage('Configuración guardada exitosamente');
+      setMessage('Configuración guardada exitosamente. Los cambios se aplicarán inmediatamente.');
       setTimeout(() => setMessage(''), 3000);
     } else {
       setMessage('Error: ' + result.error);
@@ -110,7 +136,10 @@ function ConfigPage() {
       <div className="container">
         <div className="card">
           <div className="card-body">
-            <p>Cargando configuración...</p>
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Cargando configuración...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -133,47 +162,25 @@ function ConfigPage() {
     <div className="container">
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Configuración del Sistema</h2>
+          <h2 className="card-title">{t('configuracion')} del Sistema</h2>
           {message && (
-            <div style={{ 
-              marginTop: '10px', 
-              padding: '10px', 
-              backgroundColor: message.includes('Error') ? '#f8d7da' : '#d4edda',
-              color: message.includes('Error') ? '#721c24' : '#155724',
-              borderRadius: '4px'
-            }}>
+            <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`}>
               {message}
             </div>
           )}
         </div>
         
         <div className="card-body">
-          {/* Selector de idioma */}
-          <div style={{ marginBottom: '20px' }}>
-            <label>Idioma de la interfaz:</label>
-            <select 
-              value={currentLanguage} 
-              onChange={(e) => changeLanguage(e.target.value)}
-              style={{ marginLeft: '10px', padding: '5px' }}
-            >
-              <option value="es">Español</option>
-              <option value="en">English</option>
-              <option value="ca">Català</option>
-            </select>
-          </div>
-
           {/* Pestañas */}
-          <div style={{ borderBottom: '1px solid #ddd', marginBottom: '20px' }}>
+          <div style={{ borderBottom: '1px solid var(--border-color)', marginBottom: '20px' }}>
             {['empresa', 'idiomas', 'apariencia', 'tickets', 'notificaciones'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
+                className="button"
                 style={{
-                  padding: '10px 20px',
-                  border: 'none',
-                  backgroundColor: activeTab === tab ? '#007bff' : 'transparent',
-                  color: activeTab === tab ? 'white' : '#007bff',
-                  cursor: 'pointer',
+                  backgroundColor: activeTab === tab ? 'var(--primary-color)' : 'transparent',
+                  color: activeTab === tab ? 'white' : 'var(--primary-color)',
                   marginRight: '5px',
                   textTransform: 'capitalize'
                 }}
@@ -187,51 +194,51 @@ function ConfigPage() {
           {activeTab === 'empresa' && (
             <div>
               <h3>Información de la Empresa</h3>
-              <div style={{ marginBottom: '15px' }}>
-                <label>Nombre de la empresa:</label>
+              <div className="form-group">
+                <label className="form-label">Nombre de la empresa:</label>
                 <input
                   type="text"
                   value={formData.empresa.nombre}
                   onChange={(e) => handleInputChange('empresa', 'nombre', e.target.value)}
-                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                  className="form-control"
                 />
               </div>
-              <div style={{ marginBottom: '15px' }}>
-                <label>URL del logo:</label>
+              <div className="form-group">
+                <label className="form-label">URL del logo:</label>
                 <input
                   type="text"
                   value={formData.empresa.logo_url}
                   onChange={(e) => handleInputChange('empresa', 'logo_url', e.target.value)}
-                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                  className="form-control"
                 />
               </div>
               <h4>Colores corporativos</h4>
               <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-                <div>
-                  <label>Color primario:</label>
+                <div className="form-group">
+                  <label className="form-label">Color primario:</label>
                   <input
                     type="color"
                     value={formData.empresa.colores.primario}
                     onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
-                    style={{ display: 'block', marginTop: '5px', width: '50px', height: '30px' }}
+                    style={{ width: '60px', height: '40px' }}
                   />
                 </div>
-                <div>
-                  <label>Color secundario:</label>
+                <div className="form-group">
+                  <label className="form-label">Color secundario:</label>
                   <input
                     type="color"
                     value={formData.empresa.colores.secundario}
                     onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
-                    style={{ display: 'block', marginTop: '5px', width: '50px', height: '30px' }}
+                    style={{ width: '60px', height: '40px' }}
                   />
                 </div>
-                <div>
-                  <label>Color de acento:</label>
+                <div className="form-group">
+                  <label className="form-label">Color de acento:</label>
                   <input
                     type="color"
                     value={formData.empresa.colores.acento}
                     onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
-                    style={{ display: 'block', marginTop: '5px', width: '50px', height: '30px' }}
+                    style={{ width: '60px', height: '40px' }}
                   />
                 </div>
               </div>
@@ -241,12 +248,12 @@ function ConfigPage() {
           {activeTab === 'idiomas' && (
             <div>
               <h3>Configuración de Idiomas</h3>
-              <div style={{ marginBottom: '15px' }}>
-                <label>Idioma predeterminado:</label>
+              <div className="form-group">
+                <label className="form-label">Idioma predeterminado:</label>
                 <select
                   value={formData.idioma.predeterminado}
                   onChange={(e) => handleInputChange('idioma', 'predeterminado', e.target.value)}
-                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                  className="form-control"
                 >
                   <option value="es">Español</option>
                   <option value="en">English</option>
@@ -256,33 +263,35 @@ function ConfigPage() {
               
               <h4>Traducciones</h4>
               {Object.keys(formData.idioma.traducciones).map(lang => (
-                <div key={lang} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
-                  <h5>{lang.toUpperCase()}</h5>
-                  {Object.keys(formData.idioma.traducciones[lang]).map(key => (
-                    <div key={key} style={{ marginBottom: '10px' }}>
-                      <label style={{ textTransform: 'capitalize' }}>{key}:</label>
-                      <input
-                        type="text"
-                        value={formData.idioma.traducciones[lang][key]}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            idioma: {
-                              ...prev.idioma,
-                              traducciones: {
-                                ...prev.idioma.traducciones,
-                                [lang]: {
-                                  ...prev.idioma.traducciones[lang],
-                                  [key]: e.target.value
+                <div key={lang} className="card" style={{ marginBottom: '15px' }}>
+                  <div className="card-body">
+                    <h5>{lang.toUpperCase()}</h5>
+                    {Object.keys(formData.idioma.traducciones[lang]).map(key => (
+                      <div key={key} className="form-group">
+                        <label className="form-label" style={{ textTransform: 'capitalize' }}>{key}:</label>
+                        <input
+                          type="text"
+                          value={formData.idioma.traducciones[lang][key]}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              idioma: {
+                                ...prev.idioma,
+                                traducciones: {
+                                  ...prev.idioma.traducciones,
+                                  [lang]: {
+                                    ...prev.idioma.traducciones[lang],
+                                    [key]: e.target.value
+                                  }
                                 }
                               }
-                            }
-                          }));
-                        }}
-                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                      />
-                    </div>
-                  ))}
+                            }));
+                          }}
+                          className="form-control"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
@@ -291,8 +300,8 @@ function ConfigPage() {
           {activeTab === 'apariencia' && (
             <div>
               <h3>Configuración de Apariencia</h3>
-              <div style={{ marginBottom: '15px' }}>
-                <label>
+              <div className="form-group">
+                <label className="form-label">
                   <input
                     type="checkbox"
                     checked={formData.apariencia.modo_oscuro}
@@ -302,12 +311,12 @@ function ConfigPage() {
                   Modo oscuro por defecto
                 </label>
               </div>
-              <div style={{ marginBottom: '15px' }}>
-                <label>Tema:</label>
+              <div className="form-group">
+                <label className="form-label">Tema:</label>
                 <select
                   value={formData.apariencia.tema}
                   onChange={(e) => handleInputChange('apariencia', 'tema', e.target.value)}
-                  style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                  className="form-control"
                 >
                   <option value="default">Por defecto</option>
                   <option value="corporate">Corporativo</option>
@@ -329,11 +338,13 @@ function ConfigPage() {
                       type="text"
                       value={estado}
                       onChange={(e) => handleArrayChange('tickets', 'estados', index, e.target.value)}
-                      style={{ flex: 1, padding: '5px', marginRight: '10px' }}
+                      className="form-control"
+                      style={{ marginRight: '10px' }}
                     />
                     <button
                       onClick={() => removeArrayItem('tickets', 'estados', index)}
-                      style={{ padding: '5px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '3px' }}
+                      className="button"
+                      style={{ backgroundColor: '#dc3545', color: 'white' }}
                     >
                       Eliminar
                     </button>
@@ -341,7 +352,7 @@ function ConfigPage() {
                 ))}
                 <button
                   onClick={() => addArrayItem('tickets', 'estados')}
-                  style={{ padding: '5px 10px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '3px' }}
+                  className="button button-primary"
                 >
                   Añadir estado
                 </button>
@@ -355,11 +366,13 @@ function ConfigPage() {
                       type="text"
                       value={prioridad}
                       onChange={(e) => handleArrayChange('tickets', 'prioridades', index, e.target.value)}
-                      style={{ flex: 1, padding: '5px', marginRight: '10px' }}
+                      className="form-control"
+                      style={{ marginRight: '10px' }}
                     />
                     <button
                       onClick={() => removeArrayItem('tickets', 'prioridades', index)}
-                      style={{ padding: '5px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '3px' }}
+                      className="button"
+                      style={{ backgroundColor: '#dc3545', color: 'white' }}
                     >
                       Eliminar
                     </button>
@@ -367,7 +380,7 @@ function ConfigPage() {
                 ))}
                 <button
                   onClick={() => addArrayItem('tickets', 'prioridades')}
-                  style={{ padding: '5px 10px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '3px' }}
+                  className="button button-primary"
                 >
                   Añadir prioridad
                 </button>
@@ -381,11 +394,13 @@ function ConfigPage() {
                       type="text"
                       value={categoria}
                       onChange={(e) => handleArrayChange('tickets', 'categorias', index, e.target.value)}
-                      style={{ flex: 1, padding: '5px', marginRight: '10px' }}
+                      className="form-control"
+                      style={{ marginRight: '10px' }}
                     />
                     <button
                       onClick={() => removeArrayItem('tickets', 'categorias', index)}
-                      style={{ padding: '5px 10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '3px' }}
+                      className="button"
+                      style={{ backgroundColor: '#dc3545', color: 'white' }}
                     >
                       Eliminar
                     </button>
@@ -393,7 +408,7 @@ function ConfigPage() {
                 ))}
                 <button
                   onClick={() => addArrayItem('tickets', 'categorias')}
-                  style={{ padding: '5px 10px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '3px' }}
+                  className="button button-primary"
                 >
                   Añadir categoría
                 </button>
@@ -404,8 +419,8 @@ function ConfigPage() {
           {activeTab === 'notificaciones' && (
             <div>
               <h3>Configuración de Notificaciones</h3>
-              <div style={{ marginBottom: '15px' }}>
-                <label>
+              <div className="form-group">
+                <label className="form-label">
                   <input
                     type="checkbox"
                     checked={formData.notificaciones.email_habilitado}
@@ -415,8 +430,8 @@ function ConfigPage() {
                   Notificaciones por email habilitadas
                 </label>
               </div>
-              <div style={{ marginBottom: '15px' }}>
-                <label>
+              <div className="form-group">
+                <label className="form-label">
                   <input
                     type="checkbox"
                     checked={formData.notificaciones.notificar_asignacion}
@@ -426,8 +441,8 @@ function ConfigPage() {
                   Notificar asignación de tickets
                 </label>
               </div>
-              <div style={{ marginBottom: '15px' }}>
-                <label>
+              <div className="form-group">
+                <label className="form-label">
                   <input
                     type="checkbox"
                     checked={formData.notificaciones.notificar_cambio_estado}
@@ -441,16 +456,13 @@ function ConfigPage() {
           )}
 
           {/* Botón de guardar */}
-          <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid #ddd' }}>
+          <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
             <button
               onClick={handleSave}
               disabled={saving}
+              className="button button-primary"
               style={{
-                padding: '10px 30px',
-                backgroundColor: saving ? '#6c757d' : '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
+                backgroundColor: saving ? '#6c757d' : 'var(--primary-color)',
                 cursor: saving ? 'not-allowed' : 'pointer',
                 fontSize: '16px'
               }}

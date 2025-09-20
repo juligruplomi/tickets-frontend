@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useConfig } from '../context/ConfigContext';
 
 function Navbar() {
   const { user, logout } = useAuth();
+  const { config, t } = useConfig();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
@@ -12,7 +14,7 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-content">
         <Link to="/dashboard" className="navbar-brand">
-          Tickets GrupLomi
+          {t('tickets')} {config.empresa.nombre}
         </Link>
         
         <ul className="navbar-nav">
@@ -21,7 +23,7 @@ function Navbar() {
               to="/dashboard" 
               className={isActive('/dashboard') ? 'active' : ''}
             >
-              Dashboard
+              {t('dashboard')}
             </Link>
           </li>
           <li>
@@ -29,7 +31,7 @@ function Navbar() {
               to="/tickets" 
               className={isActive('/tickets') ? 'active' : ''}
             >
-              Tickets
+              {t('tickets')}
             </Link>
           </li>
           {user?.role === 'admin' && (
@@ -38,7 +40,7 @@ function Navbar() {
                 to="/users" 
                 className={isActive('/users') ? 'active' : ''}
               >
-                Usuarios
+                {t('usuarios')}
               </Link>
             </li>
           )}
@@ -48,7 +50,7 @@ function Navbar() {
                 to="/config" 
                 className={isActive('/config') ? 'active' : ''}
               >
-                Configuración
+                {t('configuracion')}
               </Link>
             </li>
           )}
@@ -57,7 +59,7 @@ function Navbar() {
         <div className="navbar-user">
           <span>Hola, {user?.nombre || user?.email}</span>
           <button className="button button-secondary" onClick={logout}>
-            Cerrar Sesión
+            {t('cerrar_sesion')}
           </button>
         </div>
       </div>

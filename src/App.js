@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ConfigProvider } from './context/ConfigContext';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Tickets from './pages/Tickets';
@@ -113,7 +114,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppContent />
+        <ConfigProvider>
+          <AppContent />
+        </ConfigProvider>
       </AuthProvider>
     </Router>
   );

@@ -1,50 +1,61 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useSystemConfig } from '../hooks/useSystemConfig';
+import { useConfig } from '../context/ConfigContext';
 
 function Dashboard() {
   const { user } = useAuth();
-  const { config, loading } = useSystemConfig();
+  const { config, t, toggleDarkMode, darkMode, changeLanguage, currentLanguage } = useConfig();
   
   // Obtener la URL de la API desde la configuración
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-
-  if (loading || !config) {
-    return (
-      <div className="container">
-        <div className="card">
-          <div className="card-body">
-            <p>Cargando configuración...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Valores por defecto seguros
-  const empresa = config.empresa || { nombre: "GrupLomi", colores: { primario: "#0066CC", secundario: "#f8f9fa", acento: "#28a745" } };
-  const traducciones = config.idioma?.traducciones || {
-    bienvenida: "Bienvenido al sistema de tickets",
-    footer: "© 2025 - Sistema de gestión de tickets"
-  };
-  const apariencia = config.apariencia || { modo_oscuro: false };
-  const tickets = config.tickets || { estados: [] };
 
   return (
     <div className="container">
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">Dashboard - {empresa.nombre}</h2>
+          <h2 className="card-title">{t('dashboard')} - {config.empresa.nombre}</h2>
+          
+          {/* Controles de configuración rápida */}
+          <div style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <label>
+              {t('idioma') || 'Idioma'}:
+              <select 
+                value={currentLanguage} 
+                onChange={(e) => changeLanguage(e.target.value)}
+                style={{ marginLeft: '5px', padding: '5px' }}
+              >
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="ca">Català</option>
+              </select>
+            </label>
+            
+            <button
+              onClick={toggleDarkMode}
+              style={{
+                padding: '5px 10px',
+                backgroundColor: darkMode ? '#ffc107' : '#6f42c1',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              {darkMode ? '☀️ Modo Claro' : '🌙 Modo Oscuro'}
+            </button>
+          </div>
         </div>
+        
         <div className="card-body">
           <div style={{ 
             padding: '20px', 
-            backgroundColor: empresa.colores.secundario,
-            borderLeft: `4px solid ${empresa.colores.primario}`,
-            marginBottom: '20px'
+            backgroundColor: `${config.empresa.colores.secundario}20`,
+            borderLeft: `4px solid ${config.empresa.colores.primario}`,
+            marginBottom: '20px',
+            borderRadius: '4px'
           }}>
-            <h3 style={{ color: empresa.colores.primario, margin: '0 0 10px 0' }}>
-              {traducciones.bienvenida}
+            <h3 style={{ color: config.empresa.colores.primario, margin: '0 0 10px 0' }}>
+              {t('bienvenida')}
             </h3>
             <p style={{ margin: 0 }}>
               Hola <strong>{user?.nombre || user?.email}</strong>, 
@@ -53,21 +64,22 @@ function Dashboard() {
           </div>
           
           <div style={{ marginTop: '20px' }}>
-            <h3>Estado del sistema:</h3>
+            <h3>{t('estado_sistema') || 'Estado del sistema'}:</h3>
             <ul>
               <li>✅ API funcionando en: <strong>{apiUrl}</strong></li>
               <li>✅ Autenticación activa</li>
               <li>✅ Configuración cargada</li>
-              <li>✅ Tema: {apariencia.modo_oscuro ? 'Oscuro' : 'Claro'}</li>
+              <li>✅ Tema: {darkMode ? 'Oscuro' : 'Claro'}</li>
+              <li>✅ Idioma: {currentLanguage.toUpperCase()}</li>
             </ul>
           </div>
           
           <div style={{ marginTop: '20px' }}>
-            <h3>Funcionalidades disponibles:</h3>
+            <h3>{t('funcionalidades') || 'Funcionalidades disponibles'}:</h3>
             <ul>
-              <li>📋 Gestión de tickets ({tickets.estados.length} estados disponibles)</li>
-              <li>👥 Administración de usuarios {user?.role === 'admin' ? '(Disponible)' : '(Solo Admin)'}</li>
-              <li>⚙️ Configuración del sistema {user?.role === 'admin' ? '(Disponible)' : '(Solo Admin)'}</li>
+              <li>📋 Gestión de {t('tickets')} ({config.tickets.estados.length} estados disponibles)</li>
+              <li>👥 Administración de {t('usuarios')} {user?.role === 'admin' ? '(Disponible)' : '(Solo Admin)'}</li>
+              <li>⚙️ {t('configuracion')} del sistema {user?.role === 'admin' ? '(Disponible)' : '(Solo Admin)'}</li>
               <li>📊 Reportes y estadísticas</li>
             </ul>
           </div>
@@ -76,15 +88,16 @@ function Dashboard() {
             <div style={{ 
               marginTop: '20px', 
               padding: '15px',
-              backgroundColor: empresa.colores.acento + '20',
-              borderRadius: '5px'
+              backgroundColor: `${config.empresa.colores.acento}20`,
+              borderRadius: '5px',
+              border: `1px solid ${config.empresa.colores.acento}40`
             }}>
-              <h4 style={{ color: empresa.colores.acento, margin: '0 0 10px 0' }}>
+              <h4 style={{ color: config.empresa.colores.acento, margin: '0 0 10px 0' }}>
                 Panel de Administrador
               </h4>
               <p style={{ margin: 0 }}>
                 Como administrador, puedes personalizar mensajes, colores, categorías de tickets y más 
-                desde la sección de configuración.
+                desde la sección de {t('configuracion').toLowerCase()}.
               </p>
             </div>
           )}
@@ -92,12 +105,12 @@ function Dashboard() {
           <div style={{ 
             marginTop: '30px', 
             paddingTop: '20px', 
-            borderTop: '1px solid #eee',
+            borderTop: '1px solid var(--border-color)',
             textAlign: 'center',
-            color: '#666',
+            color: darkMode ? '#ccc' : '#666',
             fontSize: '14px'
           }}>
-            {traducciones.footer}
+            {t('footer')}
           </div>
         </div>
       </div>
