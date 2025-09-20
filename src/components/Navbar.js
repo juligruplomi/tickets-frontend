@@ -32,18 +32,30 @@ function Navbar() {
               Tickets
             </Link>
           </li>
-          <li>
-            <Link 
-              to="/users" 
-              className={isActive('/users') ? 'active' : ''}
-            >
-              Usuarios
-            </Link>
-          </li>
+          {user?.role === 'admin' && (
+            <li>
+              <Link 
+                to="/users" 
+                className={isActive('/users') ? 'active' : ''}
+              >
+                Usuarios
+              </Link>
+            </li>
+          )}
+          {user?.role === 'admin' && (
+            <li>
+              <Link 
+                to="/config" 
+                className={isActive('/config') ? 'active' : ''}
+              >
+                Configuración
+              </Link>
+            </li>
+          )}
         </ul>
         
         <div className="navbar-user">
-          <span>Hola, {user?.first_name || user?.email}</span>
+          <span>Hola, {user?.nombre || user?.email}</span>
           <button className="button button-secondary" onClick={logout}>
             Cerrar Sesión
           </button>

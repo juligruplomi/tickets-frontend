@@ -1,40 +1,19 @@
 import { useState, useEffect } from 'react';
-import { configAPI } from '../services/api';
+import { api } from '../services/api';
 
 export function useSystemConfig() {
-  const [config, setConfig] = useState({
-    empresa: {
-      nombre: "GrupLomi",
-      logo_url: "/logo.png",
-      colores: {
-        primario: "#0066CC",
-        secundario: "#f8f9fa",
-        acento: "#28a745"
-      }
-    },
-    mensajes: {
-      bienvenida: "Bienvenido al sistema de tickets",
-      footer: "© 2025 - Sistema de gestión de tickets"
-    },
-    apariencia: {
-      modo_oscuro: false,
-      tema: "default"
-    },
-    tickets: {
-      estados: ["abierto", "en_progreso", "pendiente", "resuelto", "cerrado"],
-      prioridades: ["baja", "media", "alta", "urgente"],
-      categorias: ["hardware", "software", "red", "acceso", "otro"]
-    }
-  });
-  
+  const [config, setConfig] = useState(null);
+  const [adminConfig, setAdminConfig] = useState(null);
+  const [currentLanguage, setCurrentLanguage] = useState('es');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const loadConfig = async () => {
+  const loadConfig = async (lang = 'es') => {
     try {
       setLoading(true);
-      const response = await configAPI.get();
+      const response = await api.get(`/config?lang=${lang}`);
       setConfig(response.data);
+      setCurrentLanguage(lang);
       setError(null);
     } catch (err) {
       console.error('Error loading config:', err);
@@ -44,10 +23,23 @@ export function useSystemConfig() {
     }
   };
 
+  const loadAdminConfig = async () => {
+    try {
+      const response = await api.get('/config/admin');
+      setAdminConfig(response.data);
+      return response.data;
+    } catch (err) {
+      console.error('Error loading admin config:', err);
+      throw err;
+    }
+  };
+
   const updateConfig = async (newConfig) => {
     try {
-      const response = await configAPI.update(newConfig);
-      setConfig(response.data.config);
+      const response = await api.put('/config/admin', newConfig);
+      setAdminConfig(response.data.config);
+      // Recargar la configuración pública también
+      loadConfig(currentLanguage);
       return { success: true };
     } catch (err) {
       console.error('Error updating config:', err);
@@ -55,15 +47,30 @@ export function useSystemConfig() {
     }
   };
 
+  const changeLanguage = (lang) => {
+    setCurrentLanguage(lang);
+    loadConfig(lang);
+  };
+
+  const t = (key) => {
+    if (!config?.idioma?.traducciones) return key;
+    return config.idioma.traducciones[key] || key;
+  };
+
   useEffect(() => {
-    loadConfig();
+    loadConfig(currentLanguage);
   }, []);
 
   return {
     config,
+    adminConfig,
+    currentLanguage,
     loading,
     error,
     updateConfig,
-    reload: loadConfig
+    loadAdminConfig,
+    changeLanguage,
+    reload: loadConfig,
+    t // función de traducción
   };
 }

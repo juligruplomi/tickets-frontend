@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Tickets from './pages/Tickets';
 import CreateTicket from './pages/CreateTicket';
 import Users from './pages/Users';
+import ConfigPage from './pages/ConfigPage';
 import Navbar from './components/Navbar';
 import './App.css';
 
@@ -23,6 +24,30 @@ function ProtectedRoute({ children }) {
   }
   
   return isAuthenticated ? children : <Navigate to="/login" />;
+}
+
+// Componente para rutas solo de admin
+function AdminRoute({ children }) {
+  const { isAuthenticated, user, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  if (user?.role !== 'admin') {
+    return <Navigate to="/dashboard" />;
+  }
+  
+  return children;
 }
 
 function AppContent() {
@@ -64,9 +89,17 @@ function AppContent() {
           <Route 
             path="/users" 
             element={
-              <ProtectedRoute>
+              <AdminRoute>
                 <Users />
-              </ProtectedRoute>
+              </AdminRoute>
+            } 
+          />
+          <Route 
+            path="/config" 
+            element={
+              <AdminRoute>
+                <ConfigPage />
+              </AdminRoute>
             } 
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />
