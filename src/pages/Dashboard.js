@@ -24,77 +24,75 @@ function Dashboard() {
               {t('bienvenida')}
             </h3>
             <p className="welcome-text">
-              Hola <strong>{user?.nombre || user?.email}</strong>, 
-              tienes rol de <strong>{user?.role === 'admin' ? 'Administrador' : 'Usuario'}</strong>
+              {t('hola') || 'Hola'} <strong>{user?.nombre || user?.email}</strong>, 
+              {t('tienes_rol') || 'tienes rol de'} <strong>{user?.role === 'admin' ? t('administrador') || 'Administrador' : t('usuario') || 'Usuario'}</strong>
             </p>
           </div>
           
           <div className="status-section">
-            <h3 className="section-title">{t('estado_sistema') || 'Estado del sistema'}</h3>
+            <h3 className="section-title">{t('estado_sistema')}</h3>
             <div className="status-grid">
               <div className="status-item">
                 <span className="status-icon">✅</span>
-                <span>API funcionando</span>
+                <span>{t('api_funcionando') || 'API funcionando'}</span>
               </div>
               <div className="status-item">
                 <span className="status-icon">✅</span>
-                <span>Autenticación activa</span>
+                <span>{t('autenticacion_activa') || 'Autenticación activa'}</span>
               </div>
               <div className="status-item">
                 <span className="status-icon">✅</span>
-                <span>Configuración cargada</span>
+                <span>{t('configuracion_cargada') || 'Configuración cargada'}</span>
               </div>
               <div className="status-item">
                 <span className="status-icon">✅</span>
-                <span>Tema: {darkMode ? 'Oscuro' : 'Claro'}</span>
+                <span>{t('tema') || 'Tema'}: {darkMode ? t('oscuro') || 'Oscuro' : t('claro') || 'Claro'}</span>
               </div>
               <div className="status-item">
                 <span className="status-icon">✅</span>
-                <span>Idioma: {currentLanguage.toUpperCase()}</span>
+                <span>{t('idioma')}: {currentLanguage.toUpperCase()}</span>
               </div>
             </div>
           </div>
           
           <div className="features-section">
-            <h3 className="section-title">{t('funcionalidades') || 'Funcionalidades disponibles'}</h3>
+            <h3 className="section-title">{t('funcionalidades')}</h3>
             <div className="features-grid">
               <div className="feature-card">
                 <span className="feature-icon">📋</span>
-                <h4>Gestión de {t('tickets')}</h4>
-                <p>{config.tickets.estados.length} estados disponibles</p>
+                <h4>{t('gestion_de') || 'Gestión de'} {t('tickets')}</h4>
+                <p>{config.tickets.estados.length} {t('estados_disponibles') || 'estados disponibles'}</p>
               </div>
               
               {user?.role === 'admin' && (
                 <div className="feature-card">
                   <span className="feature-icon">👥</span>
-                  <h4>Administración de {t('usuarios')}</h4>
-                  <p>Gestión completa de usuarios</p>
+                  <h4>{t('administracion_de') || 'Administración de'} {t('usuarios')}</h4>
+                  <p>{t('gestion_completa_usuarios') || 'Gestión completa de usuarios'}</p>
                 </div>
               )}
               
               {user?.role === 'admin' && (
                 <div className="feature-card">
                   <span className="feature-icon">⚙️</span>
-                  <h4>{t('configuracion')} del sistema</h4>
-                  <p>Personalización avanzada</p>
+                  <h4>{t('configuracion')} {t('del_sistema') || 'del sistema'}</h4>
+                  <p>{t('personalizacion_avanzada') || 'Personalización avanzada'}</p>
                 </div>
               )}
               
               <div className="feature-card">
                 <span className="feature-icon">📊</span>
-                <h4>Reportes y estadísticas</h4>
-                <p>Análisis y métricas</p>
+                <h4>{t('reportes_estadisticas') || 'Reportes y estadísticas'}</h4>
+                <p>{t('analisis_metricas') || 'Análisis y métricas'}</p>
               </div>
             </div>
           </div>
 
           {user?.role === 'admin' && (
             <div className="admin-panel">
-              <h4 className="admin-title">Panel de Administrador</h4>
+              <h4 className="admin-title">{t('panel_administrador') || 'Panel de Administrador'}</h4>
               <p className="admin-text">
-                Como administrador, puedes personalizar mensajes, colores, categorías de tickets y más 
-                desde la sección de {t('configuracion').toLowerCase()}. Los controles de idioma y tema 
-                están disponibles en la barra de navegación superior.
+                {t('como_administrador') || 'Como administrador, puedes personalizar mensajes, colores, categorías de tickets y más desde la sección de'} {t('configuracion').toLowerCase()}. {t('controles_navbar') || 'Los controles de idioma y tema están disponibles en la barra de navegación superior'}.
               </p>
             </div>
           )}

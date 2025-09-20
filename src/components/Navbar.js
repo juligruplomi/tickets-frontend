@@ -10,6 +10,16 @@ function Navbar() {
 
   const isActive = (path) => location.pathname === path;
 
+  // Nombres simples de idiomas sin códigos de país
+  const languageNames = {
+    es: "Español",
+    en: "English", 
+    ca: "Català",
+    de: "Deutsch",
+    it: "Italiano",
+    pt: "Português"
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar-content">
@@ -86,12 +96,9 @@ function Navbar() {
                 className="navbar-select"
                 title="Cambiar idioma"
               >
-                <option value="es">🇪🇸</option>
-                <option value="en">🇬🇧</option>
-                <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿</option>
-                <option value="de">🇩🇪</option>
-                <option value="it">🇮🇹</option>
-                <option value="pt">🇵🇹</option>
+                {Object.entries(languageNames).map(([code, name]) => (
+                  <option key={code} value={code}>{name}</option>
+                ))}
               </select>
             </div>
             
@@ -114,11 +121,11 @@ function Navbar() {
             </div>
           </div>
           
-          <span className="user-name">Hola, {user?.nombre || user?.email}</span>
+          <span className="user-name">{t('hola') || 'Hola'}, {user?.nombre || user?.email}</span>
           <button 
             className="logout-button" 
             onClick={logout}
-            title="Cerrar sesión"
+            title={t('cerrar_sesion')}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M16 17v-3H9v-4h7V7l5 5-5 5M14 2a2 2 0 012 2v2h-2V4H5v16h9v-2h2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V4a2 2 0 012-2h9z"/>
