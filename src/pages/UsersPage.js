@@ -19,7 +19,7 @@ function UsersPage() {
     telefono: '',
     direccion: '',
     fecha_nacimiento: '',
-    fecha_contratacion: new Date().toISOString().split('T')[0],
+    foto_file: null,
     foto_url: '/avatars/default.jpg',
     role: 'operario',
     departamento: '',
@@ -34,6 +34,21 @@ function UsersPage() {
       loadUsers();
     }
   }, [user]);
+
+  const handlePhotoUpload = (file, isEditing = false) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const photoUrl = e.target.result;
+        if (isEditing) {
+          setEditingUser({...editingUser, foto_file: file, foto_url: photoUrl});
+        } else {
+          setNewUser({...newUser, foto_file: file, foto_url: photoUrl});
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const loadUsers = async () => {
     try {
@@ -63,7 +78,7 @@ function UsersPage() {
         telefono: '',
         direccion: '',
         fecha_nacimiento: '',
-        fecha_contratacion: new Date().toISOString().split('T')[0],
+        foto_file: null,
         foto_url: '/avatars/default.jpg',
         role: 'operario',
         departamento: '',
@@ -134,6 +149,17 @@ function UsersPage() {
       'contabilidad': '#0066CC'
     };
     return colors[role] || '#6c757d';
+  };
+
+  const getAvailableLanguages = () => {
+    return [
+      { value: 'es', label: 'Español' },
+      { value: 'en', label: 'English' },
+      { value: 'ca', label: 'Català' },
+      { value: 'de', label: 'Deutsch' },
+      { value: 'it', label: 'Italiano' },
+      { value: 'pt', label: 'Português' }
+    ];
   };
 
   const getAvailableRoles = () => {
@@ -281,9 +307,6 @@ function UsersPage() {
                     </div>
                     <div className="detail-item">
                       <strong>Teléfono:</strong> {userData.telefono || 'N/A'}
-                    </div>
-                    <div className="detail-item">
-                      <strong>Contratación:</strong> {userData.fecha_contratacion ? new Date(userData.fecha_contratacion).toLocaleDateString() : 'N/A'}
                     </div>
                   </div>
                   
@@ -436,14 +459,23 @@ function UsersPage() {
                     </div>
                     
                     <div className="form-group">
-                      <label className="form-label">Fecha de Contratación:</label>
+                      <label className="form-label">Foto de Perfil:</label>
                       <input
-                        type="date"
-                        required
-                        value={newUser.fecha_contratacion}
-                        onChange={(e) => setNewUser({...newUser, fecha_contratacion: e.target.value})}
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={(e) => handlePhotoUpload(e.target.files[0])}
                         className="form-control"
                       />
+                      {newUser.foto_url && newUser.foto_url !== '/avatars/default.jpg' && (
+                        <div className="photo-preview">
+                          <img 
+                            src={newUser.foto_url} 
+                            alt="Preview" 
+                            className="preview-image"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -503,22 +535,11 @@ function UsersPage() {
                         onChange={(e) => setNewUser({...newUser, idioma_preferido: e.target.value})}
                         className="form-control"
                       >
-                        <option value="es">Español</option>
-                        <option value="en">English</option>
-                        <option value="ca">Català</option>
+                        {getAvailableLanguages().map(lang => (
+                          <option key={lang.value} value={lang.value}>{lang.label}</option>
+                        ))}
                       </select>
                     </div>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">URL de Foto:</label>
-                    <input
-                      type="url"
-                      value={newUser.foto_url}
-                      onChange={(e) => setNewUser({...newUser, foto_url: e.target.value})}
-                      className="form-control"
-                      placeholder="/avatars/usuario.jpg"
-                    />
                   </div>
                   
                   <div className="form-group">
@@ -575,7 +596,6 @@ function UsersPage() {
                 telefono: editingUser.telefono,
                 direccion: editingUser.direccion,
                 fecha_nacimiento: editingUser.fecha_nacimiento,
-                fecha_contratacion: editingUser.fecha_contratacion,
                 foto_url: editingUser.foto_url,
                 role: editingUser.role,
                 departamento: editingUser.departamento,
@@ -687,14 +707,23 @@ function UsersPage() {
                     </div>
                     
                     <div className="form-group">
-                      <label className="form-label">Fecha de Contratación:</label>
+                      <label className="form-label">Foto de Perfil:</label>
                       <input
-                        type="date"
-                        required
-                        value={editingUser.fecha_contratacion || ''}
-                        onChange={(e) => setEditingUser({...editingUser, fecha_contratacion: e.target.value})}
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        onChange={(e) => handlePhotoUpload(e.target.files[0], true)}
                         className="form-control"
                       />
+                      {editingUser.foto_url && editingUser.foto_url !== '/avatars/default.jpg' && (
+                        <div className="photo-preview">
+                          <img 
+                            src={editingUser.foto_url} 
+                            alt="Preview" 
+                            className="preview-image"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -753,21 +782,11 @@ function UsersPage() {
                         onChange={(e) => setEditingUser({...editingUser, idioma_preferido: e.target.value})}
                         className="form-control"
                       >
-                        <option value="es">Español</option>
-                        <option value="en">English</option>
-                        <option value="ca">Català</option>
+                        {getAvailableLanguages().map(lang => (
+                          <option key={lang.value} value={lang.value}>{lang.label}</option>
+                        ))}
                       </select>
                     </div>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">URL de Foto:</label>
-                    <input
-                      type="url"
-                      value={editingUser.foto_url || ''}
-                      onChange={(e) => setEditingUser({...editingUser, foto_url: e.target.value})}
-                      className="form-control"
-                    />
                   </div>
                   
                   <div className="form-group">
