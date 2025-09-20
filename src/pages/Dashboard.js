@@ -11,116 +11,126 @@ function Dashboard() {
 
   return (
     <div className="container">
-      <div className="card">
-        <div className="card-header">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="card dashboard-card">
+        <div className="card-header dashboard-header">
+          <div className="dashboard-title-section">
             <h2 className="card-title">{t('dashboard')} - {config.empresa.nombre}</h2>
-            
-            {/* Controles minimalistas en la esquina */}
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          </div>
+          
+          {/* Controles integrados en el header */}
+          <div className="dashboard-controls">
+            <div className="language-selector">
               <select 
                 value={currentLanguage} 
                 onChange={(e) => changeLanguage(e.target.value)}
-                style={{ 
-                  padding: '5px 8px', 
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '4px',
-                  backgroundColor: 'var(--card-background)',
-                  color: 'var(--text-color)',
-                  fontSize: '14px'
-                }}
+                className="control-select"
               >
-                <option value="es">🇪🇸 ES</option>
-                <option value="en">🇬🇧 EN</option>
-                <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 CA</option>
-                <option value="de">🇩🇪 DE</option>
-                <option value="it">🇮🇹 IT</option>
-                <option value="pt">🇵🇹 PT</option>
+                <option value="es">🇪🇸</option>
+                <option value="en">🇬🇧</option>
+                <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿</option>
+                <option value="de">🇩🇪</option>
+                <option value="it">🇮🇹</option>
+                <option value="pt">🇵🇹</option>
               </select>
-              
-              <button
-                onClick={toggleDarkMode}
-                style={{
-                  padding: '5px 8px',
-                  backgroundColor: 'transparent',
-                  color: 'var(--text-color)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontSize: '14px'
-                }}
-                title={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
-              >
-                {darkMode ? '☀️' : '🌙'}
-              </button>
+            </div>
+            
+            {/* Toggle switch estilo Apple */}
+            <div className="theme-toggle">
+              <input
+                type="checkbox"
+                id="darkModeToggle"
+                checked={darkMode}
+                onChange={toggleDarkMode}
+                className="toggle-checkbox"
+              />
+              <label htmlFor="darkModeToggle" className="toggle-label">
+                <span className="toggle-slider"></span>
+              </label>
             </div>
           </div>
         </div>
         
         <div className="card-body">
-          <div style={{ 
-            padding: '20px', 
-            backgroundColor: `${config.empresa.colores.secundario}20`,
-            borderLeft: `4px solid ${config.empresa.colores.primario}`,
-            marginBottom: '20px',
-            borderRadius: '4px'
-          }}>
-            <h3 style={{ color: config.empresa.colores.primario, margin: '0 0 10px 0' }}>
+          <div className="welcome-section">
+            <h3 className="welcome-title">
               {t('bienvenida')}
             </h3>
-            <p style={{ margin: 0 }}>
+            <p className="welcome-text">
               Hola <strong>{user?.nombre || user?.email}</strong>, 
               tienes rol de <strong>{user?.role === 'admin' ? 'Administrador' : 'Usuario'}</strong>
             </p>
           </div>
           
-          <div style={{ marginTop: '20px' }}>
-            <h3>{t('estado_sistema') || 'Estado del sistema'}:</h3>
-            <ul>
-              <li>✅ API funcionando en: <strong>{apiUrl}</strong></li>
-              <li>✅ Autenticación activa</li>
-              <li>✅ Configuración cargada</li>
-              <li>✅ Tema: {darkMode ? 'Oscuro' : 'Claro'}</li>
-              <li>✅ Idioma: {currentLanguage.toUpperCase()}</li>
-            </ul>
+          <div className="status-section">
+            <h3 className="section-title">{t('estado_sistema') || 'Estado del sistema'}</h3>
+            <div className="status-grid">
+              <div className="status-item">
+                <span className="status-icon">✅</span>
+                <span>API funcionando</span>
+              </div>
+              <div className="status-item">
+                <span className="status-icon">✅</span>
+                <span>Autenticación activa</span>
+              </div>
+              <div className="status-item">
+                <span className="status-icon">✅</span>
+                <span>Configuración cargada</span>
+              </div>
+              <div className="status-item">
+                <span className="status-icon">✅</span>
+                <span>Tema: {darkMode ? 'Oscuro' : 'Claro'}</span>
+              </div>
+              <div className="status-item">
+                <span className="status-icon">✅</span>
+                <span>Idioma: {currentLanguage.toUpperCase()}</span>
+              </div>
+            </div>
           </div>
           
-          <div style={{ marginTop: '20px' }}>
-            <h3>{t('funcionalidades') || 'Funcionalidades disponibles'}:</h3>
-            <ul>
-              <li>📋 Gestión de {t('tickets')} ({config.tickets.estados.length} estados disponibles)</li>
-              <li>👥 Administración de {t('usuarios')} {user?.role === 'admin' ? '(Disponible)' : '(Solo Admin)'}</li>
-              <li>⚙️ {t('configuracion')} del sistema {user?.role === 'admin' ? '(Disponible)' : '(Solo Admin)'}</li>
-              <li>📊 Reportes y estadísticas</li>
-            </ul>
+          <div className="features-section">
+            <h3 className="section-title">{t('funcionalidades') || 'Funcionalidades disponibles'}</h3>
+            <div className="features-grid">
+              <div className="feature-card">
+                <span className="feature-icon">📋</span>
+                <h4>Gestión de {t('tickets')}</h4>
+                <p>{config.tickets.estados.length} estados disponibles</p>
+              </div>
+              
+              {user?.role === 'admin' && (
+                <div className="feature-card">
+                  <span className="feature-icon">👥</span>
+                  <h4>Administración de {t('usuarios')}</h4>
+                  <p>Gestión completa de usuarios</p>
+                </div>
+              )}
+              
+              {user?.role === 'admin' && (
+                <div className="feature-card">
+                  <span className="feature-icon">⚙️</span>
+                  <h4>{t('configuracion')} del sistema</h4>
+                  <p>Personalización avanzada</p>
+                </div>
+              )}
+              
+              <div className="feature-card">
+                <span className="feature-icon">📊</span>
+                <h4>Reportes y estadísticas</h4>
+                <p>Análisis y métricas</p>
+              </div>
+            </div>
           </div>
 
           {user?.role === 'admin' && (
-            <div style={{ 
-              marginTop: '20px', 
-              padding: '15px',
-              backgroundColor: `${config.empresa.colores.acento}20`,
-              borderRadius: '5px',
-              border: `1px solid ${config.empresa.colores.acento}40`
-            }}>
-              <h4 style={{ color: config.empresa.colores.acento, margin: '0 0 10px 0' }}>
-                Panel de Administrador
-              </h4>
-              <p style={{ margin: 0 }}>
+            <div className="admin-panel">
+              <h4 className="admin-title">Panel de Administrador</h4>
+              <p className="admin-text">
                 Como administrador, puedes personalizar mensajes, colores, categorías de tickets y más 
                 desde la sección de {t('configuracion').toLowerCase()}.
               </p>
             </div>
           )}
 
-          <div style={{ 
-            marginTop: '30px', 
-            paddingTop: '20px', 
-            borderTop: '1px solid var(--border-color)',
-            textAlign: 'center',
-            color: darkMode ? '#ccc' : '#666',
-            fontSize: '14px'
-          }}>
+          <div className="footer-section">
             {t('footer')}
           </div>
         </div>
