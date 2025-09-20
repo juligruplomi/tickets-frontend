@@ -9,6 +9,7 @@ function ConfigPage() {
   const [adminConfig, setAdminConfig] = useState(null);
   const [formData, setFormData] = useState(null);
   const [activeTab, setActiveTab] = useState('empresa');
+  const [activeLanguageTab, setActiveLanguageTab] = useState('es');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -27,7 +28,6 @@ function ConfigPage() {
     try {
       const response = await api.put('/config/admin', newConfig);
       setAdminConfig(response.data.config);
-      // Recargar la configuración global para aplicar los cambios
       reloadConfig();
       return { success: true };
     } catch (err) {
@@ -105,6 +105,26 @@ function ConfigPage() {
     }));
   };
 
+  const handleLogoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Simulación de subida de archivo
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const logoUrl = e.target.result;
+        setFormData(prev => ({
+          ...prev,
+          empresa: {
+            ...prev.empresa,
+            logo_url: logoUrl,
+            logo_file: file.name
+          }
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     const result = await updateConfig(formData);
@@ -158,6 +178,15 @@ function ConfigPage() {
     );
   }
 
+  const languageNames = {
+    es: '🇪🇸 Español',
+    en: '🇬🇧 English',
+    ca: '🏴󠁥󠁳󠁣󠁴󠁿 Català',
+    de: '🇩🇪 Deutsch',
+    it: '🇮🇹 Italiano',
+    pt: '🇵🇹 Português'
+  };
+
   return (
     <div className="container">
       <div className="card">
@@ -171,21 +200,15 @@ function ConfigPage() {
         </div>
         
         <div className="card-body">
-          {/* Pestañas */}
-          <div style={{ borderBottom: '1px solid var(--border-color)', marginBottom: '20px' }}>
+          {/* Pestañas principales */}
+          <div className="config-tabs">
             {['empresa', 'idiomas', 'apariencia', 'tickets', 'notificaciones'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className="button"
-                style={{
-                  backgroundColor: activeTab === tab ? 'var(--primary-color)' : 'transparent',
-                  color: activeTab === tab ? 'white' : 'var(--primary-color)',
-                  marginRight: '5px',
-                  textTransform: 'capitalize'
-                }}
+                className={`config-tab ${activeTab === tab ? 'active' : ''}`}
               >
-                {tab}
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
           </div>
@@ -203,43 +226,97 @@ function ConfigPage() {
                   className="form-control"
                 />
               </div>
+              
               <div className="form-group">
-                <label className="form-label">URL del logo:</label>
-                <input
-                  type="text"
-                  value={formData.empresa.logo_url}
-                  onChange={(e) => handleInputChange('empresa', 'logo_url', e.target.value)}
-                  className="form-control"
-                />
+                <label className="form-label">Logo de la empresa:</label>
+                <div style={{ marginBottom: '10px' }}>
+                  <label className="form-label">URL del logo:</label>
+                  <input
+                    type="text"
+                    value={formData.empresa.logo_url}
+                    onChange={(e) => handleInputChange('empresa', 'logo_url', e.target.value)}
+                    className="form-control"
+                    placeholder="https://ejemplo.com/logo.png"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">O subir archivo:</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="form-control"
+                    style={{ marginBottom: '10px' }}
+                  />
+                  {formData.empresa.logo_url && (
+                    <div style={{ marginTop: '10px' }}>
+                      <p>Vista previa:</p>
+                      <img 
+                        src={formData.empresa.logo_url} 
+                        alt="Logo preview" 
+                        style={{ maxWidth: '200px', maxHeight: '100px', border: '1px solid var(--border-color)' }}
+                        onError={(e) => {e.target.style.display = 'none'}}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
+              
               <h4>Colores corporativos</h4>
               <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                 <div className="form-group">
                   <label className="form-label">Color primario:</label>
-                  <input
-                    type="color"
-                    value={formData.empresa.colores.primario}
-                    onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
-                    style={{ width: '60px', height: '40px' }}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={formData.empresa.colores.primario}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
+                      style={{ width: '60px', height: '40px' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.empresa.colores.primario}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
+                      className="form-control"
+                      style={{ width: '100px' }}
+                    />
+                  </div>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Color secundario:</label>
-                  <input
-                    type="color"
-                    value={formData.empresa.colores.secundario}
-                    onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
-                    style={{ width: '60px', height: '40px' }}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={formData.empresa.colores.secundario}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
+                      style={{ width: '60px', height: '40px' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.empresa.colores.secundario}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
+                      className="form-control"
+                      style={{ width: '100px' }}
+                    />
+                  </div>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Color de acento:</label>
-                  <input
-                    type="color"
-                    value={formData.empresa.colores.acento}
-                    onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
-                    style={{ width: '60px', height: '40px' }}
-                  />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={formData.empresa.colores.acento}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
+                      style={{ width: '60px', height: '40px' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.empresa.colores.acento}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
+                      className="form-control"
+                      style={{ width: '100px' }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -249,51 +326,69 @@ function ConfigPage() {
             <div>
               <h3>Configuración de Idiomas</h3>
               <div className="form-group">
-                <label className="form-label">Idioma predeterminado:</label>
+                <label className="form-label">Idioma predeterminado del sistema:</label>
                 <select
                   value={formData.idioma.predeterminado}
                   onChange={(e) => handleInputChange('idioma', 'predeterminado', e.target.value)}
                   className="form-control"
                 >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                  <option value="ca">Català</option>
+                  {formData.idioma.idiomas_disponibles.map(lang => (
+                    <option key={lang} value={lang}>{languageNames[lang]}</option>
+                  ))}
                 </select>
+                <small style={{ color: 'var(--text-color)', opacity: 0.7 }}>
+                  Nota: Los usuarios pueden cambiar su idioma individualmente desde el dashboard.
+                </small>
               </div>
               
-              <h4>Traducciones</h4>
-              {Object.keys(formData.idioma.traducciones).map(lang => (
-                <div key={lang} className="card" style={{ marginBottom: '15px' }}>
-                  <div className="card-body">
-                    <h5>{lang.toUpperCase()}</h5>
-                    {Object.keys(formData.idioma.traducciones[lang]).map(key => (
-                      <div key={key} className="form-group">
-                        <label className="form-label" style={{ textTransform: 'capitalize' }}>{key}:</label>
-                        <input
-                          type="text"
-                          value={formData.idioma.traducciones[lang][key]}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              idioma: {
-                                ...prev.idioma,
-                                traducciones: {
-                                  ...prev.idioma.traducciones,
-                                  [lang]: {
-                                    ...prev.idioma.traducciones[lang],
-                                    [key]: e.target.value
-                                  }
+              <h4>Traducciones por idioma</h4>
+              
+              {/* Pestañas de idiomas */}
+              <div className="language-tabs">
+                {Object.keys(formData.idioma.traducciones).map(lang => (
+                  <button
+                    key={lang}
+                    onClick={() => setActiveLanguageTab(lang)}
+                    className={`language-tab ${activeLanguageTab === lang ? 'active' : ''}`}
+                  >
+                    {languageNames[lang]}
+                  </button>
+                ))}
+              </div>
+
+              {/* Contenido de traducciones para el idioma seleccionado */}
+              <div className="card" style={{ marginTop: '15px' }}>
+                <div className="card-body">
+                  <h5>{languageNames[activeLanguageTab]} - Traducciones</h5>
+                  {Object.keys(formData.idioma.traducciones[activeLanguageTab]).map(key => (
+                    <div key={key} className="form-group">
+                      <label className="form-label" style={{ textTransform: 'capitalize' }}>
+                        {key.replace('_', ' ')}:
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.idioma.traducciones[activeLanguageTab][key]}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            idioma: {
+                              ...prev.idioma,
+                              traducciones: {
+                                ...prev.idioma.traducciones,
+                                [activeLanguageTab]: {
+                                  ...prev.idioma.traducciones[activeLanguageTab],
+                                  [key]: e.target.value
                                 }
                               }
-                            }));
-                          }}
-                          className="form-control"
-                        />
-                      </div>
-                    ))}
-                  </div>
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           )}
 
@@ -312,7 +407,7 @@ function ConfigPage() {
                 </label>
               </div>
               <div className="form-group">
-                <label className="form-label">Tema:</label>
+                <label className="form-label">Tema del sistema:</label>
                 <select
                   value={formData.apariencia.tema}
                   onChange={(e) => handleInputChange('apariencia', 'tema', e.target.value)}
@@ -321,7 +416,14 @@ function ConfigPage() {
                   <option value="default">Por defecto</option>
                   <option value="corporate">Corporativo</option>
                   <option value="modern">Moderno</option>
+                  <option value="matrix">Matrix</option>
                 </select>
+                <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '5px', display: 'block' }}>
+                  {formData.apariencia.tema === 'default' && 'Tema estándar con colores personalizables'}
+                  {formData.apariencia.tema === 'corporate' && 'Tema profesional con tipografía serif'}
+                  {formData.apariencia.tema === 'modern' && 'Tema moderno con gradientes y bordes redondeados'}
+                  {formData.apariencia.tema === 'matrix' && 'Tema Matrix con efectos verdes y fondo negro'}
+                </small>
               </div>
             </div>
           )}

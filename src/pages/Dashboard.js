@@ -13,36 +13,47 @@ function Dashboard() {
     <div className="container">
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">{t('dashboard')} - {config.empresa.nombre}</h2>
-          
-          {/* Controles de configuración rápida */}
-          <div style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <label>
-              {t('idioma') || 'Idioma'}:
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 className="card-title">{t('dashboard')} - {config.empresa.nombre}</h2>
+            
+            {/* Controles minimalistas en la esquina */}
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <select 
                 value={currentLanguage} 
                 onChange={(e) => changeLanguage(e.target.value)}
-                style={{ marginLeft: '5px', padding: '5px' }}
+                style={{ 
+                  padding: '5px 8px', 
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '4px',
+                  backgroundColor: 'var(--card-background)',
+                  color: 'var(--text-color)',
+                  fontSize: '14px'
+                }}
               >
-                <option value="es">Español</option>
-                <option value="en">English</option>
-                <option value="ca">Català</option>
+                <option value="es">🇪🇸 ES</option>
+                <option value="en">🇬🇧 EN</option>
+                <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 CA</option>
+                <option value="de">🇩🇪 DE</option>
+                <option value="it">🇮🇹 IT</option>
+                <option value="pt">🇵🇹 PT</option>
               </select>
-            </label>
-            
-            <button
-              onClick={toggleDarkMode}
-              style={{
-                padding: '5px 10px',
-                backgroundColor: darkMode ? '#ffc107' : '#6f42c1',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              {darkMode ? '☀️ Modo Claro' : '🌙 Modo Oscuro'}
-            </button>
+              
+              <button
+                onClick={toggleDarkMode}
+                style={{
+                  padding: '5px 8px',
+                  backgroundColor: 'transparent',
+                  color: 'var(--text-color)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontSize: '14px'
+                }}
+                title={darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+              >
+                {darkMode ? '☀️' : '🌙'}
+              </button>
+            </div>
           </div>
         </div>
         
