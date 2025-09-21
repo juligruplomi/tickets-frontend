@@ -12,6 +12,10 @@ function GastosPage() {
   const [editingGasto, setEditingGasto] = useState(null);
   const [filter, setFilter] = useState('todos');
   const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState(() => {
+    // Recuperar preferencia guardada o usar 'grid' por defecto
+    return localStorage.getItem('gastosViewMode') || 'grid';
+  });
   const [newGasto, setNewGasto] = useState({
     tipo_gasto: 'dieta',
     descripcion: '',
@@ -23,6 +27,12 @@ function GastosPage() {
     kilometros: '',
     precio_km: ''
   });
+
+  // Función para cambiar el modo de vista
+  const toggleViewMode = (mode) => {
+    setViewMode(mode);
+    localStorage.setItem('gastosViewMode', mode);
+  };
 
   useEffect(() => {
     loadGastos();
@@ -244,7 +254,7 @@ function GastosPage() {
         </div>
         
         <div className="card-body">
-          {/* Filtros y búsqueda */}
+          {/* Filtros, búsqueda y controles de vista */}
           <div className="gastos-filters">
             <div className="filter-group">
               <select 
@@ -271,6 +281,30 @@ function GastosPage() {
                 style={{ maxWidth: '300px' }}
               />
             </div>
+            
+            {/* Controles de vista */}
+            <div className="view-controls">
+              <div className="view-toggle">
+                <button
+                  className={`view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                  onClick={() => toggleViewMode('grid')}
+                  title="Vista de cuadrícula"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/>
+                  </svg>
+                </button>
+                <button
+                  className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                  onClick={() => toggleViewMode('list')}
+                  title="Vista de lista"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Lista de gastos */}
@@ -287,10 +321,108 @@ function GastosPage() {
               )}
             </div>
           ) : (
-            <div className="gastos-grid">
+            <div className={`gastos-container ${viewMode === 'list' ? 'gastos-list' : 'gastos-grid'}`}>
               {filteredGastos.map(gasto => {
                 const tipoInfo = getTipoGastoInfo(gasto.tipo_gasto);
-                return (
+                
+                if (viewMode === 'list') {
+                  // Vista de lista - más compacta, horizontal
+                  return (
+                    <div key={gasto.id} className="gasto-list-item">
+                      <div className="gasto-list-left">
+                        <div className="gasto-list-header">
+                          <span className="gasto-id">#{gasto.id}</span>
+                          <span className="tipo-badge-small">
+                            {tipoInfo.icon} {tipoInfo.nombre}
+                          </span>
+                          <span 
+                            className="estado-badge-small"
+                            style={{ backgroundColor: getEstadoColor(gasto.estado) }}
+                          >
+                            {gasto.estado.toUpperCase()}
+                          </span>
+                        </div>
+                        
+                        <h4 className="gasto-list-descripcion">{gasto.descripcion}</h4>
+                        
+                        {gasto.obra && (
+                          <div className="gasto-list-obra">
+                            <strong>Obra:</strong> {gasto.obra}
+                          </div>
+                        )}
+                        
+                        <div className="gasto-list-meta">
+                          <span className="gasto-date">
+                            📅 {new Date(gasto.fecha_gasto).toLocaleDateString()}
+                          </span>
+                          {gasto.tipo_gasto === 'gasolina' && gasto.kilometros && (
+                            <span className="combustible-info">
+                              📏 {gasto.kilometros} km × {gasto.precio_km.toFixed(3)}€/km
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="gasto-list-right">
+                        <div className="gasto-list-amount">
+                          <span className="amount-value">{gasto.importe.toFixed(2)}€</span>
+                        </div>
+                        
+                        <div className="gasto-list-actions">
+                          {/* Acciones de aprobación */}
+                          {gasto.estado === 'pendiente' && canApprove(gasto) && (
+                            <div className="approval-actions-compact">
+                              <button
+                                className="btn-compact btn-success"
+                                onClick={() => aprobarGasto(gasto.id, 'aprobar')}
+                                title="Aprobar"
+                              >
+                                ✅
+                              </button>
+                              <button
+                                className="btn-compact btn-danger"
+                                onClick={() => {
+                                  const observaciones = prompt('Motivo del rechazo (opcional):');
+                                  if (observaciones !== null) {
+                                    aprobarGasto(gasto.id, 'rechazar', observaciones);
+                                  }
+                                }}
+                                title="Rechazar"
+                              >
+                                ❌
+                              </button>
+                            </div>
+                          )}
+                          
+                          {/* Acciones de edición */}
+                          <div className="edit-actions-compact">
+                            {canEdit(gasto) && (
+                              <button
+                                className="btn-compact btn-secondary"
+                                onClick={() => setEditingGasto(gasto)}
+                                title="Editar"
+                              >
+                                ✏️
+                              </button>
+                            )}
+                            
+                            {canDelete(gasto) && (
+                              <button
+                                className="btn-compact btn-danger"
+                                onClick={() => deleteGasto(gasto.id)}
+                                title="Eliminar"
+                              >
+                                🗑️
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                } else {
+                  // Vista de cuadrícula - original
+                  return (
                   <div key={gasto.id} className="gasto-card">
                     <div className="gasto-header">
                       <div className="gasto-id">#{gasto.id}</div>
@@ -400,11 +532,12 @@ function GastosPage() {
                         )}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                    </div>
+                    );
+                    }
+                    })}
+                    </div>
+                    )}
         </div>
       </div>
 
