@@ -17,6 +17,7 @@ function ConfigPage() {
   const loadAdminConfig = async () => {
     try {
       const response = await api.get('/config/admin');
+      console.log('Admin config loaded:', response.data);
       return response.data;
     } catch (err) {
       console.error('Error loading admin config:', err);
@@ -221,7 +222,7 @@ function ConfigPage() {
                 <label className="form-label">Nombre de la empresa:</label>
                 <input
                   type="text"
-                  value={formData.empresa.nombre}
+                  value={formData.empresa?.nombre || ''}
                   onChange={(e) => handleInputChange('empresa', 'nombre', e.target.value)}
                   className="form-control"
                 />
@@ -233,7 +234,7 @@ function ConfigPage() {
                   <label className="form-label">URL del logo:</label>
                   <input
                     type="text"
-                    value={formData.empresa.logo_url}
+                    value={formData.empresa?.logo_url || ''}
                     onChange={(e) => handleInputChange('empresa', 'logo_url', e.target.value)}
                     className="form-control"
                     placeholder="https://ejemplo.com/logo.png"
@@ -248,7 +249,7 @@ function ConfigPage() {
                     className="form-control"
                     style={{ marginBottom: '15px' }}
                   />
-                  {formData.empresa.logo_url && (
+                  {formData.empresa?.logo_url && (
                     <div style={{ marginTop: '15px' }}>
                       <p><strong>Vista previa:</strong></p>
                       <img 
@@ -275,13 +276,13 @@ function ConfigPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <input
                       type="color"
-                      value={formData.empresa.colores.primario}
+                      value={formData.empresa?.colores?.primario || '#0066CC'}
                       onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
                       style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
                     />
                     <input
                       type="text"
-                      value={formData.empresa.colores.primario}
+                      value={formData.empresa?.colores?.primario || '#0066CC'}
                       onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
                       className="form-control"
                       style={{ flex: 1 }}
@@ -293,13 +294,13 @@ function ConfigPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <input
                       type="color"
-                      value={formData.empresa.colores.secundario}
+                      value={formData.empresa?.colores?.secundario || '#f8f9fa'}
                       onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
                       style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
                     />
                     <input
                       type="text"
-                      value={formData.empresa.colores.secundario}
+                      value={formData.empresa?.colores?.secundario || '#f8f9fa'}
                       onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
                       className="form-control"
                       style={{ flex: 1 }}
@@ -311,13 +312,13 @@ function ConfigPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <input
                       type="color"
-                      value={formData.empresa.colores.acento}
+                      value={formData.empresa?.colores?.acento || '#28a745'}
                       onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
                       style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
                     />
                     <input
                       type="text"
-                      value={formData.empresa.colores.acento}
+                      value={formData.empresa?.colores?.acento || '#28a745'}
                       onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
                       className="form-control"
                       style={{ flex: 1 }}
@@ -331,70 +332,95 @@ function ConfigPage() {
           {activeTab === 'idiomas' && (
             <div>
               <h3 className="section-title">Configuración de Idiomas</h3>
-              <div className="form-group">
-                <label className="form-label">Idioma predeterminado del sistema:</label>
-                <select
-                  value={formData.idioma.predeterminado}
-                  onChange={(e) => handleInputChange('idioma', 'predeterminado', e.target.value)}
-                  className="form-control"
-                >
-                  {formData.idioma.idiomas_disponibles.map(lang => (
-                    <option key={lang} value={lang}>{languageNames[lang]}</option>
-                  ))}
-                </select>
-                <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
-                  Nota: Los usuarios pueden cambiar su idioma individualmente desde el dashboard.
-                </small>
-              </div>
+              
+              {/* Verificar si existe la configuración de idiomas */}
+              {formData.idioma && formData.idioma.idiomas_disponibles ? (
+                <div className="form-group">
+                  <label className="form-label">Idioma predeterminado del sistema:</label>
+                  <select
+                    value={formData.idioma.predeterminado || 'es'}
+                    onChange={(e) => handleInputChange('idioma', 'predeterminado', e.target.value)}
+                    className="form-control"
+                  >
+                    {formData.idioma.idiomas_disponibles.map(lang => (
+                      <option key={lang} value={lang}>{languageNames[lang] || lang}</option>
+                    ))}
+                  </select>
+                  <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
+                    Nota: Los usuarios pueden cambiar su idioma individualmente desde el dashboard.
+                  </small>
+                </div>
+              ) : (
+                <div style={{ padding: '15px', backgroundColor: '#fff3cd', border: '1px solid #ffeaa7', borderRadius: '5px', marginBottom: '20px' }}>
+                  <p><strong>⚠️ Configuración de idiomas no encontrada</strong></p>
+                  <p>La configuración de idiomas no está disponible. Por favor, contacta al administrador del sistema.</p>
+                </div>
+              )}
               
               <h4 className="section-title">Traducciones por idioma</h4>
               
-              {/* Pestañas de idiomas */}
-              <div className="language-tabs">
-                {Object.keys(formData.idioma.traducciones).map(lang => (
-                  <button
-                    key={lang}
-                    onClick={() => setActiveLanguageTab(lang)}
-                    className={`language-tab ${activeLanguageTab === lang ? 'active' : ''}`}
-                  >
-                    {languageNames[lang]}
-                  </button>
-                ))}
-              </div>
+              {/* Verificar si existen traducciones */}
+              {formData.idioma && formData.idioma.traducciones && Object.keys(formData.idioma.traducciones).length > 0 ? (
+                <>
+                  {/* Pestañas de idiomas */}
+                  <div className="language-tabs">
+                    {Object.keys(formData.idioma.traducciones).map(lang => (
+                      <button
+                        key={lang}
+                        onClick={() => setActiveLanguageTab(lang)}
+                        className={`language-tab ${activeLanguageTab === lang ? 'active' : ''}`}
+                      >
+                        {languageNames[lang] || lang}
+                      </button>
+                    ))}
+                  </div>
 
-              {/* Contenido de traducciones para el idioma seleccionado */}
-              <div className="card" style={{ marginTop: '15px' }}>
-                <div className="card-body">
-                  <h5 className="section-title">{languageNames[activeLanguageTab]} - Traducciones</h5>
-                  {Object.keys(formData.idioma.traducciones[activeLanguageTab]).map(key => (
-                    <div key={key} className="form-group">
-                      <label className="form-label" style={{ textTransform: 'capitalize' }}>
-                        {key.replace('_', ' ')}:
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.idioma.traducciones[activeLanguageTab][key]}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            idioma: {
-                              ...prev.idioma,
-                              traducciones: {
-                                ...prev.idioma.traducciones,
-                                [activeLanguageTab]: {
-                                  ...prev.idioma.traducciones[activeLanguageTab],
-                                  [key]: e.target.value
-                                }
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                      />
+                  {/* Contenido de traducciones para el idioma seleccionado */}
+                  {formData.idioma.traducciones[activeLanguageTab] ? (
+                    <div className="card" style={{ marginTop: '15px' }}>
+                      <div className="card-body">
+                        <h5 className="section-title">{languageNames[activeLanguageTab] || activeLanguageTab} - Traducciones</h5>
+                        {Object.keys(formData.idioma.traducciones[activeLanguageTab]).map(key => (
+                          <div key={key} className="form-group">
+                            <label className="form-label" style={{ textTransform: 'capitalize' }}>
+                              {key.replace('_', ' ')}:
+                            </label>
+                            <input
+                              type="text"
+                              value={formData.idioma.traducciones[activeLanguageTab][key] || ''}
+                              onChange={(e) => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  idioma: {
+                                    ...prev.idioma,
+                                    traducciones: {
+                                      ...prev.idioma.traducciones,
+                                      [activeLanguageTab]: {
+                                        ...prev.idioma.traducciones[activeLanguageTab],
+                                        [key]: e.target.value
+                                      }
+                                    }
+                                  }
+                                }));
+                              }}
+                              className="form-control"
+                            />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  ) : (
+                    <div style={{ padding: '15px', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '5px', marginTop: '15px' }}>
+                      <p>No hay traducciones disponibles para el idioma seleccionado: <strong>{activeLanguageTab}</strong></p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{ padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '5px', border: '1px solid #ddd' }}>
+                  <p><strong>📝 Sin traducciones configuradas</strong></p>
+                  <p>No se han encontrado traducciones configuradas. El sistema funcionará con los textos por defecto.</p>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
@@ -405,7 +431,7 @@ function ConfigPage() {
                 <label className="form-label">
                   <input
                     type="checkbox"
-                    checked={formData.apariencia.modo_oscuro}
+                    checked={formData.apariencia?.modo_oscuro || false}
                     onChange={(e) => handleInputChange('apariencia', 'modo_oscuro', e.target.checked)}
                     style={{ marginRight: '8px' }}
                   />
@@ -415,7 +441,7 @@ function ConfigPage() {
               <div className="form-group">
                 <label className="form-label">Tema del sistema:</label>
                 <select
-                  value={formData.apariencia.tema}
+                  value={formData.apariencia?.tema || 'default'}
                   onChange={(e) => handleInputChange('apariencia', 'tema', e.target.value)}
                   className="form-control"
                 >
@@ -425,22 +451,22 @@ function ConfigPage() {
                   <option value="matrix">Matrix</option>
                 </select>
                 <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
-                  {formData.apariencia.tema === 'default' && 'Tema estándar con colores personalizables'}
-                  {formData.apariencia.tema === 'corporate' && 'Tema profesional con tipografía serif'}
-                  {formData.apariencia.tema === 'modern' && 'Tema moderno con gradientes y bordes redondeados'}
-                  {formData.apariencia.tema === 'matrix' && 'Tema Matrix con efectos verdes y fondo negro'}
+                  {(formData.apariencia?.tema || 'default') === 'default' && 'Tema estándar con colores personalizables'}
+                  {(formData.apariencia?.tema || 'default') === 'corporate' && 'Tema profesional con tipografía serif'}
+                  {(formData.apariencia?.tema || 'default') === 'modern' && 'Tema moderno con gradientes y bordes redondeados'}
+                  {(formData.apariencia?.tema || 'default') === 'matrix' && 'Tema Matrix con efectos verdes y fondo negro'}
                 </small>
               </div>
             </div>
           )}
 
-          {activeTab === 'tickets' && (
+          {activeTab === 'tickets' && formData.tickets && (
             <div>
               <h3 className="section-title">Configuración de Tickets</h3>
               
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Estados de tickets</h4>
-                {formData.tickets.estados.map((estado, index) => (
+                {formData.tickets.estados && formData.tickets.estados.map((estado, index) => (
                   <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
                     <input
                       type="text"
@@ -469,7 +495,7 @@ function ConfigPage() {
 
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Prioridades</h4>
-                {formData.tickets.prioridades.map((prioridad, index) => (
+                {formData.tickets.prioridades && formData.tickets.prioridades.map((prioridad, index) => (
                   <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
                     <input
                       type="text"
@@ -498,7 +524,7 @@ function ConfigPage() {
 
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Categorías</h4>
-                {formData.tickets.categorias.map((categoria, index) => (
+                {formData.tickets.categorias && formData.tickets.categorias.map((categoria, index) => (
                   <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
                     <input
                       type="text"
@@ -527,14 +553,14 @@ function ConfigPage() {
             </div>
           )}
 
-          {activeTab === 'notificaciones' && (
+          {activeTab === 'notificaciones' && formData.notificaciones && (
             <div>
               <h3 className="section-title">Configuración de Notificaciones</h3>
               <div className="form-group">
                 <label className="form-label">
                   <input
                     type="checkbox"
-                    checked={formData.notificaciones.email_habilitado}
+                    checked={formData.notificaciones.email_habilitado || false}
                     onChange={(e) => handleInputChange('notificaciones', 'email_habilitado', e.target.checked)}
                     style={{ marginRight: '8px' }}
                   />
@@ -545,7 +571,7 @@ function ConfigPage() {
                 <label className="form-label">
                   <input
                     type="checkbox"
-                    checked={formData.notificaciones.notificar_asignacion}
+                    checked={formData.notificaciones.notificar_asignacion || false}
                     onChange={(e) => handleInputChange('notificaciones', 'notificar_asignacion', e.target.checked)}
                     style={{ marginRight: '8px' }}
                   />
@@ -556,7 +582,7 @@ function ConfigPage() {
                 <label className="form-label">
                   <input
                     type="checkbox"
-                    checked={formData.notificaciones.notificar_cambio_estado}
+                    checked={formData.notificaciones.notificar_cambio_estado || false}
                     onChange={(e) => handleInputChange('notificaciones', 'notificar_cambio_estado', e.target.checked)}
                     style={{ marginRight: '8px' }}
                   />
