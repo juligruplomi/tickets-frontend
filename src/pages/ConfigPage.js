@@ -46,6 +46,9 @@ function ConfigPage() {
       }).catch(() => {
         setLoading(false);
       });
+    } else {
+      // Para usuarios no administradores, solo marcar como cargado
+      setLoading(false);
     }
   }, [user]);
 
@@ -141,10 +144,97 @@ function ConfigPage() {
   if (user?.role !== 'administrador') {
     return (
       <div className="container">
-        <div className="card">
+        <div className="card dashboard-card">
+          <div className="card-header">
+            <h2 className="card-title">⚙️ Mi Configuración</h2>
+            {message && (
+              <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`}>
+                {message}
+              </div>
+            )}
+          </div>
+          
           <div className="card-body">
-            <h2>Acceso Denegado</h2>
-            <p>Solo los administradores pueden acceder a la configuración del sistema.</p>
+            <div style={{ maxWidth: '600px' }}>
+              <h3 className="section-title">Preferencias de Idioma</h3>
+              
+              <div style={{
+                background: 'var(--secondary-color)',
+                padding: '1.5rem',
+                borderRadius: 'var(--border-radius)',
+                border: '1px solid var(--border-color)',
+                marginBottom: '2rem'
+              }}>
+                <div className="form-group">
+                  <label className="form-label">Idioma de la interfaz:</label>
+                  <select
+                    value={user?.idioma_preferido || 'es'}
+                    onChange={async (e) => {
+                      const newLanguage = e.target.value;
+                      setSaving(true);
+                      
+                      try {
+                        await changeLanguage(newLanguage);
+                        setMessage('Idioma cambiado exitosamente.');
+                        setTimeout(() => setMessage(''), 3000);
+                      } catch (err) {
+                        console.error('Error changing language:', err);
+                        setMessage('Error al cambiar el idioma. Inténtalo de nuevo.');
+                        setTimeout(() => setMessage(''), 5000);
+                      } finally {
+                        setSaving(false);
+                      }
+                    }}
+                    className="form-control"
+                    disabled={saving}
+                    style={{ maxWidth: '300px' }}
+                  >
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="pt">🇵🇹 Português</option>
+                  </select>
+                  <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
+                    Los cambios se aplicarán inmediatamente en toda la interfaz.
+                  </small>
+                </div>
+                
+                {saving && (
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '0.5rem', 
+                    marginTop: '1rem',
+                    color: 'var(--primary-color)'
+                  }}>
+                    <div className="loading-spinner" style={{ width: '16px', height: '16px' }}></div>
+                    <span>Cambiando idioma...</span>
+                  </div>
+                )}
+              </div>
+              
+              <div style={{
+                background: 'rgba(0, 102, 204, 0.1)',
+                border: '1px solid rgba(0, 102, 204, 0.2)',
+                borderRadius: 'var(--border-radius)',
+                padding: '1rem',
+                fontSize: '0.875rem'
+              }}>
+                <h4 style={{ 
+                  margin: '0 0 0.5rem 0', 
+                  color: 'var(--primary-color)',
+                  fontSize: '1rem'
+                }}>
+                  📝 Nota:
+                </h4>
+                <p style={{ margin: 0, lineHeight: '1.4' }}>
+                  Solo puedes cambiar tu idioma personal. Para modificar otras configuraciones del sistema, 
+                  contacta con el administrador.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
