@@ -103,10 +103,10 @@ export function ConfigProvider({ children }) {
   // Cambiar idioma del usuario
   const changeLanguage = async (lang) => {
     try {
-      // Guardar idioma preferido del usuario
-      await api.post('/usuarios/language', { language: lang });
+      // Usar el nuevo endpoint para cambiar idioma
+      const response = await api.put('/config/language', { language: lang });
+      setConfig(response.data);
       setCurrentLanguage(lang);
-      await loadConfig(lang);
     } catch (err) {
       console.error('Error changing language:', err);
       // Fallback: cambiar solo localmente
