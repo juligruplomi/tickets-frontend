@@ -99,9 +99,9 @@ function AppContent() {
           <Route 
             path="/config" 
             element={
-              <AdminRoute>
+              <ProtectedRoute>
                 <ConfigPage />
-              </AdminRoute>
+              </ProtectedRoute>
             } 
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />
