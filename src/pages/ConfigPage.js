@@ -844,7 +844,7 @@ function ConfigPage() {
                       placeholder="[{{empresa}}] {{tipo}}: {{titulo}}"
                     />
                     <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
-                      Variables disponibles: {{empresa}}, {{tipo}}, {{titulo}}, {{usuario}}
+                      Variables disponibles: {'{{'}}empresa{'}}'}, {'{{'}}tipo{'}}'}, {'{{'}}titulo{'}}'}, {'{{'}}usuario{'}}'}
                     </small>
                   </div>
                   
