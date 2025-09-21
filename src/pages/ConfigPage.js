@@ -5,7 +5,7 @@ import { api } from '../services/api';
 
 function ConfigPage() {
   const { user } = useAuth();
-  const { config, t, reloadConfig } = useConfig();
+  const { config, t, reloadConfig, changeLanguage } = useConfig();
   const [adminConfig, setAdminConfig] = useState(null);
   const [formData, setFormData] = useState(null);
   const [activeTab, setActiveTab] = useState('empresa');
@@ -339,7 +339,21 @@ function ConfigPage() {
                   <label className="form-label">Idioma predeterminado del sistema:</label>
                   <select
                     value={formData.idioma.predeterminado || 'es'}
-                    onChange={(e) => handleInputChange('idioma', 'predeterminado', e.target.value)}
+                    onChange={async (e) => {
+                      const newLanguage = e.target.value;
+                      handleInputChange('idioma', 'predeterminado', newLanguage);
+                      
+                      // Cambiar directamente el idioma del usuario
+                      try {
+                        await changeLanguage(newLanguage);
+                        setMessage('Idioma cambiado exitosamente.');
+                        setTimeout(() => setMessage(''), 3000);
+                      } catch (err) {
+                        console.error('Error changing language:', err);
+                        setMessage('Error al cambiar el idioma');
+                        setTimeout(() => setMessage(''), 3000);
+                      }
+                    }}
                     className="form-control"
                   >
                     {formData.idioma.idiomas_disponibles.map(lang => (
