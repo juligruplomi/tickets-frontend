@@ -5,20 +5,12 @@ import { useConfig } from '../context/ConfigContext';
 
 function Navbar() {
   const { user, logout } = useAuth();
-  const { config, t, darkMode, currentLanguage, changeLanguage, toggleDarkMode } = useConfig();
+  const { config, darkMode, toggleDarkMode } = useConfig();
   const location = useLocation();
 
   const isActive = (path) => location.pathname === path;
 
-  // Nombres simples de idiomas sin códigos de país
-  const languageNames = {
-    es: "Español",
-    en: "English", 
-    ca: "Català",
-    de: "Deutsch",
-    it: "Italiano",
-    pt: "Português"
-  };
+
 
   return (
     <nav className="navbar">
@@ -107,20 +99,6 @@ function Navbar() {
         
         <div className="navbar-user">
           <div className="user-controls">
-            {/* Selector de idioma en navbar */}
-            <div className="navbar-language-selector">
-              <select 
-                value={currentLanguage} 
-                onChange={(e) => changeLanguage(e.target.value)}
-                className="navbar-select"
-                title="Cambiar idioma"
-              >
-                {Object.entries(languageNames).map(([code, name]) => (
-                  <option key={code} value={code}>{name}</option>
-                ))}
-              </select>
-            </div>
-            
             {/* Toggle theme en navbar */}
             <div className="navbar-theme-toggle">
               <input
