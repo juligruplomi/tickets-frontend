@@ -478,91 +478,316 @@ function ConfigPage() {
             <div>
               <h3 className="section-title">Configuración de Tickets</h3>
               
+              {/* Estados de tickets */}
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Estados de tickets</h4>
-                {formData.tickets.estados && formData.tickets.estados.map((estado, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
-                    <input
-                      type="text"
-                      value={estado}
-                      onChange={(e) => handleArrayChange('tickets', 'estados', index, e.target.value)}
-                      className="form-control"
-                      style={{ flex: 1 }}
-                    />
-                    <button
-                      onClick={() => removeArrayItem('tickets', 'estados', index)}
-                      className="button"
-                      style={{ backgroundColor: '#dc3545', color: 'white', padding: '8px 16px' }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                ))}
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {formData.tickets.estados && formData.tickets.estados.map((estado, index) => (
+                    <div key={index} style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '1rem',
+                      padding: '1rem',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--border-radius-small)',
+                      background: 'var(--card-background)'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <input
+                          type="color"
+                          value={estado.color || '#6c757d'}
+                          onChange={(e) => {
+                            const newEstados = [...formData.tickets.estados];
+                            newEstados[index] = { ...estado, color: e.target.value };
+                            setFormData(prev => ({
+                              ...prev,
+                              tickets: {
+                                ...prev.tickets,
+                                estados: newEstados
+                              }
+                            }));
+                          }}
+                          style={{ width: '40px', height: '40px', borderRadius: '4px', border: 'none' }}
+                        />
+                        <span 
+                          style={{ 
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '12px',
+                            color: 'white',
+                            backgroundColor: estado.color || '#6c757d',
+                            fontSize: '0.75rem',
+                            fontWeight: '500'
+                          }}
+                        >
+                          {estado.nombre}
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Nombre del estado"
+                        value={estado.nombre || ''}
+                        onChange={(e) => {
+                          const newEstados = [...formData.tickets.estados];
+                          newEstados[index] = { ...estado, nombre: e.target.value };
+                          setFormData(prev => ({
+                            ...prev,
+                            tickets: {
+                              ...prev.tickets,
+                              estados: newEstados
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                        style={{ flex: 1 }}
+                      />
+                      <button
+                        onClick={() => {
+                          const newEstados = formData.tickets.estados.filter((_, i) => i !== index);
+                          setFormData(prev => ({
+                            ...prev,
+                            tickets: {
+                              ...prev.tickets,
+                              estados: newEstados
+                            }
+                          }));
+                        }}
+                        className="button"
+                        style={{ backgroundColor: '#dc3545', color: 'white', padding: '8px 16px' }}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  ))}
+                </div>
                 <button
-                  onClick={() => addArrayItem('tickets', 'estados')}
+                  onClick={() => {
+                    const newEstado = { id: `estado_${Date.now()}`, nombre: '', color: '#6c757d' };
+                    setFormData(prev => ({
+                      ...prev,
+                      tickets: {
+                        ...prev.tickets,
+                        estados: [...(prev.tickets.estados || []), newEstado]
+                      }
+                    }));
+                  }}
                   className="button button-primary"
-                  style={{ marginTop: '10px' }}
+                  style={{ marginTop: '1rem' }}
                 >
-                  Añadir estado
+                  + Añadir estado
                 </button>
               </div>
 
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Prioridades</h4>
-                {formData.tickets.prioridades && formData.tickets.prioridades.map((prioridad, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
-                    <input
-                      type="text"
-                      value={prioridad}
-                      onChange={(e) => handleArrayChange('tickets', 'prioridades', index, e.target.value)}
-                      className="form-control"
-                      style={{ flex: 1 }}
-                    />
-                    <button
-                      onClick={() => removeArrayItem('tickets', 'prioridades', index)}
-                      className="button"
-                      style={{ backgroundColor: '#dc3545', color: 'white', padding: '8px 16px' }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                ))}
-                <button
-                  onClick={() => addArrayItem('tickets', 'prioridades')}
-                  className="button button-primary"
-                  style={{ marginTop: '10px' }}
-                >
-                  Añadir prioridad
-                </button>
-              </div>
-
+              {/* Categorías */}
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Categorías</h4>
-                {formData.tickets.categorias && formData.tickets.categorias.map((categoria, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', gap: '10px' }}>
-                    <input
-                      type="text"
-                      value={categoria}
-                      onChange={(e) => handleArrayChange('tickets', 'categorias', index, e.target.value)}
-                      className="form-control"
-                      style={{ flex: 1 }}
-                    />
-                    <button
-                      onClick={() => removeArrayItem('tickets', 'categorias', index)}
-                      className="button"
-                      style={{ backgroundColor: '#dc3545', color: 'white', padding: '8px 16px' }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                ))}
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {formData.tickets.categorias && formData.tickets.categorias.map((categoria, index) => (
+                    <div key={index} style={{ 
+                      padding: '1rem',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--border-radius-small)',
+                      background: 'var(--card-background)'
+                    }}>
+                      <div style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem' }}>
+                        <input
+                          type="text"
+                          placeholder="Nombre de la categoría"
+                          value={categoria.nombre || ''}
+                          onChange={(e) => {
+                            const newCategorias = [...formData.tickets.categorias];
+                            newCategorias[index] = { ...categoria, nombre: e.target.value };
+                            setFormData(prev => ({
+                              ...prev,
+                              tickets: {
+                                ...prev.tickets,
+                                categorias: newCategorias
+                              }
+                            }));
+                          }}
+                          className="form-control"
+                          style={{ flex: 1 }}
+                        />
+                        <button
+                          onClick={() => {
+                            const newCategorias = formData.tickets.categorias.filter((_, i) => i !== index);
+                            setFormData(prev => ({
+                              ...prev,
+                              tickets: {
+                                ...prev.tickets,
+                                categorias: newCategorias
+                              }
+                            }));
+                          }}
+                          className="button"
+                          style={{ backgroundColor: '#dc3545', color: 'white', padding: '8px 16px' }}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                      <textarea
+                        placeholder="Descripción de la categoría"
+                        value={categoria.descripcion || ''}
+                        onChange={(e) => {
+                          const newCategorias = [...formData.tickets.categorias];
+                          newCategorias[index] = { ...categoria, descripcion: e.target.value };
+                          setFormData(prev => ({
+                            ...prev,
+                            tickets: {
+                              ...prev.tickets,
+                              categorias: newCategorias
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                        rows="2"
+                        style={{ fontSize: '0.875rem' }}
+                      />
+                    </div>
+                  ))}
+                </div>
                 <button
-                  onClick={() => addArrayItem('tickets', 'categorias')}
+                  onClick={() => {
+                    const newCategoria = { id: `categoria_${Date.now()}`, nombre: '', descripcion: '' };
+                    setFormData(prev => ({
+                      ...prev,
+                      tickets: {
+                        ...prev.tickets,
+                        categorias: [...(prev.tickets.categorias || []), newCategoria]
+                      }
+                    }));
+                  }}
                   className="button button-primary"
-                  style={{ marginTop: '10px' }}
+                  style={{ marginTop: '1rem' }}
                 >
-                  Añadir categoría
+                  + Añadir categoría
                 </button>
+              </div>
+
+              {/* Configuración general */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Configuración general</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.tickets.configuracion?.auto_asignar_supervisor || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            tickets: {
+                              ...prev.tickets,
+                              configuracion: {
+                                ...prev.tickets.configuracion,
+                                auto_asignar_supervisor: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Auto-asignar al supervisor
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Tiempo límite de resolución (horas):</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="720"
+                      value={formData.tickets.configuracion?.tiempo_limite_resolucion || 72}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          tickets: {
+                            ...prev.tickets,
+                            configuracion: {
+                              ...prev.tickets.configuracion,
+                              tiempo_limite_resolucion: parseInt(e.target.value)
+                            }
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      style={{ maxWidth: '200px' }}
+                    />
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.tickets.configuracion?.permitir_reabrir || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            tickets: {
+                              ...prev.tickets,
+                              configuracion: {
+                                ...prev.tickets.configuracion,
+                                permitir_reabrir: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Permitir reabrir tickets cerrados
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.tickets.configuracion?.requiere_aprobacion_cierre || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            tickets: {
+                              ...prev.tickets,
+                              configuracion: {
+                                ...prev.tickets.configuracion,
+                                requiere_aprobacion_cierre: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Requiere aprobación para cerrar tickets
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Tamaño máximo de adjuntos (MB):</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={formData.tickets.configuracion?.tamano_maximo_adjunto || 10}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          tickets: {
+                            ...prev.tickets,
+                            configuracion: {
+                              ...prev.tickets.configuracion,
+                              tamano_maximo_adjunto: parseInt(e.target.value)
+                            }
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      style={{ maxWidth: '200px' }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -570,38 +795,320 @@ function ConfigPage() {
           {activeTab === 'notificaciones' && formData.notificaciones && (
             <div>
               <h3 className="section-title">Configuración de Notificaciones</h3>
-              <div className="form-group">
-                <label className="form-label">
-                  <input
-                    type="checkbox"
-                    checked={formData.notificaciones.email_habilitado || false}
-                    onChange={(e) => handleInputChange('notificaciones', 'email_habilitado', e.target.checked)}
-                    style={{ marginRight: '8px' }}
-                  />
-                  Notificaciones por email habilitadas
-                </label>
+              
+              {/* Configuración general de email */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Configuración de Email</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.notificaciones.email_habilitado || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            notificaciones: {
+                              ...prev.notificaciones,
+                              email_habilitado: e.target.checked
+                            }
+                          }));
+                        }}
+                      />
+                      Notificaciones por email habilitadas
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Plantilla de asunto:</label>
+                    <input
+                      type="text"
+                      value={formData.notificaciones.plantilla_asunto || ''}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          notificaciones: {
+                            ...prev.notificaciones,
+                            plantilla_asunto: e.target.value
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      placeholder="[{{empresa}}] {{tipo}}: {{titulo}}"
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
+                      Variables disponibles: {{empresa}}, {{tipo}}, {{titulo}}, {{usuario}}
+                    </small>
+                  </div>
+                  
+                  {/* Configuración SMTP */}
+                  <div style={{ marginTop: '1rem' }}>
+                    <h5 style={{ marginBottom: '1rem', color: 'var(--primary-color)' }}>Servidor SMTP</h5>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                      <div className="form-group">
+                        <label className="form-label">Servidor:</label>
+                        <input
+                          type="text"
+                          value={formData.notificaciones.configuracion_email?.servidor_smtp || ''}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                configuracion_email: {
+                                  ...prev.notificaciones.configuracion_email,
+                                  servidor_smtp: e.target.value
+                                }
+                              }
+                            }));
+                          }}
+                          className="form-control"
+                          placeholder="smtp.gmail.com"
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label className="form-label">Puerto:</label>
+                        <input
+                          type="number"
+                          value={formData.notificaciones.configuracion_email?.puerto || ''}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                configuracion_email: {
+                                  ...prev.notificaciones.configuracion_email,
+                                  puerto: parseInt(e.target.value)
+                                }
+                              }
+                            }));
+                          }}
+                          className="form-control"
+                          placeholder="587"
+                        />
+                      </div>
+                      
+                      <div className="form-group">
+                        <label className="form-label">Usuario:</label>
+                        <input
+                          type="email"
+                          value={formData.notificaciones.configuracion_email?.usuario || ''}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                configuracion_email: {
+                                  ...prev.notificaciones.configuracion_email,
+                                  usuario: e.target.value
+                                }
+                              }
+                            }));
+                          }}
+                          className="form-control"
+                          placeholder="admin@gruplomi.com"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.notificaciones.configuracion_email?.ssl_habilitado || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                configuracion_email: {
+                                  ...prev.notificaciones.configuracion_email,
+                                  ssl_habilitado: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        SSL/TLS habilitado
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">
-                  <input
-                    type="checkbox"
-                    checked={formData.notificaciones.notificar_asignacion || false}
-                    onChange={(e) => handleInputChange('notificaciones', 'notificar_asignacion', e.target.checked)}
-                    style={{ marginRight: '8px' }}
-                  />
-                  Notificar asignación de tickets
-                </label>
+              
+              {/* Eventos de notificación */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Eventos de Notificación</h4>
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {formData.notificaciones.eventos && Object.entries(formData.notificaciones.eventos).map(([eventKey, evento]) => (
+                    <div key={eventKey} style={{ 
+                      padding: '1.5rem',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--border-radius)',
+                      background: 'var(--card-background)'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h5 style={{ margin: 0, textTransform: 'capitalize', color: 'var(--text-color)' }}>
+                          {eventKey.replace(/_/g, ' ')}
+                        </h5>
+                        <label className="form-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={evento.habilitado || false}
+                            onChange={(e) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                notificaciones: {
+                                  ...prev.notificaciones,
+                                  eventos: {
+                                    ...prev.notificaciones.eventos,
+                                    [eventKey]: {
+                                      ...evento,
+                                      habilitado: e.target.checked
+                                    }
+                                  }
+                                }
+                              }));
+                            }}
+                          />
+                          Habilitado
+                        </label>
+                      </div>
+                      
+                      <div className="form-group">
+                        <label className="form-label">Plantilla del mensaje:</label>
+                        <textarea
+                          value={evento.plantilla || ''}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                eventos: {
+                                  ...prev.notificaciones.eventos,
+                                  [eventKey]: {
+                                    ...evento,
+                                    plantilla: e.target.value
+                                  }
+                                }
+                              }
+                            }));
+                          }}
+                          className="form-control"
+                          rows="2"
+                          placeholder="Mensaje de la notificación..."
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">
-                  <input
-                    type="checkbox"
-                    checked={formData.notificaciones.notificar_cambio_estado || false}
-                    onChange={(e) => handleInputChange('notificaciones', 'notificar_cambio_estado', e.target.checked)}
-                    style={{ marginRight: '8px' }}
-                  />
-                  Notificar cambios de estado
-                </label>
+              
+              {/* Recordatorios */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Recordatorios Automáticos</h4>
+                <div style={{ display: 'grid', gap: '1rem' }}>
+                  {formData.notificaciones.recordatorios && Object.entries(formData.notificaciones.recordatorios).map(([recordKey, recordatorio]) => (
+                    <div key={recordKey} style={{ 
+                      padding: '1.5rem',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--border-radius)',
+                      background: 'var(--card-background)'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h5 style={{ margin: 0, textTransform: 'capitalize', color: 'var(--text-color)' }}>
+                          {recordKey.replace(/_/g, ' ')}
+                        </h5>
+                        <label className="form-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={recordatorio.habilitado || false}
+                            onChange={(e) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                notificaciones: {
+                                  ...prev.notificaciones,
+                                  recordatorios: {
+                                    ...prev.notificaciones.recordatorios,
+                                    [recordKey]: {
+                                      ...recordatorio,
+                                      habilitado: e.target.checked
+                                    }
+                                  }
+                                }
+                              }));
+                            }}
+                          />
+                          Habilitado
+                        </label>
+                      </div>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                        <div className="form-group">
+                          <label className="form-label">Frecuencia:</label>
+                          <select
+                            value={recordatorio.frecuencia || 'diaria'}
+                            onChange={(e) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                notificaciones: {
+                                  ...prev.notificaciones,
+                                  recordatorios: {
+                                    ...prev.notificaciones.recordatorios,
+                                    [recordKey]: {
+                                      ...recordatorio,
+                                      frecuencia: e.target.value
+                                    }
+                                  }
+                                }
+                              }));
+                            }}
+                            className="form-control"
+                          >
+                            <option value="diaria">Diaria</option>
+                            <option value="cada_hora">Cada hora</option>
+                            <option value="semanal">Semanal</option>
+                            <option value="mensual">Mensual</option>
+                          </select>
+                        </div>
+                        
+                        {recordatorio.hora && (
+                          <div className="form-group">
+                            <label className="form-label">Hora:</label>
+                            <input
+                              type="time"
+                              value={recordatorio.hora || ''}
+                              onChange={(e) => {
+                                setFormData(prev => ({
+                                  ...prev,
+                                  notificaciones: {
+                                    ...prev.notificaciones,
+                                    recordatorios: {
+                                      ...prev.notificaciones.recordatorios,
+                                      [recordKey]: {
+                                        ...recordatorio,
+                                        hora: e.target.value
+                                      }
+                                    }
+                                  }
+                                }));
+                              }}
+                              className="form-control"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
