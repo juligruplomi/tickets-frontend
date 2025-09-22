@@ -59,6 +59,38 @@ function ConfigPage() {
     }));
   };
 
+  const handleNestedInputChange = (section, subsection, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [subsection]: {
+          ...prev[section]?.[subsection],
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  const handleLogoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const logoUrl = e.target.result;
+        setFormData(prev => ({
+          ...prev,
+          empresa: {
+            ...prev.empresa,
+            logo_url: logoUrl,
+            logo_file: file.name
+          }
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     const result = await updateConfig(formData);
@@ -83,6 +115,209 @@ function ConfigPage() {
                 {message}
               </div>
             )}
+
+          {activeTab === 'idiomas' && (
+            <div>
+              <h3 className="section-title">Configuración de Idiomas</h3>
+              
+              <div className="form-group">
+                <label className="form-label">Idioma predeterminado del sistema:</label>
+                <select
+                  value={formData.idioma?.predeterminado || 'es'}
+                  onChange={async (e) => {
+                    const newLanguage = e.target.value;
+                    handleInputChange('idioma', 'predeterminado', newLanguage);
+                    
+                    try {
+                      await changeLanguage(newLanguage);
+                      setMessage('Idioma cambiado exitosamente.');
+                      setTimeout(() => setMessage(''), 3000);
+                    } catch (err) {
+                      console.error('Error changing language:', err);
+                      setMessage('Error al cambiar el idioma');
+                      setTimeout(() => setMessage(''), 3000);
+                    }
+                  }}
+                  className="form-control"
+                  style={{ maxWidth: '250px' }}
+                >
+                  <option value="es">🇪🇸 Español</option>
+                  <option value="en">🇬🇧 English</option>
+                  <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
+                  <option value="de">🇩🇪 Deutsch</option>
+                  <option value="it">🇮🇹 Italiano</option>
+                  <option value="pt">🇵🇹 Português</option>
+                </select>
+                <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
+                  Nota: Los usuarios pueden cambiar su idioma individualmente desde su configuración personal.
+                </small>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'apariencia' && (
+            <div>
+              <h3 className="section-title">Configuración de Apariencia</h3>
+              <div className="form-group">
+                <label className="form-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.apariencia?.modo_oscuro || false}
+                    onChange={(e) => handleInputChange('apariencia', 'modo_oscuro', e.target.checked)}
+                    style={{ marginRight: '8px' }}
+                  />
+                  Modo oscuro por defecto
+                </label>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Tema del sistema:</label>
+                <select
+                  value={formData.apariencia?.tema || 'default'}
+                  onChange={(e) => handleInputChange('apariencia', 'tema', e.target.value)}
+                  className="form-control"
+                  style={{ maxWidth: '250px' }}
+                >
+                  <option value="default">Por defecto</option>
+                  <option value="corporate">Corporativo</option>
+                  <option value="modern">Moderno</option>
+                  <option value="matrix">Matrix</option>
+                </select>
+                <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
+                  {(formData.apariencia?.tema || 'default') === 'default' && 'Tema estándar con colores personalizables'}
+                  {(formData.apariencia?.tema || 'default') === 'corporate' && 'Tema profesional con tipografía serif'}
+                  {(formData.apariencia?.tema || 'default') === 'modern' && 'Tema moderno con gradientes y bordes redondeados'}
+                  {(formData.apariencia?.tema || 'default') === 'matrix' && 'Tema Matrix con efectos verdes y fondo negro'}
+                </small>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'notificaciones' && (
+            <div>
+              <h3 className="section-title">Configuración de Notificaciones</h3>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Configuración de Email</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.notificaciones?.email_habilitado || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            notificaciones: {
+                              ...prev.notificaciones,
+                              email_habilitado: e.target.checked
+                            }
+                          }));
+                        }}
+                      />
+                      Notificaciones por email habilitadas
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Plantilla de asunto:</label>
+                    <input
+                      type="text"
+                      value={formData.notificaciones?.plantilla_asunto || ''}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          notificaciones: {
+                            ...prev.notificaciones,
+                            plantilla_asunto: e.target.value
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
+                      Variables disponibles: {{empresa}}, {{tipo}}, {{descripcion}}, {{usuario}}, {{importe}}
+                    </small>
+                  </div>
+                  
+                  <div style={{ marginTop: '1rem' }}>
+                    <h5 style={{ marginBottom: '1rem', color: 'var(--primary-color)' }}>Eventos de Notificación</h5>
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.notificaciones?.eventos?.nuevo_gasto || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                eventos: {
+                                  ...prev.notificaciones?.eventos,
+                                  nuevo_gasto: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Notificar cuando se registra un nuevo gasto
+                      </label>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.notificaciones?.eventos?.gasto_aprobado || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                eventos: {
+                                  ...prev.notificaciones?.eventos,
+                                  gasto_aprobado: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Notificar cuando un gasto es aprobado
+                      </label>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.notificaciones?.eventos?.gasto_rechazado || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              notificaciones: {
+                                ...prev.notificaciones,
+                                eventos: {
+                                  ...prev.notificaciones?.eventos,
+                                  gasto_rechazado: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Notificar cuando un gasto es rechazado
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           
           <div className="card-body">
@@ -214,7 +449,7 @@ function ConfigPage() {
         <div className="card-body">
           {/* Pestañas principales */}
           <div className="config-tabs">
-            {['empresa', 'gastos'].map(tab => (
+            {['empresa', 'idiomas', 'apariencia', 'gastos', 'notificaciones'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -237,6 +472,105 @@ function ConfigPage() {
                   onChange={(e) => handleInputChange('empresa', 'nombre', e.target.value)}
                   className="form-control"
                 />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Logo de la empresa:</label>
+                <div style={{ marginBottom: '15px' }}>
+                  <label className="form-label">URL del logo:</label>
+                  <input
+                    type="text"
+                    value={formData.empresa?.logo_url || ''}
+                    onChange={(e) => handleInputChange('empresa', 'logo_url', e.target.value)}
+                    className="form-control"
+                    placeholder="https://ejemplo.com/logo.png"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">O subir archivo:</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="form-control"
+                    style={{ marginBottom: '15px' }}
+                  />
+                  {formData.empresa?.logo_url && (
+                    <div style={{ marginTop: '15px' }}>
+                      <p><strong>Vista previa:</strong></p>
+                      <img 
+                        src={formData.empresa.logo_url} 
+                        alt="Logo preview" 
+                        style={{ 
+                          maxWidth: '200px', 
+                          maxHeight: '100px', 
+                          border: '1px solid var(--border-color)',
+                          borderRadius: 'var(--border-radius-small)',
+                          background: 'var(--card-background)'
+                        }}
+                        onError={(e) => {e.target.style.display = 'none'}}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <h4 className="section-title">Colores corporativos</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+                <div className="form-group">
+                  <label className="form-label">Color primario:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={formData.empresa?.colores?.primario || '#0066CC'}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
+                      style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.empresa?.colores?.primario || '#0066CC'}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
+                      className="form-control"
+                      style={{ flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Color secundario:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={formData.empresa?.colores?.secundario || '#f8f9fa'}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
+                      style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.empresa?.colores?.secundario || '#f8f9fa'}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
+                      className="form-control"
+                      style={{ flex: 1 }}
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Color de acento:</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <input
+                      type="color"
+                      value={formData.empresa?.colores?.acento || '#28a745'}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
+                      style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
+                    />
+                    <input
+                      type="text"
+                      value={formData.empresa?.colores?.acento || '#28a745'}
+                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
+                      className="form-control"
+                      style={{ flex: 1 }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           )}
