@@ -447,11 +447,109 @@ function ConfigPage() {
             <div>
               <h3 className="section-title">Configuración de Gastos</h3>
               
+              {/* Categorías de gastos */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Categorías de Gastos</h4>
+                <div style={{ 
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)',
+                  marginBottom: '1rem'
+                }}>
+                  <div style={{ display: 'grid', gap: '1rem' }}>
+                    {(formData.gastos?.categorias || [
+                      { id: '1', nombre: 'Transporte', icono: '🚗', limite_mensual: 500 },
+                      { id: '2', nombre: 'Comidas', icono: '🍽️', limite_mensual: 300 },
+                      { id: '3', nombre: 'Material de oficina', icono: '💼', limite_mensual: 200 },
+                      { id: '4', nombre: 'Formación', icono: '📚', limite_mensual: 1000 }
+                    ]).map((categoria, index) => (
+                      <div key={index} style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '1rem',
+                        padding: '1rem',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 'var(--border-radius-small)',
+                        background: 'var(--secondary-color)'
+                      }}>
+                        <span style={{ fontSize: '1.5rem' }}>{categoria.icono}</span>
+                        <div style={{ flex: 1 }}>
+                          <strong>{categoria.nombre}</strong>
+                          <small style={{ display: 'block', opacity: 0.7 }}>
+                            Límite mensual: {categoria.limite_mensual}€
+                          </small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button
+                    className="button button-secondary"
+                    style={{ marginTop: '1rem', fontSize: '0.875rem' }}
+                    onClick={() => setMessage('Funcionalidad de edición de categorías disponible próximamente.')}
+                  >
+                    ⚙️ Gestionar Categorías
+                  </button>
+                </div>
+              </div>
+
+              {/* Métodos de pago */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Métodos de Pago</h4>
+                <div style={{ 
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)',
+                  marginBottom: '1rem'
+                }}>
+                  <div style={{ display: 'grid', gap: '0.5rem' }}>
+                    {[
+                      { nombre: 'Tarjeta de crédito corporativa', icono: '💳', requiere_justificante: true },
+                      { nombre: 'Efectivo', icono: '💰', requiere_justificante: true },
+                      { nombre: 'Transferencia bancaria', icono: '🏦', requiere_justificante: false },
+                      { nombre: 'PayPal', icono: '📱', requiere_justificante: false }
+                    ].map((metodo, index) => (
+                      <div key={index} style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '1rem',
+                        padding: '0.75rem',
+                        background: 'var(--secondary-color)',
+                        borderRadius: 'var(--border-radius-small)'
+                      }}>
+                        <span style={{ fontSize: '1.2rem' }}>{metodo.icono}</span>
+                        <span style={{ flex: 1 }}>{metodo.nombre}</span>
+                        <span style={{ 
+                          fontSize: '0.75rem',
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '12px',
+                          background: metodo.requiere_justificante ? '#ffc107' : '#28a745',
+                          color: 'white'
+                        }}>
+                          {metodo.requiere_justificante ? 'Requiere justificante' : 'No requiere justificante'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button
+                    className="button button-secondary"
+                    style={{ marginTop: '1rem', fontSize: '0.875rem' }}
+                    onClick={() => setMessage('Funcionalidad de edición de métodos de pago disponible próximamente.')}
+                  >
+                    ⚙️ Gestionar Métodos de Pago
+                  </button>
+                </div>
+              </div>
+
+              {/* Configuración general de gastos */}
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Configuración General</h4>
                 <div style={{ 
                   display: 'grid', 
-                  gap: '1rem',
+                  gap: '1.5rem',
                   padding: '1.5rem',
                   border: '1px solid var(--border-color)',
                   borderRadius: 'var(--border-radius)',
@@ -505,6 +603,9 @@ function ConfigPage() {
                       className="form-control"
                       style={{ maxWidth: '200px' }}
                     />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                      Gastos superiores a este importe requerirán aprobación adicional
+                    </small>
                   </div>
                   
                   <div className="form-group">
@@ -578,8 +679,57 @@ function ConfigPage() {
                           }));
                         }}
                       />
-                      Auto-aprobar gastos pequeños
+                      Auto-aprobar gastos pequeños (menos de 25€)
                     </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.gastos?.configuracion?.permitir_gastos_futuros || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                permitir_gastos_futuros: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Permitir registrar gastos con fecha futura
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Días máximos para registrar gastos retroactivos:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="365"
+                      value={formData.gastos?.configuracion?.dias_max_retroactivos || 30}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gastos: {
+                            ...prev.gastos,
+                            configuracion: {
+                              ...prev.gastos?.configuracion,
+                              dias_max_retroactivos: parseInt(e.target.value)
+                            }
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      style={{ maxWidth: '200px' }}
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                      Los usuarios no podrán registrar gastos de hace más de este número de días
+                    </small>
                   </div>
                   
                   <div className="form-group">
@@ -604,6 +754,88 @@ function ConfigPage() {
                       className="form-control"
                       style={{ maxWidth: '200px' }}
                     />
+                  </div>
+                </div>
+              </div>
+
+              {/* Flujo de aprobación */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Flujo de Aprobación</h4>
+                <div style={{ 
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.gastos?.configuracion?.requiere_aprobacion_supervisor || true}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                requiere_aprobacion_supervisor: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Los gastos requieren aprobación del supervisor
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.gastos?.configuracion?.notificar_aprobaciones || true}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                notificar_aprobaciones: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Enviar notificaciones automáticas de aprobación/rechazo
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Tiempo límite para aprobar gastos (días):</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="30"
+                      value={formData.gastos?.configuracion?.dias_limite_aprobacion || 7}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gastos: {
+                            ...prev.gastos,
+                            configuracion: {
+                              ...prev.gastos?.configuracion,
+                              dias_limite_aprobacion: parseInt(e.target.value)
+                            }
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      style={{ maxWidth: '200px' }}
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                      Después de este tiempo, los gastos se aprobarán automáticamente
+                    </small>
                   </div>
                 </div>
               </div>
