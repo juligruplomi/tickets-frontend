@@ -104,6 +104,7 @@ function ConfigPage() {
     setSaving(false);
   };
 
+  // Panel para usuarios no administradores
   if (user?.role !== 'administrador') {
     return (
       <div className="container">
@@ -115,209 +116,6 @@ function ConfigPage() {
                 {message}
               </div>
             )}
-
-          {activeTab === 'idiomas' && (
-            <div>
-              <h3 className="section-title">Configuración de Idiomas</h3>
-              
-              <div className="form-group">
-                <label className="form-label">Idioma predeterminado del sistema:</label>
-                <select
-                  value={formData.idioma?.predeterminado || 'es'}
-                  onChange={async (e) => {
-                    const newLanguage = e.target.value;
-                    handleInputChange('idioma', 'predeterminado', newLanguage);
-                    
-                    try {
-                      await changeLanguage(newLanguage);
-                      setMessage('Idioma cambiado exitosamente.');
-                      setTimeout(() => setMessage(''), 3000);
-                    } catch (err) {
-                      console.error('Error changing language:', err);
-                      setMessage('Error al cambiar el idioma');
-                      setTimeout(() => setMessage(''), 3000);
-                    }
-                  }}
-                  className="form-control"
-                  style={{ maxWidth: '250px' }}
-                >
-                  <option value="es">🇪🇸 Español</option>
-                  <option value="en">🇬🇧 English</option>
-                  <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
-                  <option value="de">🇩🇪 Deutsch</option>
-                  <option value="it">🇮🇹 Italiano</option>
-                  <option value="pt">🇵🇹 Português</option>
-                </select>
-                <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
-                  Nota: Los usuarios pueden cambiar su idioma individualmente desde su configuración personal.
-                </small>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'apariencia' && (
-            <div>
-              <h3 className="section-title">Configuración de Apariencia</h3>
-              <div className="form-group">
-                <label className="form-label">
-                  <input
-                    type="checkbox"
-                    checked={formData.apariencia?.modo_oscuro || false}
-                    onChange={(e) => handleInputChange('apariencia', 'modo_oscuro', e.target.checked)}
-                    style={{ marginRight: '8px' }}
-                  />
-                  Modo oscuro por defecto
-                </label>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Tema del sistema:</label>
-                <select
-                  value={formData.apariencia?.tema || 'default'}
-                  onChange={(e) => handleInputChange('apariencia', 'tema', e.target.value)}
-                  className="form-control"
-                  style={{ maxWidth: '250px' }}
-                >
-                  <option value="default">Por defecto</option>
-                  <option value="corporate">Corporativo</option>
-                  <option value="modern">Moderno</option>
-                  <option value="matrix">Matrix</option>
-                </select>
-                <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
-                  {(formData.apariencia?.tema || 'default') === 'default' && 'Tema estándar con colores personalizables'}
-                  {(formData.apariencia?.tema || 'default') === 'corporate' && 'Tema profesional con tipografía serif'}
-                  {(formData.apariencia?.tema || 'default') === 'modern' && 'Tema moderno con gradientes y bordes redondeados'}
-                  {(formData.apariencia?.tema || 'default') === 'matrix' && 'Tema Matrix con efectos verdes y fondo negro'}
-                </small>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'notificaciones' && (
-            <div>
-              <h3 className="section-title">Configuración de Notificaciones</h3>
-              
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Configuración de Email</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.email_habilitado || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              email_habilitado: e.target.checked
-                            }
-                          }));
-                        }}
-                      />
-                      Notificaciones por email habilitadas
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Plantilla de asunto:</label>
-                    <input
-                      type="text"
-                      value={formData.notificaciones?.plantilla_asunto || ''}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            plantilla_asunto: e.target.value
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
-                      Variables disponibles: {{empresa}}, {{tipo}}, {{descripcion}}, {{usuario}}, {{importe}}
-                    </small>
-                  </div>
-                  
-                  <div style={{ marginTop: '1rem' }}>
-                    <h5 style={{ marginBottom: '1rem', color: 'var(--primary-color)' }}>Eventos de Notificación</h5>
-                    <div className="form-group">
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.nuevo_gasto || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  nuevo_gasto: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        Notificar cuando se registra un nuevo gasto
-                      </label>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.gasto_aprobado || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  gasto_aprobado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        Notificar cuando un gasto es aprobado
-                      </label>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.gasto_rechazado || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  gasto_rechazado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        Notificar cuando un gasto es rechazado
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
           
           <div className="card-body">
@@ -434,6 +232,7 @@ function ConfigPage() {
     );
   }
 
+  // Panel para administradores
   return (
     <div className="container">
       <div className="card dashboard-card">
@@ -575,11 +374,79 @@ function ConfigPage() {
             </div>
           )}
 
+          {activeTab === 'idiomas' && (
+            <div>
+              <h3 className="section-title">Configuración de Idiomas</h3>
+              <div className="form-group">
+                <label className="form-label">Idioma predeterminado del sistema:</label>
+                <select
+                  value={formData.idioma?.predeterminado || 'es'}
+                  onChange={async (e) => {
+                    const newLanguage = e.target.value;
+                    handleInputChange('idioma', 'predeterminado', newLanguage);
+                    
+                    try {
+                      await changeLanguage(newLanguage);
+                      setMessage('Idioma cambiado exitosamente.');
+                      setTimeout(() => setMessage(''), 3000);
+                    } catch (err) {
+                      console.error('Error changing language:', err);
+                      setMessage('Error al cambiar el idioma');
+                      setTimeout(() => setMessage(''), 3000);
+                    }
+                  }}
+                  className="form-control"
+                  style={{ maxWidth: '250px' }}
+                >
+                  <option value="es">🇪🇸 Español</option>
+                  <option value="en">🇬🇧 English</option>
+                  <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
+                  <option value="de">🇩🇪 Deutsch</option>
+                  <option value="it">🇮🇹 Italiano</option>
+                  <option value="pt">🇵🇹 Português</option>
+                </select>
+                <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
+                  Nota: Los usuarios pueden cambiar su idioma individualmente desde su configuración personal.
+                </small>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'apariencia' && (
+            <div>
+              <h3 className="section-title">Configuración de Apariencia</h3>
+              <div className="form-group">
+                <label className="form-label">
+                  <input
+                    type="checkbox"
+                    checked={formData.apariencia?.modo_oscuro || false}
+                    onChange={(e) => handleInputChange('apariencia', 'modo_oscuro', e.target.checked)}
+                    style={{ marginRight: '8px' }}
+                  />
+                  Modo oscuro por defecto
+                </label>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Tema del sistema:</label>
+                <select
+                  value={formData.apariencia?.tema || 'default'}
+                  onChange={(e) => handleInputChange('apariencia', 'tema', e.target.value)}
+                  className="form-control"
+                  style={{ maxWidth: '250px' }}
+                >
+                  <option value="default">Por defecto</option>
+                  <option value="corporate">Corporativo</option>
+                  <option value="modern">Moderno</option>
+                  <option value="matrix">Matrix</option>
+                </select>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'gastos' && (
             <div>
               <h3 className="section-title">Configuración de Gastos</h3>
               
-              {/* Configuración general de gastos */}
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Configuración General</h4>
                 <div style={{ 
@@ -737,6 +604,65 @@ function ConfigPage() {
                       className="form-control"
                       style={{ maxWidth: '200px' }}
                     />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'notificaciones' && (
+            <div>
+              <h3 className="section-title">Configuración de Notificaciones</h3>
+              
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Configuración de Email</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.notificaciones?.email_habilitado || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            notificaciones: {
+                              ...prev.notificaciones,
+                              email_habilitado: e.target.checked
+                            }
+                          }));
+                        }}
+                      />
+                      Notificaciones por email habilitadas
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Plantilla de asunto:</label>
+                    <input
+                      type="text"
+                      value={formData.notificaciones?.plantilla_asunto || ''}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          notificaciones: {
+                            ...prev.notificaciones,
+                            plantilla_asunto: e.target.value
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
+                      Variables disponibles: {'{{'}}empresa{'}}'}, {'{{'}}tipo{'}}'}, {'{{'}}descripcion{'}}'}, {'{{'}}usuario{'}}'}, {'{{'}}importe{'}}'}
+                    </small>
                   </div>
                 </div>
               </div>
