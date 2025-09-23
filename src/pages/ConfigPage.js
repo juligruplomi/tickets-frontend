@@ -468,6 +468,296 @@ function ConfigPage() {
             </div>
           )}
 
+          {activeTab === 'gastos' && (
+            <div>
+              <h3 className="section-title">Configuración de Gastos</h3>
+              
+              {/* Categorías de gastos */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Categorías de Gastos</h4>
+                <div style={{ 
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)',
+                  marginBottom: '1rem'
+                }}>
+                  <div style={{ display: 'grid', gap: '1rem' }}>
+                    {(formData.gastos?.categorias || []).map((categoria, index) => (
+                      <div key={index} style={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '1rem',
+                        padding: '1rem',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 'var(--border-radius-small)',
+                        background: 'var(--secondary-color)'
+                      }}>
+                        <span style={{ fontSize: '1.5rem' }}>{categoria.icono}</span>
+                        <div style={{ flex: 1 }}>
+                          <strong>{categoria.nombre}</strong>
+                          <small style={{ display: 'block', opacity: 0.7 }}>
+                            Límite mensual: {categoria.limite_mensual}€
+                          </small>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  <button
+                    className="button button-secondary"
+                    style={{ marginTop: '1rem', fontSize: '0.875rem' }}
+                    onClick={() => setMessage('Funcionalidad de edición de categorías disponible próximamente.')}
+                  >
+                    ⚙️ Gestionar Categorías
+                  </button>
+                </div>
+              </div>
+
+              {/* Configuración general */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Configuración General</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1.5rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-label">Moneda por defecto:</label>
+                    <select
+                      value={formData.gastos?.configuracion?.moneda_defecto || 'EUR'}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gastos: {
+                            ...prev.gastos,
+                            configuracion: {
+                              ...prev.gastos?.configuracion,
+                              moneda_defecto: e.target.value
+                            }
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      style={{ maxWidth: '200px' }}
+                    >
+                      <option value="EUR">€ Euro</option>
+                      <option value="USD">$ Dólar</option>
+                      <option value="GBP">£ Libra</option>
+                      <option value="JPY">¥ Yen</option>
+                    </select>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Límite máximo por gasto individual (€):</label>
+                    <input
+                      type="number"
+                      min="1"
+                      step="0.01"
+                      value={formData.gastos?.configuracion?.limite_maximo_gasto || 1000}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          gastos: {
+                            ...prev.gastos,
+                            configuracion: {
+                              ...prev.gastos?.configuracion,
+                              limite_maximo_gasto: parseFloat(e.target.value)
+                            }
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      style={{ maxWidth: '200px' }}
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                      Gastos superiores a este importe requerirán aprobación adicional
+                    </small>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.gastos?.configuracion?.requiere_justificante_siempre || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                requiere_justificante_siempre: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Requiere justificante para todos los gastos
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.gastos?.configuracion?.requiere_aprobacion_supervisor || true}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                requiere_aprobacion_supervisor: e.target.checked
+                              }
+                            }
+                          }));
+                        }}
+                      />
+                      Los gastos requieren aprobación del supervisor
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'notificaciones' && (
+            <div>
+              <h3 className="section-title">Configuración de Notificaciones</h3>
+              
+              {/* Configuración general de email */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Configuración de Email</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1.5rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  <div className="form-group">
+                    <label className="form-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={formData.notificaciones?.email_habilitado || false}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            notificaciones: {
+                              ...prev.notificaciones,
+                              email_habilitado: e.target.checked
+                            }
+                          }));
+                        }}
+                      />
+                      Notificaciones por email habilitadas
+                    </label>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Email del administrador del sistema:</label>
+                    <input
+                      type="email"
+                      value={formData.notificaciones?.email_admin || ''}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          notificaciones: {
+                            ...prev.notificaciones,
+                            email_admin: e.target.value
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      placeholder="admin@gruplomi.com"
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '5px', display: 'block' }}>
+                      Se usará como email remitente para las notificaciones
+                    </small>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">Plantilla de asunto:</label>
+                    <input
+                      type="text"
+                      value={formData.notificaciones?.plantilla_asunto || ''}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          notificaciones: {
+                            ...prev.notificaciones,
+                            plantilla_asunto: e.target.value
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
+                      Variables disponibles: {'{empresa}, {tipo}, {descripcion}, {usuario}, {importe}'}
+                    </small>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Eventos de notificación */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Eventos de Notificación</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  {[
+                    { key: 'nuevo_gasto', label: '💰 Nuevo gasto registrado', to: 'Al usuario y supervisor', description: 'Se envía cuando un empleado registra un nuevo gasto' },
+                    { key: 'gasto_aprobado', label: '✅ Gasto aprobado', to: 'Al usuario', description: 'Confirma al empleado que su gasto ha sido aprobado' },
+                    { key: 'gasto_rechazado', label: '❌ Gasto rechazado', to: 'Al usuario', description: 'Notifica al empleado el rechazo con motivos' },
+                    { key: 'limite_categoria_alcanzado', label: '⚠️ Límite de categoría alcanzado', to: 'Al supervisor', description: 'Alerta cuando se supera el límite mensual de una categoría' },
+                    { key: 'gastos_pendientes', label: '🔔 Recordatorio gastos pendientes', to: 'Al supervisor', description: 'Recordatorio diario de gastos pendientes de aprobación' },
+                    { key: 'informe_mensual', label: '📄 Informe mensual de gastos', to: 'Al administrador', description: 'Resumen mensual de todos los gastos y estadísticas' }
+                  ].map((evento) => (
+                    <div key={evento.key} className="form-group">
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <label className="form-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={formData.notificaciones?.eventos?.[evento.key] || false}
+                            onChange={(e) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                notificaciones: {
+                                  ...prev.notificaciones,
+                                  eventos: {
+                                    ...prev.notificaciones?.eventos,
+                                    [evento.key]: e.target.checked
+                                  }
+                                }
+                              }));
+                            }}
+                          />
+                          {evento.label}
+                        </label>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>{evento.to}</span>
+                      </div>
+                      <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
+                        {evento.description}
+                      </small>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
             <button
               onClick={handleSave}
