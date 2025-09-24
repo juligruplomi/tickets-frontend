@@ -42,6 +42,66 @@ function ConfigPage() {
         setFormData(JSON.parse(JSON.stringify(config)));
         setLoading(false);
       }).catch(() => {
+        const defaultConfig = {
+          empresa: { 
+            nombre: '', 
+            logo_url: '', 
+            colores: { 
+              primario: '#0066CC', 
+              secundario: '#f8f9fa', 
+              acento: '#28a745' 
+            } 
+          },
+          idioma: { predeterminado: 'es' },
+          apariencia: { modo_oscuro: false, tema: 'default' },
+          gastos: {
+            categorias: [
+              { id: '1', nombre: 'Transporte', icono: '🚗', limite_mensual: 500 },
+              { id: '2', nombre: 'Comidas', icono: '🍽️', limite_mensual: 300 },
+              { id: '3', nombre: 'Material de oficina', icono: '💼', limite_mensual: 200 },
+              { id: '4', nombre: 'Formación', icono: '📚', limite_mensual: 1000 }
+            ],
+            configuracion: {
+              moneda_defecto: 'EUR',
+              limite_maximo_gasto: 1000,
+              requiere_justificante_siempre: false,
+              importe_minimo_justificante: 50,
+              auto_aprobar_gastos_pequenos: false,
+              permitir_gastos_futuros: false,
+              dias_max_retroactivos: 30,
+              tamano_maximo_adjunto: 10,
+              requiere_aprobacion_supervisor: true,
+              notificar_aprobaciones: true,
+              dias_limite_aprobacion: 7
+            }
+          },
+          notificaciones: {
+            email_habilitado: false,
+            plantilla_asunto: '',
+            email_admin: '',
+            eventos: {
+              nuevo_gasto: false,
+              gasto_aprobado: false,
+              gasto_rechazado: false,
+              limite_categoria_alcanzado: false,
+              gastos_pendientes: false,
+              informe_mensual: false
+            },
+            recordatorios: {
+              habilitados: false,
+              frecuencia_pendientes: 'diario',
+              hora: '09:00',
+              dias_aviso: 3
+            },
+            smtp: {
+              servidor: '',
+              puerto: 587,
+              usuario: '',
+              ssl_habilitado: false
+            }
+          }
+        };
+        setFormData(defaultConfig);
         setLoading(false);
       });
     } else {
@@ -104,7 +164,6 @@ function ConfigPage() {
     setSaving(false);
   };
 
-  // Panel para usuarios no administradores
   if (user?.role !== 'administrador') {
     return (
       <div className="container">
@@ -160,9 +219,6 @@ function ConfigPage() {
                     <option value="it">🇮🇹 Italiano</option>
                     <option value="pt">🇵🇹 Português</option>
                   </select>
-                  <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '8px' }}>
-                    Los cambios se aplicarán inmediatamente en toda la interfaz.
-                  </small>
                 </div>
                 
                 {saving && (
@@ -232,7 +288,6 @@ function ConfigPage() {
     );
   }
 
-  // Panel para administradores
   return (
     <div className="container">
       <div className="card dashboard-card">
@@ -246,7 +301,6 @@ function ConfigPage() {
         </div>
         
         <div className="card-body">
-          {/* Pestañas principales */}
           <div className="config-tabs">
             {['empresa', 'idiomas', 'apariencia', 'gastos', 'notificaciones'].map(tab => (
               <button
@@ -259,7 +313,6 @@ function ConfigPage() {
             ))}
           </div>
 
-          {/* Contenido de pestañas */}
           {activeTab === 'empresa' && (
             <div>
               <h3 className="section-title">Información de la Empresa</h3>
@@ -306,723 +359,6 @@ function ConfigPage() {
                           border: '1px solid var(--border-color)',
                           borderRadius: 'var(--border-radius-small)',
                           background: 'var(--card-background)'
-                }}>
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.auto_aprobar_gastos_pequenos || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                auto_aprobar_gastos_pequenos: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Auto-aprobar gastos pequeños (menos de 25€)
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.permitir_gastos_futuros || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                permitir_gastos_futuros: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Permitir registrar gastos con fecha futura
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Días máximos para registrar gastos retroactivos:</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="365"
-                      value={formData.gastos?.configuracion?.dias_max_retroactivos || 30}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              dias_max_retroactivos: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Los usuarios no podrán registrar gastos de hace más de este número de días
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Tamaño máximo de archivos adjuntos (MB):</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="50"
-                      value={formData.gastos?.configuracion?.tamano_maximo_adjunto || 10}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              tamano_maximo_adjunto: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Flujo de aprobación */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Flujo de Aprobación</h4>
-                <div style={{ 
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.requiere_aprobacion_supervisor || true}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                requiere_aprobacion_supervisor: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Los gastos requieren aprobación del supervisor
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.notificar_aprobaciones || true}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                notificar_aprobaciones: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Enviar notificaciones automáticas de aprobación/rechazo
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Tiempo límite para aprobar gastos (días):</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={formData.gastos?.configuracion?.dias_limite_aprobacion || 7}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              dias_limite_aprobacion: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Después de este tiempo, los gastos se aprobarán automáticamente
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'notificaciones' && (
-            <div>
-              <h3 className="section-title">Configuración de Notificaciones</h3>
-              
-              {/* Configuración general de email */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Configuración de Email</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1.5rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.email_habilitado || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              email_habilitado: e.target.checked
-                            }
-                          }));
-                        }}
-                      />
-                      Notificaciones por email habilitadas
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Plantilla de asunto:</label>
-                    <input
-                      type="text"
-                      value={formData.notificaciones?.plantilla_asunto || ''}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            plantilla_asunto: e.target.value
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
-                      Variables disponibles: {{empresa}}, {{tipo}}, {{descripcion}}, {{usuario}}, {{importe}}
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Email del administrador del sistema:</label>
-                    <input
-                      type="email"
-                      value={formData.notificaciones?.email_admin || ''}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            email_admin: e.target.value
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      placeholder="admin@gruplomi.com"
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '5px', display: 'block' }}>
-                      Se usará como email remitente para las notificaciones
-                    </small>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Eventos de notificación */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Eventos de Notificación</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.nuevo_gasto || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  nuevo_gasto: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        💰 Nuevo gasto registrado
-                      </label>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>Al usuario y supervisor</span>
-                    </div>
-                    <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                      Se envía cuando un empleado registra un nuevo gasto
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.gasto_aprobado || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  gasto_aprobado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        ✅ Gasto aprobado
-                      </label>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>Al usuario</span>
-                    </div>
-                    <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                      Confirma al empleado que su gasto ha sido aprobado
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.gasto_rechazado || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  gasto_rechazado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        ❌ Gasto rechazado
-                      </label>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>Al usuario</span>
-                    </div>
-                    <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                      Notifica al empleado el rechazo con motivos
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.limite_categoria_alcanzado || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  limite_categoria_alcanzado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        ⚠️ Límite de categoría alcanzado
-                      </label>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>Al supervisor</span>
-                    </div>
-                    <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                      Alerta cuando se supera el límite mensual de una categoría
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.gastos_pendientes || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  gastos_pendientes: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        🔔 Recordatorio gastos pendientes
-                      </label>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>Al supervisor</span>
-                    </div>
-                    <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                      Recordatorio diario de gastos pendientes de aprobación
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.eventos?.informe_mensual || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                eventos: {
-                                  ...prev.notificaciones?.eventos,
-                                  informe_mensual: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        📄 Informe mensual de gastos
-                      </label>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>Al administrador</span>
-                    </div>
-                    <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                      Resumen mensual de todos los gastos y estadísticas
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Botón de guardar */}
-          <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="button button-primary"
-              style={{
-                backgroundColor: saving ? '#6c757d' : 'var(--primary-color)',
-                cursor: saving ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
-            >
-              {saving ? 'Guardando...' : 'Guardar Configuración'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default ConfigPage;
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.recordatorios?.habilitados || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              recordatorios: {
-                                ...prev.notificaciones?.recordatorios,
-                                habilitados: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Habilitar recordatorios automáticos
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Recordar gastos pendientes de aprobación cada:</label>
-                    <select
-                      value={formData.notificaciones?.recordatorios?.frecuencia_pendientes || 'diario'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              frecuencia_pendientes: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    >
-                      <option value="nunca">Nunca</option>
-                      <option value="diario">Diariamente</option>
-                      <option value="cada_2_dias">Cada 2 días</option>
-                      <option value="semanal">Semanalmente</option>
-                    </select>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Hora para enviar recordatorios:</label>
-                    <input
-                      type="time"
-                      value={formData.notificaciones?.recordatorios?.hora || '09:00'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              hora: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '150px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Días de aviso antes de vencimiento:</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={formData.notificaciones?.recordatorios?.dias_aviso || 3}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              dias_aviso: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '150px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Aviso previo antes de que los gastos se aprueben automáticamente
-                    </small>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Configuración SMTP */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Configuración del Servidor SMTP</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1.5rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div style={{ 
-                    padding: '1rem',
-                    background: 'rgba(255, 193, 7, 0.1)',
-                    border: '1px solid rgba(255, 193, 7, 0.3)',
-                    borderRadius: 'var(--border-radius-small)'
-                  }}>
-                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#856404' }}>⚠️ Configuración Avanzada</h5>
-                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#856404' }}>
-                      La configuración del servidor SMTP requiere conocimientos técnicos. 
-                      Contacta con tu administrador de sistemas para configurar estos parámetros.
-                    </p>
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-                    <div className="form-group">
-                      <label className="form-label">Servidor SMTP:</label>
-                      <input
-                        type="text"
-                        value={formData.notificaciones?.smtp?.servidor || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                servidor: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="smtp.gmail.com"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Puerto:</label>
-                      <input
-                        type="number"
-                        value={formData.notificaciones?.smtp?.puerto || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                puerto: parseInt(e.target.value)
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="587"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Usuario:</label>
-                      <input
-                        type="email"
-                        value={formData.notificaciones?.smtp?.usuario || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                usuario: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="notificaciones@gruplomi.com"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.smtp?.ssl_habilitado || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                ssl_habilitado: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Usar conexión segura SSL/TLS
-                    </label>
-                  </div>
-                  
-                  <button
-                    className="button button-secondary"
-                    style={{ fontSize: '0.875rem' }}
-                    onClick={() => setMessage('Funcionalidad de prueba de email disponible próximamente.')}
-                  >
-                    📧 Probar Configuración de Email
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Botón de guardar */}
-          <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="button button-primary"
-              style={{
-                backgroundColor: saving ? '#6c757d' : 'var(--primary-color)',
-                cursor: saving ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
-            >
-              {saving ? 'Guardando...' : 'Guardar Configuración'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default ConfigPage;background)'
                         }}
                         onError={(e) => {e.target.style.display = 'none'}}
                       />
@@ -1033,60 +369,26 @@ export default ConfigPage;background)'
               
               <h4 className="section-title">Colores corporativos</h4>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
-                <div className="form-group">
-                  <label className="form-label">Color primario:</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <input
-                      type="color"
-                      value={formData.empresa?.colores?.primario || '#0066CC'}
-                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
-                      style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
-                    />
-                    <input
-                      type="text"
-                      value={formData.empresa?.colores?.primario || '#0066CC'}
-                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'primario', e.target.value)}
-                      className="form-control"
-                      style={{ flex: 1 }}
-                    />
+                {['primario', 'secundario', 'acento'].map(colorType => (
+                  <div key={colorType} className="form-group">
+                    <label className="form-label">Color {colorType}:</label>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <input
+                        type="color"
+                        value={formData.empresa?.colores?.[colorType] || '#0066CC'}
+                        onChange={(e) => handleNestedInputChange('empresa', 'colores', colorType, e.target.value)}
+                        style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
+                      />
+                      <input
+                        type="text"
+                        value={formData.empresa?.colores?.[colorType] || '#0066CC'}
+                        onChange={(e) => handleNestedInputChange('empresa', 'colores', colorType, e.target.value)}
+                        className="form-control"
+                        style={{ flex: 1 }}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Color secundario:</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <input
-                      type="color"
-                      value={formData.empresa?.colores?.secundario || '#f8f9fa'}
-                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
-                      style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
-                    />
-                    <input
-                      type="text"
-                      value={formData.empresa?.colores?.secundario || '#f8f9fa'}
-                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'secundario', e.target.value)}
-                      className="form-control"
-                      style={{ flex: 1 }}
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Color de acento:</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <input
-                      type="color"
-                      value={formData.empresa?.colores?.acento || '#28a745'}
-                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
-                      style={{ width: '60px', height: '40px', borderRadius: 'var(--border-radius-small)', border: 'none' }}
-                    />
-                    <input
-                      type="text"
-                      value={formData.empresa?.colores?.acento || '#28a745'}
-                      onChange={(e) => handleNestedInputChange('empresa', 'colores', 'acento', e.target.value)}
-                      className="form-control"
-                      style={{ flex: 1 }}
-                    />
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           )}
@@ -1156,6 +458,12 @@ export default ConfigPage;background)'
                   <option value="modern">Moderno</option>
                   <option value="matrix">Matrix</option>
                 </select>
+                <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
+                  {(formData.apariencia?.tema || 'default') === 'default' && 'Tema estándar con colores personalizables'}
+                  {(formData.apariencia?.tema || 'default') === 'corporate' && 'Tema profesional con tipografía serif'}
+                  {(formData.apariencia?.tema || 'default') === 'modern' && 'Tema moderno con gradientes y bordes redondeados'}
+                  {(formData.apariencia?.tema || 'default') === 'matrix' && 'Tema Matrix con efectos verdes y fondo negro'}
+                </small>
               </div>
             </div>
           )}
@@ -1175,12 +483,7 @@ export default ConfigPage;background)'
                   marginBottom: '1rem'
                 }}>
                   <div style={{ display: 'grid', gap: '1rem' }}>
-                    {(formData.gastos?.categorias || [
-                      { id: '1', nombre: 'Transporte', icono: '🚗', limite_mensual: 500 },
-                      { id: '2', nombre: 'Comidas', icono: '🍽️', limite_mensual: 300 },
-                      { id: '3', nombre: 'Material de oficina', icono: '💼', limite_mensual: 200 },
-                      { id: '4', nombre: 'Formación', icono: '📚', limite_mensual: 1000 }
-                    ]).map((categoria, index) => (
+                    {(formData.gastos?.categorias || []).map((categoria, index) => (
                       <div key={index} style={{ 
                         display: 'flex', 
                         alignItems: 'center', 
@@ -1211,57 +514,7 @@ export default ConfigPage;background)'
                 </div>
               </div>
 
-              {/* Métodos de pago */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Métodos de Pago</h4>
-                <div style={{ 
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)',
-                  marginBottom: '1rem'
-                }}>
-                  <div style={{ display: 'grid', gap: '0.5rem' }}>
-                    {[
-                      { nombre: 'Tarjeta de crédito corporativa', icono: '💳', requiere_justificante: true },
-                      { nombre: 'Efectivo', icono: '💰', requiere_justificante: true },
-                      { nombre: 'Transferencia bancaria', icono: '🏦', requiere_justificante: false },
-                      { nombre: 'PayPal', icono: '📱', requiere_justificante: false }
-                    ].map((metodo, index) => (
-                      <div key={index} style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '1rem',
-                        padding: '0.75rem',
-                        background: 'var(--secondary-color)',
-                        borderRadius: 'var(--border-radius-small)'
-                      }}>
-                        <span style={{ fontSize: '1.2rem' }}>{metodo.icono}</span>
-                        <span style={{ flex: 1 }}>{metodo.nombre}</span>
-                        <span style={{ 
-                          fontSize: '0.75rem',
-                          padding: '0.25rem 0.5rem',
-                          borderRadius: '12px',
-                          background: metodo.requiere_justificante ? '#ffc107' : '#28a745',
-                          color: 'white'
-                        }}>
-                          {metodo.requiere_justificante ? 'Requiere justificante' : 'No requiere justificante'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  <button
-                    className="button button-secondary"
-                    style={{ marginTop: '1rem', fontSize: '0.875rem' }}
-                    onClick={() => setMessage('Funcionalidad de edición de métodos de pago disponible próximamente.')}
-                  >
-                    ⚙️ Gestionar Métodos de Pago
-                  </button>
-                </div>
-              </div>
-
-              {/* Configuración general de gastos */}
+              {/* Configuración general */}
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Configuración General</h4>
                 <div style={{ 
@@ -1348,143 +601,6 @@ export default ConfigPage;background)'
                   </div>
                   
                   <div className="form-group">
-                    <label className="form-label">Importe mínimo que requiere justificante (€):</label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.01"
-                      value={formData.gastos?.configuracion?.importe_minimo_justificante || 50}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              importe_minimo_justificante: parseFloat(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                      disabled={formData.gastos?.configuracion?.requiere_justificante_siempre}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      {formData.gastos?.configuracion?.requiere_justificante_siempre ? 
-                        'Deshabilitado: se requiere justificante para todos los gastos' : 
-                        'Gastos por encima de este importe requerirán justificante'
-                      }
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.auto_aprobar_gastos_pequenos || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                auto_aprobar_gastos_pequenos: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Auto-aprobar gastos pequeños (menos de 25€)
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.permitir_gastos_futuros || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                permitir_gastos_futuros: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Permitir registrar gastos con fecha futura
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Días máximos para registrar gastos retroactivos:</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="365"
-                      value={formData.gastos?.configuracion?.dias_max_retroactivos || 30}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              dias_max_retroactivos: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Los usuarios no podrán registrar gastos de hace más de este número de días
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Tamaño máximo de archivos adjuntos (MB):</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="50"
-                      value={formData.gastos?.configuracion?.tamano_maximo_adjunto || 10}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              tamano_maximo_adjunto: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Flujo de aprobación */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Flujo de Aprobación</h4>
-                <div style={{ 
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
                     <label className="form-checkbox">
                       <input
                         type="checkbox"
@@ -1505,55 +621,6 @@ export default ConfigPage;background)'
                       Los gastos requieren aprobación del supervisor
                     </label>
                   </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.notificar_aprobaciones || true}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            gastos: {
-                              ...prev.gastos,
-                              configuracion: {
-                                ...prev.gastos?.configuracion,
-                                notificar_aprobaciones: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Enviar notificaciones automáticas de aprobación/rechazo
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Tiempo límite para aprobar gastos (días):</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={formData.gastos?.configuracion?.dias_limite_aprobacion || 7}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              dias_limite_aprobacion: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Después de este tiempo, los gastos se aprobarán automáticamente
-                    </small>
-                  </div>
                 </div>
               </div>
             </div>
@@ -1563,11 +630,12 @@ export default ConfigPage;background)'
             <div>
               <h3 className="section-title">Configuración de Notificaciones</h3>
               
+              {/* Configuración general de email */}
               <div style={{ marginBottom: '30px' }}>
                 <h4 className="section-title">Configuración de Email</h4>
                 <div style={{ 
                   display: 'grid', 
-                  gap: '1rem',
+                  gap: '1.5rem',
                   padding: '1.5rem',
                   border: '1px solid var(--border-color)',
                   borderRadius: 'var(--border-radius)',
@@ -1593,6 +661,28 @@ export default ConfigPage;background)'
                   </div>
                   
                   <div className="form-group">
+                    <label className="form-label">Email del administrador del sistema:</label>
+                    <input
+                      type="email"
+                      value={formData.notificaciones?.email_admin || ''}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          notificaciones: {
+                            ...prev.notificaciones,
+                            email_admin: e.target.value
+                          }
+                        }));
+                      }}
+                      className="form-control"
+                      placeholder="admin@gruplomi.com"
+                    />
+                    <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '5px', display: 'block' }}>
+                      Se usará como email remitente para las notificaciones
+                    </small>
+                  </div>
+                  
+                  <div className="form-group">
                     <label className="form-label">Plantilla de asunto:</label>
                     <input
                       type="text"
@@ -1610,15 +700,64 @@ export default ConfigPage;background)'
                       placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
                     />
                     <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
-                      Variables disponibles: {'{{'}}empresa{'}}'}, {'{{'}}tipo{'}}'}, {'{{'}}descripcion{'}}'}, {'{{'}}usuario{'}}'}, {'{{'}}importe{'}}'}
+                      Variables disponibles: {'{empresa}, {tipo}, {descripcion}, {usuario}, {importe}'}
                     </small>
                   </div>
+                </div>
+              </div>
+              
+              {/* Eventos de notificación */}
+              <div style={{ marginBottom: '30px' }}>
+                <h4 className="section-title">Eventos de Notificación</h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gap: '1rem',
+                  padding: '1.5rem',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--border-radius)',
+                  background: 'var(--card-background)'
+                }}>
+                  {[
+                    { key: 'nuevo_gasto', label: '💰 Nuevo gasto registrado', to: 'Al usuario y supervisor', description: 'Se envía cuando un empleado registra un nuevo gasto' },
+                    { key: 'gasto_aprobado', label: '✅ Gasto aprobado', to: 'Al usuario', description: 'Confirma al empleado que su gasto ha sido aprobado' },
+                    { key: 'gasto_rechazado', label: '❌ Gasto rechazado', to: 'Al usuario', description: 'Notifica al empleado el rechazo con motivos' },
+                    { key: 'limite_categoria_alcanzado', label: '⚠️ Límite de categoría alcanzado', to: 'Al supervisor', description: 'Alerta cuando se supera el límite mensual de una categoría' },
+                    { key: 'gastos_pendientes', label: '🔔 Recordatorio gastos pendientes', to: 'Al supervisor', description: 'Recordatorio diario de gastos pendientes de aprobación' },
+                    { key: 'informe_mensual', label: '📄 Informe mensual de gastos', to: 'Al administrador', description: 'Resumen mensual de todos los gastos y estadísticas' }
+                  ].map((evento) => (
+                    <div key={evento.key} className="form-group">
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                        <label className="form-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={formData.notificaciones?.eventos?.[evento.key] || false}
+                            onChange={(e) => {
+                              setFormData(prev => ({
+                                ...prev,
+                                notificaciones: {
+                                  ...prev.notificaciones,
+                                  eventos: {
+                                    ...prev.notificaciones?.eventos,
+                                    [evento.key]: e.target.checked
+                                  }
+                                }
+                              }));
+                            }}
+                          />
+                          {evento.label}
+                        </label>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>{evento.to}</span>
+                      </div>
+                      <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
+                        {evento.description}
+                      </small>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           )}
 
-          {/* Botón de guardar */}
           <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
             <button
               onClick={handleSave}
