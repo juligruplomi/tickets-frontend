@@ -9,6 +9,7 @@ import UsersPage from './pages/UsersPage';
 import CreateTicket from './pages/CreateTicket';
 import Users from './pages/Users';
 import ConfigPage from './pages/ConfigPage';
+import RolesPage from './pages/RolesPage';
 import Navbar from './components/Navbar';
 import './App.css';
 
@@ -102,6 +103,14 @@ function AppContent() {
               <ProtectedRoute>
                 <ConfigPage />
               </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/roles" 
+            element={
+              <AdminRoute>
+                <RolesPage />
+              </AdminRoute>
             } 
           />
           <Route path="/" element={<Navigate to="/dashboard" />} />

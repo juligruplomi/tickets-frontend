@@ -51,19 +51,32 @@ function Navbar() {
             </Link>
           </li>
           
-          {/* Solo administradores ven usuarios */}
+          {/* Solo administradores ven usuarios y roles */}
           {user?.role === 'administrador' && (
-            <li>
-              <Link 
-                to="/users" 
-                className={`nav-link ${isActive('/users') ? 'active' : ''}`}
-                title="Usuarios"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link 
+                  to="/users" 
+                  className={`nav-link ${isActive('/users') ? 'active' : ''}`}
+                  title="Usuarios"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/roles" 
+                  className={`nav-link ${isActive('/roles') ? 'active' : ''}`}
+                  title="Roles y Permisos"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                  </svg>
+                </Link>
+              </li>
+            </>
           )}
           
           {/* Reportes para supervisores, contabilidad y administradores */}
