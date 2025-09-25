@@ -1,70 +1,210 @@
-# Getting Started with Create React App
+# GrupLomi - Sistema de Gestión de Gastos 💰
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Sistema completo de gestión de gastos empresariales con control de roles, permisos y flujos de aprobación.
 
-## Available Scripts
+## 🚀 Características
 
-In the project directory, you can run:
+- **Gestión de Gastos**: Registro, aprobación y seguimiento de gastos empresariales
+- **Sistema de Roles y Permisos**: Control granular de acceso a funcionalidades
+- **Categorías Personalizables**: Organización de gastos por categorías con límites
+- **Notificaciones por Email**: Sistema SMTP configurable para alertas
+- **Multi-idioma**: Soporte para ES, EN, CA, DE, IT, PT
+- **Dashboard Interactivo**: Visualización de estadísticas y métricas
+- **Modo Oscuro**: Interfaz adaptable con múltiples temas
 
-### `npm start`
+## 📋 Requisitos Previos
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js 16.0 o superior
+- npm o yarn
+- Git
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 🛠️ Instalación Local
 
-### `npm test`
+1. **Clonar el repositorio**
+```bash
+git clone https://github.com/tu-usuario/gruplomi-expense-system.git
+cd gruplomi-expense-system
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **Instalar dependencias**
+```bash
+npm install
+# o
+yarn install
+```
 
-### `npm run build`
+3. **Configurar variables de entorno**
+```bash
+cp .env.example .env.local
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Edita `.env.local` con tu configuración:
+```
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_API_TIMEOUT=30000
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. **Iniciar el servidor de desarrollo**
+```bash
+npm start
+# o
+yarn start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+El proyecto estará disponible en `http://localhost:3000`
 
-### `npm run eject`
+## 🚀 Despliegue en Vercel
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Opción 1: Deploy con Vercel CLI
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Instalar Vercel CLI**
+```bash
+npm i -g vercel
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. **Login en Vercel**
+```bash
+vercel login
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. **Deploy**
+```bash
+vercel
+```
 
-## Learn More
+### Opción 2: Deploy desde GitHub
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. **Push a GitHub**
+```bash
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/tu-usuario/gruplomi-expense-system.git
+git push -u origin main
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. **Conectar con Vercel**
+- Ve a [vercel.com](https://vercel.com)
+- Click en "New Project"
+- Importa tu repositorio de GitHub
+- Configura las variables de entorno:
+  - `REACT_APP_API_URL`: URL de tu API backend
+  - `REACT_APP_ENVIRONMENT`: production
 
-### Code Splitting
+3. **Deploy automático**
+- Vercel desplegará automáticamente con cada push a main
+- Preview deployments para cada PR
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔧 Configuración de Variables de Entorno en Vercel
 
-### Analyzing the Bundle Size
+En el dashboard de Vercel, ve a Settings → Environment Variables y añade:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```
+REACT_APP_API_URL=https://api.tu-dominio.com
+REACT_APP_ENVIRONMENT=production
+REACT_APP_ENABLE_NOTIFICATIONS=true
+REACT_APP_DEFAULT_LANGUAGE=es
+```
 
-### Making a Progressive Web App
+## 📁 Estructura del Proyecto
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+gruplomi-expense-system/
+├── public/              # Archivos públicos
+├── src/
+│   ├── components/      # Componentes reutilizables
+│   │   ├── CategoriesManager.js
+│   │   ├── SMTPConfig.js
+│   │   └── Navbar.js
+│   ├── context/        # Context API
+│   │   ├── AuthContext.js
+│   │   └── ConfigContext.js
+│   ├── pages/          # Páginas de la aplicación
+│   │   ├── Dashboard.js
+│   │   ├── GastosPage.js
+│   │   ├── ConfigPage.js
+│   │   ├── RolesPage.js
+│   │   └── UsersPage.js
+│   ├── services/       # Servicios y APIs
+│   │   └── api.js
+│   └── App.js         # Componente principal
+├── .env.example       # Variables de entorno ejemplo
+├── vercel.json        # Configuración de Vercel
+└── package.json       # Dependencias y scripts
+```
 
-### Advanced Configuration
+## 🔑 Roles y Permisos
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Roles predefinidos:
+- **Administrador**: Acceso total al sistema
+- **Supervisor**: Gestión de gastos y aprobaciones
+- **Empleado**: Registro de gastos propios
+- **Auditor**: Solo lectura para auditorías
 
-### Deployment
+### Permisos disponibles:
+- Gestión de tickets
+- Gestión de gastos
+- Administración de usuarios
+- Configuración del sistema
+- Generación de informes
+- Gestión de notificaciones
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 📊 Scripts Disponibles
 
-### `npm run build` fails to minify
+```bash
+npm start          # Inicia servidor de desarrollo
+npm run build      # Construye para producción
+npm test           # Ejecuta tests
+npm run eject      # Eyecta de Create React App (no recomendado)
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🐛 Debugging
+
+Para debuggear en desarrollo:
+
+1. Abre Chrome DevTools
+2. Ve a Sources → Webpack → src
+3. Añade breakpoints en tu código
+4. Usa console.log para debugging rápido
+
+## 📝 Commits y Versionado
+
+Usa commits semánticos:
+```bash
+feat: nueva funcionalidad
+fix: corrección de bugs
+docs: cambios en documentación
+style: cambios de formato
+refactor: refactorización de código
+test: añadir tests
+chore: tareas de mantenimiento
+```
+
+## 🤝 Contribuir
+
+1. Fork el proyecto
+2. Crea tu feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'feat: Add some AmazingFeature'`)
+4. Push al branch (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Distribuido bajo licencia MIT. Ver `LICENSE` para más información.
+
+## 📞 Contacto
+
+GrupLomi - [info@gruplomi.com](mailto:info@gruplomi.com)
+
+Link del Proyecto: [https://github.com/tu-usuario/gruplomi-expense-system](https://github.com/tu-usuario/gruplomi-expense-system)
+
+## 🙏 Agradecimientos
+
+- [React](https://reactjs.org/)
+- [Vercel](https://vercel.com/)
+- [Lucide Icons](https://lucide.dev/)
+- [Create React App](https://create-react-app.dev/)
+
+---
+
+⭐ Si este proyecto te ha sido útil, considera darle una estrella en GitHub!
