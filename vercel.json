@@ -18,9 +18,5 @@
   ],
   "buildCommand": "npm run build",
   "outputDirectory": "build",
-  "framework": "create-react-app",
-  "environmentVariables": {
-    "REACT_APP_API_URL": "@gruplomi-api-url",
-    "REACT_APP_ENVIRONMENT": "production"
-  }
+  "framework": "create-react-app"
 }
