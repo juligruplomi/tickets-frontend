@@ -174,243 +174,6 @@ function ConfigPage() {
               <div className={`alert ${message.includes('Error') ? 'alert-danger' : 'alert-success'}`}>
                 {message}
               </div>
-              
-              {/* Recordatorios automáticos */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Recordatorios Automáticos</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1.5rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.recordatorios?.habilitados || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              recordatorios: {
-                                ...prev.notificaciones?.recordatorios,
-                                habilitados: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Habilitar recordatorios automáticos
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Recordar gastos pendientes de aprobación cada:</label>
-                    <select
-                      value={formData.notificaciones?.recordatorios?.frecuencia_pendientes || 'diario'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              frecuencia_pendientes: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    >
-                      <option value="nunca">Nunca</option>
-                      <option value="diario">Diariamente</option>
-                      <option value="cada_2_dias">Cada 2 días</option>
-                      <option value="semanal">Semanalmente</option>
-                    </select>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Hora para enviar recordatorios:</label>
-                    <input
-                      type="time"
-                      value={formData.notificaciones?.recordatorios?.hora || '09:00'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              hora: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '150px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Días de aviso antes de vencimiento:</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={formData.notificaciones?.recordatorios?.dias_aviso || 3}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              dias_aviso: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '150px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Aviso previo antes de que los gastos se aprueben automáticamente
-                    </small>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Configuración SMTP */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Configuración del Servidor SMTP</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1.5rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div style={{ 
-                    padding: '1rem',
-                    background: 'rgba(255, 193, 7, 0.1)',
-                    border: '1px solid rgba(255, 193, 7, 0.3)',
-                    borderRadius: 'var(--border-radius-small)'
-                  }}>
-                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#856404' }}>⚠️ Configuración Avanzada</h5>
-                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#856404' }}>
-                      La configuración del servidor SMTP requiere conocimientos técnicos. 
-                      Contacta con tu administrador de sistemas para configurar estos parámetros.
-                    </p>
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-                    <div className="form-group">
-                      <label className="form-label">Servidor SMTP:</label>
-                      <input
-                        type="text"
-                        value={formData.notificaciones?.smtp?.servidor || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                servidor: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="smtp.gmail.com"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Puerto:</label>
-                      <input
-                        type="number"
-                        value={formData.notificaciones?.smtp?.puerto || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                puerto: parseInt(e.target.value)
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="587"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Usuario:</label>
-                      <input
-                        type="email"
-                        value={formData.notificaciones?.smtp?.usuario || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                usuario: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="notificaciones@gruplomi.com"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.smtp?.ssl_habilitado || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                ssl_habilitado: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Usar conexión segura SSL/TLS
-                    </label>
-                  </div>
-                  
-                  <button
-                    className="button button-secondary"
-                    style={{ fontSize: '0.875rem' }}
-                    onClick={() => setMessage('Funcionalidad de prueba de email disponible próximamente.')}
-                  >
-                    📧 Probar Configuración de Email
-                  </button>
-                </div>
-              </div>
             )}
           </div>
           
@@ -762,64 +525,12 @@ function ConfigPage() {
                   borderRadius: 'var(--border-radius)',
                   background: 'var(--card-background)'
                 }}>
-                  <div className="form-group">
-                    <label className="form-label">Moneda por defecto:</label>
-                    <select
-                      value={formData.gastos?.configuracion?.moneda_defecto || 'EUR'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              moneda_defecto: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    >
-                      <option value="EUR">€ Euro</option>
-                      <option value="USD">$ Dólar</option>
-                      <option value="GBP">£ Libra</option>
-                      <option value="JPY">¥ Yen</option>
-                    </select>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Límite máximo por gasto individual (€):</label>
-                    <input
-                      type="number"
-                      min="1"
-                      step="0.01"
-                      value={formData.gastos?.configuracion?.limite_maximo_gasto || 1000}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          gastos: {
-                            ...prev.gastos,
-                            configuracion: {
-                              ...prev.gastos?.configuracion,
-                              limite_maximo_gasto: parseFloat(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Gastos superiores a este importe requerirán aprobación adicional
-                    </small>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.requiere_justificante_siempre || false}
+                  {/* Primera fila: Moneda y límite máximo */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Moneda por defecto:</label>
+                      <select
+                        value={formData.gastos?.configuracion?.moneda_defecto || 'EUR'}
                         onChange={(e) => {
                           setFormData(prev => ({
                             ...prev,
@@ -827,21 +538,28 @@ function ConfigPage() {
                               ...prev.gastos,
                               configuracion: {
                                 ...prev.gastos?.configuracion,
-                                requiere_justificante_siempre: e.target.checked
+                                moneda_defecto: e.target.value
                               }
                             }
                           }));
                         }}
-                      />
-                      Requiere justificante para todos los gastos
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-checkbox">
+                        className="form-control"
+                      >
+                        <option value="EUR">€ Euro</option>
+                        <option value="USD">$ Dólar</option>
+                        <option value="GBP">£ Libra</option>
+                        <option value="JPY">¥ Yen</option>
+                        <option value="CHF">Fr Francos Suizos</option>
+                      </select>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label className="form-label">Límite máximo por gasto individual:</label>
                       <input
-                        type="checkbox"
-                        checked={formData.gastos?.configuracion?.requiere_aprobacion_supervisor || true}
+                        type="number"
+                        min="1"
+                        step="0.01"
+                        value={formData.gastos?.configuracion?.limite_maximo_gasto || 1000}
                         onChange={(e) => {
                           setFormData(prev => ({
                             ...prev,
@@ -849,14 +567,424 @@ function ConfigPage() {
                               ...prev.gastos,
                               configuracion: {
                                 ...prev.gastos?.configuracion,
-                                requiere_aprobacion_supervisor: e.target.checked
+                                limite_maximo_gasto: parseFloat(e.target.value)
                               }
                             }
                           }));
                         }}
+                        className="form-control"
                       />
-                      Los gastos requieren aprobación del supervisor
-                    </label>
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Gastos superiores requerirán aprobación adicional
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Importe mínimo para justificante:</label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={formData.gastos?.configuracion?.importe_minimo_justificante || 50}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                importe_minimo_justificante: parseFloat(e.target.value)
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                        disabled={formData.gastos?.configuracion?.requiere_justificante_siempre}
+                      />
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Gastos superiores a este importe requieren justificante
+                      </small>
+                    </div>
+                  </div>
+
+                  {/* Segunda fila: Límites temporales */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Días máximos retroactivos:</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="365"
+                        value={formData.gastos?.configuracion?.dias_max_retroactivos || 30}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                dias_max_retroactivos: parseInt(e.target.value)
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      />
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Máximo de días hacia atrás para registrar gastos
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Días límite para aprobación:</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="30"
+                        value={formData.gastos?.configuracion?.dias_limite_aprobacion || 7}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                dias_limite_aprobacion: parseInt(e.target.value)
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      />
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Días para aprobar antes de escalación automática
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Tamaño máximo adjunto (MB):</label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="50"
+                        value={formData.gastos?.configuracion?.tamano_maximo_adjunto || 10}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                tamano_maximo_adjunto: parseInt(e.target.value)
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      />
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Tamaño máximo de archivos adjuntos
+                      </small>
+                    </div>
+                  </div>
+
+                  {/* Separador visual */}
+                  <div style={{ borderTop: '1px solid var(--border-color)', margin: '10px 0' }}></div>
+
+                  {/* Checkboxes de configuración */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.requiere_justificante_siempre || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  requiere_justificante_siempre: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Requiere justificante para todos los gastos
+                      </label>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.requiere_aprobacion_supervisor || true}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  requiere_aprobacion_supervisor: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Los gastos requieren aprobación del supervisor
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.auto_aprobar_gastos_pequenos || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  auto_aprobar_gastos_pequenos: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Auto-aprobar gastos menores a 50€
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.permitir_gastos_futuros || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  permitir_gastos_futuros: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Permitir registrar gastos con fecha futura
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.notificar_aprobaciones || true}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  notificar_aprobaciones: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Notificar aprobaciones y rechazos
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.permitir_edicion_aprobados || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  permitir_edicion_aprobados: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Permitir editar gastos aprobados (solo admin)
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Políticas avanzadas */}
+                  <div style={{ borderTop: '1px solid var(--border-color)', margin: '10px 0' }}></div>
+                  
+                  <h5 style={{ margin: '15px 0 10px 0', fontSize: '1rem', fontWeight: '600' }}>Políticas Avanzadas</h5>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Política de duplicados:</label>
+                      <select
+                        value={formData.gastos?.configuracion?.politica_duplicados || 'advertir'}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                politica_duplicados: e.target.value
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      >
+                        <option value="permitir">Permitir siempre</option>
+                        <option value="advertir">Advertir al usuario</option>
+                        <option value="bloquear">Bloquear duplicados</option>
+                      </select>
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Cómo manejar gastos duplicados (mismo importe y fecha)
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Método de cálculo IVA:</label>
+                      <select
+                        value={formData.gastos?.configuracion?.metodo_iva || 'incluido'}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                metodo_iva: e.target.value
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      >
+                        <option value="incluido">IVA incluido</option>
+                        <option value="separado">IVA separado</option>
+                        <option value="no_aplicar">No aplicar IVA</option>
+                      </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-label">Tipo IVA predeterminado (%):</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        value={formData.gastos?.configuracion?.tipo_iva_defecto || 21}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                tipo_iva_defecto: parseFloat(e.target.value)
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Período de cierre contable */}
+                  <div style={{ borderTop: '1px solid var(--border-color)', margin: '15px 0' }}></div>
+                  
+                  <h5 style={{ margin: '15px 0 10px 0', fontSize: '1rem', fontWeight: '600' }}>Período de Cierre Contable</h5>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                    <div className="form-group">
+                      <label className="form-label">Día de cierre mensual:</label>
+                      <select
+                        value={formData.gastos?.configuracion?.dia_cierre_mensual || 'ultimo'}
+                        onChange={(e) => {
+                          setFormData(prev => ({
+                            ...prev,
+                            gastos: {
+                              ...prev.gastos,
+                              configuracion: {
+                                ...prev.gastos?.configuracion,
+                                dia_cierre_mensual: e.target.value
+                              }
+                            }
+                          }));
+                        }}
+                        className="form-control"
+                      >
+                        <option value="ultimo">Último día del mes</option>
+                        {[...Array(28)].map((_, i) => (
+                          <option key={i + 1} value={i + 1}>Día {i + 1}</option>
+                        ))}
+                      </select>
+                      <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
+                        Día del mes para cerrar el período contable
+                      </small>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.bloquear_periodo_cerrado || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  bloquear_periodo_cerrado: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Bloquear modificaciones en períodos cerrados
+                      </label>
+                    </div>
+
+                    <div className="form-group">
+                      <label className="form-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={formData.gastos?.configuracion?.generar_informe_automatico || false}
+                          onChange={(e) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              gastos: {
+                                ...prev.gastos,
+                                configuracion: {
+                                  ...prev.gastos?.configuracion,
+                                  generar_informe_automatico: e.target.checked
+                                }
+                              }
+                            }));
+                          }}
+                        />
+                        Generar informe automático al cierre
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -934,7 +1062,7 @@ function ConfigPage() {
                         }));
                       }}
                       className="form-control"
-                      placeholder="[{{empresa}}] Gasto {{tipo}}: {{descripcion}}"
+                      placeholder="[{{empresa}}] {{tipo}}: {{titulo}}"
                     />
                     <small style={{ color: 'var(--text-color)', opacity: 0.7, marginTop: '8px', display: 'block' }}>
                       Variables disponibles: {'{empresa}, {tipo}, {descripcion}, {usuario}, {importe}'}
@@ -966,383 +1094,6 @@ function ConfigPage() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
                         <label className="form-checkbox">
                           <input
-                            type="checkbox"
-                            checked={formData.notificaciones?.eventos?.[evento.key] || false}
-                            onChange={(e) => {
-                              setFormData(prev => ({
-                                ...prev,
-                                notificaciones: {
-                                  ...prev.notificaciones,
-                                  eventos: {
-                                    ...prev.notificaciones?.eventos,
-                                    [evento.key]: e.target.checked
-                                  }
-                                }
-                              }));
-                            }}
-                          />
-                          {evento.label}
-                        </label>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-color)', opacity: 0.7 }}>{evento.to}</span>
-                      </div>
-                      <small style={{ color: 'var(--text-color)', opacity: 0.6, marginLeft: '1.5rem' }}>
-                        {evento.description}
-                      </small>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Recordatorios automáticos */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Recordatorios Automáticos</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1.5rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div className="form-group">
-                    <label className="form-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={formData.notificaciones?.recordatorios?.habilitados || false}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              recordatorios: {
-                                ...prev.notificaciones?.recordatorios,
-                                habilitados: e.target.checked
-                              }
-                            }
-                          }));
-                        }}
-                      />
-                      Habilitar recordatorios automáticos
-                    </label>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Recordar gastos pendientes de aprobación cada:</label>
-                    <select
-                      value={formData.notificaciones?.recordatorios?.frecuencia_pendientes || 'diario'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              frecuencia_pendientes: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '200px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    >
-                      <option value="nunca">Nunca</option>
-                      <option value="diario">Diariamente</option>
-                      <option value="cada_2_dias">Cada 2 días</option>
-                      <option value="semanal">Semanalmente</option>
-                    </select>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Hora para enviar recordatorios:</label>
-                    <input
-                      type="time"
-                      value={formData.notificaciones?.recordatorios?.hora || '09:00'}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              hora: e.target.value
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '150px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    />
-                  </div>
-                  
-                  <div className="form-group">
-                    <label className="form-label">Días de aviso antes de vencimiento:</label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="30"
-                      value={formData.notificaciones?.recordatorios?.dias_aviso || 3}
-                      onChange={(e) => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            recordatorios: {
-                              ...prev.notificaciones?.recordatorios,
-                              dias_aviso: parseInt(e.target.value)
-                            }
-                          }
-                        }));
-                      }}
-                      className="form-control"
-                      style={{ maxWidth: '150px' }}
-                      disabled={!formData.notificaciones?.recordatorios?.habilitados}
-                    />
-                    <small style={{ color: 'var(--text-color)', opacity: 0.7, display: 'block', marginTop: '5px' }}>
-                      Aviso previo antes de que los gastos se aprueben automáticamente
-                    </small>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Configuración SMTP */}
-              <div style={{ marginBottom: '30px' }}>
-                <h4 className="section-title">Configuración del Servidor SMTP</h4>
-                <div style={{ 
-                  display: 'grid', 
-                  gap: '1.5rem',
-                  padding: '1.5rem',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: 'var(--border-radius)',
-                  background: 'var(--card-background)'
-                }}>
-                  <div style={{ 
-                    padding: '1rem',
-                    background: 'rgba(255, 193, 7, 0.1)',
-                    border: '1px solid rgba(255, 193, 7, 0.3)',
-                    borderRadius: 'var(--border-radius-small)'
-                  }}>
-                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#856404' }}>⚠️ Configuración Avanzada</h5>
-                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#856404' }}>
-                      La configuración del servidor SMTP requiere conocimientos técnicos. 
-                      Contacta con tu administrador de sistemas para configurar estos parámetros.
-                    </p>
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1rem' }}>
-                    <div className="form-group">
-                      <label className="form-label">Servidor SMTP:</label>
-                      <input
-                        type="text"
-                        value={formData.notificaciones?.smtp?.servidor || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                servidor: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="smtp.gmail.com"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Puerto:</label>
-                      <input
-                        type="number"
-                        value={formData.notificaciones?.smtp?.puerto || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                puerto: parseInt(e.target.value)
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="587"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Usuario:</label>
-                      <input
-                        type="email"
-                        value={formData.notificaciones?.smtp?.usuario || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                usuario: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="notificaciones@gruplomi.com"
-                      />
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Contraseña:</label>
-                      <input
-                        type="password"
-                        value={formData.notificaciones?.smtp?.contraseña || ''}
-                        onChange={(e) => {
-                          setFormData(prev => ({
-                            ...prev,
-                            notificaciones: {
-                              ...prev.notificaciones,
-                              smtp: {
-                                ...prev.notificaciones?.smtp,
-                                contraseña: e.target.value
-                              }
-                            }
-                          }));
-                        }}
-                        className="form-control"
-                        placeholder="••••••••"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div className="form-group">
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.smtp?.ssl_habilitado || false}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                smtp: {
-                                  ...prev.notificaciones?.smtp,
-                                  ssl_habilitado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        Usar SSL (puerto 465)
-                      </label>
-                    </div>
-                    
-                    <div className="form-group">
-                      <label className="form-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={formData.notificaciones?.smtp?.tls_habilitado || true}
-                          onChange={(e) => {
-                            setFormData(prev => ({
-                              ...prev,
-                              notificaciones: {
-                                ...prev.notificaciones,
-                                smtp: {
-                                  ...prev.notificaciones?.smtp,
-                                  tls_habilitado: e.target.checked
-                                }
-                              }
-                            }));
-                          }}
-                        />
-                        Usar TLS (puerto 587)
-                      </label>
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                    <button
-                      className="button button-secondary"
-                      style={{ fontSize: '0.875rem' }}
-                      onClick={() => setMessage('Funcionalidad de prueba de email disponible próximamente.')}
-                    >
-                      📧 Probar Configuración de Email
-                    </button>
-                    
-                    <button
-                      className="button button-outline"
-                      style={{ fontSize: '0.875rem' }}
-                      onClick={() => {
-                        setFormData(prev => ({
-                          ...prev,
-                          notificaciones: {
-                            ...prev.notificaciones,
-                            smtp: {
-                              servidor: 'smtp.gmail.com',
-                              puerto: 587,
-                              usuario: '',
-                              contraseña: '',
-                              ssl_habilitado: false,
-                              tls_habilitado: true
-                            }
-                          }
-                        }));
-                        setMessage('Configuración SMTP restablecida a valores por defecto para Gmail.');
-                        setTimeout(() => setMessage(''), 3000);
-                      }}
-                    >
-                      ⚙️ Configuración por defecto (Gmail)
-                    </button>
-                  </div>
-                  
-                  <div style={{ 
-                    padding: '1rem',
-                    background: 'rgba(13, 202, 240, 0.1)',
-                    border: '1px solid rgba(13, 202, 240, 0.3)',
-                    borderRadius: 'var(--border-radius-small)',
-                    fontSize: '0.875rem'
-                  }}>
-                    <h6 style={{ margin: '0 0 0.5rem 0', color: '#0c5460' }}>📝 Configuraciones comunes:</h6>
-                    <div style={{ display: 'grid', gap: '0.5rem' }}>
-                      <div><strong>Gmail:</strong> smtp.gmail.com, puerto 587 (TLS) o 465 (SSL)</div>
-                      <div><strong>Outlook:</strong> smtp.outlook.com, puerto 587 (TLS)</div>
-                      <div><strong>Yahoo:</strong> smtp.mail.yahoo.com, puerto 587 (TLS)</div>
-                      <div><strong>Custom:</strong> Consulta con tu proveedor de hosting</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '1px solid var(--border-color)' }}>
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="button button-primary"
-              style={{
-                backgroundColor: saving ? '#6c757d' : 'var(--primary-color)',
-                cursor: saving ? 'not-allowed' : 'pointer',
-                fontSize: '16px',
-                padding: '12px 24px'
-              }}
-            >
-              {saving ? 'Guardando...' : 'Guardar Configuración'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default ConfigPage;
                             type="checkbox"
                             checked={formData.notificaciones?.eventos?.[evento.key] || false}
                             onChange={(e) => {
