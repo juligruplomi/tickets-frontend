@@ -290,18 +290,14 @@ function GastosPage() {
                   onClick={() => toggleViewMode('grid')}
                   title="Vista de cuadrícula"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4 4h6v6H4V4zm10 0h6v6h-6V4zM4 14h6v6H4v-6zm10 0h6v6h-6v-6z"/>
-                  </svg>
+                  ⊞
                 </button>
                 <button
                   className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
                   onClick={() => toggleViewMode('list')}
                   title="Vista de lista"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
-                  </svg>
+                  ☰
                 </button>
               </div>
             </div>

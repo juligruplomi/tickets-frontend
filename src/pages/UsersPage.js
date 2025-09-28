@@ -231,14 +231,14 @@ function UsersPage() {
                 onClick={() => setViewMode('grid')}
                 title="Vista Cuadrícula"
               >
-                🗓️
+                ⊞
               </button>
               <button 
                 className={`view-btn ${viewMode === 'list' ? 'active' : ''}`}
                 onClick={() => setViewMode('list')}
                 title="Vista Lista"
               >
-                📋
+                ☰
               </button>
             </div>
             <button 
