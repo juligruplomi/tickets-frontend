@@ -10,6 +10,7 @@ import CreateTicket from './pages/CreateTicket';
 import Users from './pages/Users';
 import ConfigPage from './pages/ConfigPage';
 import RolesPage from './pages/RolesPage';
+import ReportesPage from './pages/ReportesPage';
 import Navbar from './components/Navbar';
 import './App.css';
 
@@ -78,6 +79,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <GastosPage />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/reportes" 
+            element={
+              <ProtectedRoute>
+                <ReportesPage />
               </ProtectedRoute>
             } 
           />
