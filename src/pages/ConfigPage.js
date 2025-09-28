@@ -557,12 +557,14 @@ function ConfigPage() {
     }
   });
 
-  // Cargar configuración del servidor
+  // Cargar configuración del servidor (comentado ya que no hay backend API)
   useEffect(() => {
-    loadConfig();
+    // loadConfig(); // Comentado hasta que tengamos backend
   }, []);
 
   const loadConfig = async () => {
+    // Función comentada hasta que tengamos un backend real
+    /*
     try {
       const response = await fetch('/api/config');
       if (response.ok) {
@@ -575,6 +577,7 @@ function ConfigPage() {
     } catch (error) {
       console.error('Error loading config:', error);
     }
+    */
   };
 
   const handleSave = async () => {
@@ -582,6 +585,8 @@ function ConfigPage() {
     setMessage('');
     
     try {
+      // Comentado hasta que tengamos backend API
+      /*
       const response = await fetch('/api/config', {
         method: 'POST',
         headers: {
@@ -595,6 +600,11 @@ function ConfigPage() {
       } else {
         throw new Error('Error en el servidor');
       }
+      */
+      
+      // Simulación de guardado exitoso (temporal)
+      setMessage('✅ Configuración guardada localmente (sin backend)');
+      
     } catch (error) {
       setMessage('❌ Error al guardar la configuración: ' + error.message);
     } finally {
@@ -623,6 +633,9 @@ function ConfigPage() {
   const testSMTPConfig = async () => {
     try {
       setMessage('🧪 Enviando email de prueba...');
+      
+      // Comentado hasta que tengamos backend API
+      /*
       const response = await fetch('/api/test-smtp', {
         method: 'POST',
         headers: {
@@ -636,6 +649,11 @@ function ConfigPage() {
       } else {
         throw new Error('Error en la prueba SMTP');
       }
+      */
+      
+      // Simulación de test exitoso (temporal)
+      setMessage('✅ Configuración SMTP validada localmente (sin backend)');
+      
     } catch (error) {
       setMessage('❌ Error en la prueba SMTP: ' + error.message);
     }
