@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 function Login() {
   const [formData, setFormData] = useState({
-    email: 'admin@gruplomi.com',
-    password: 'admin123'
+    email: '',
+    password: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,12 +40,8 @@ function Login() {
     setLoading(false);
   };
 
-  const testUsers = [
-    { email: 'admin@gruplomi.com', password: 'admin123', role: 'Administrador' },
-    { email: 'supervisor@gruplomi.com', password: 'super123', role: 'Supervisor' },
-    { email: 'operario@gruplomi.com', password: 'opera123', role: 'Operario' },
-    { email: 'contabilidad@gruplomi.com', password: 'conta123', role: 'Contabilidad' }
-  ];
+  // Usuarios de prueba eliminados por seguridad
+  const testUsers = [];
 
   const setTestUser = (user) => {
     setFormData({
@@ -109,26 +105,8 @@ function Login() {
           </button>
         </form>
         
-        <div className="test-users">
-          <p><strong>Usuarios de prueba:</strong></p>
-          <div className="test-users-grid">
-            {testUsers.map((user, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setTestUser(user)}
-                className="test-user-btn"
-                disabled={loading}
-              >
-                <div className="test-user-role">{user.role}</div>
-                <div className="test-user-email">{user.email}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-        
         <div className="login-footer">
-          <p><small>Haz clic en cualquier usuario para cargar sus credenciales</small></p>
+          <p><small>© 2025 GrupLomi - Sistema de Gestión de Gastos</small></p>
         </div>
       </div>
     </div>
