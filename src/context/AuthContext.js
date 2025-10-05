@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { api, authAPI } from '../services/api';
+import { authService } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -18,33 +18,34 @@ export function AuthProvider({ children }) {
 
   // Verificar si hay token al cargar la página
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      // Intentar obtener info del usuario
-      authAPI.me().then(response => {
-        setUser(response.data);
-        setIsAuthenticated(true);
-      }).catch(() => {
-        // Token inválido, limpiar
-        localStorage.removeItem('token');
-        delete api.defaults.headers.common['Authorization'];
-      });
-    }
-    setLoading(false);
+    const checkAuth = async () => {
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
+      
+      if (token && savedUser) {
+        try {
+          // Verificar que el token sigue siendo válido
+          const response = await authService.getMe();
+          setUser(response.data);
+          setIsAuthenticated(true);
+        } catch (error) {
+          // Token inválido, limpiar
+          authService.logout();
+        }
+      }
+      setLoading(false);
+    };
+
+    checkAuth();
   }, []);
 
   const login = async (email, password) => {
     setLoading(true);
     try {
-      // Usar la función del authAPI que ya corregimos
-      const response = await authAPI.login(email, password);
+      const response = await authService.login(email, password);
 
-      if (response.data && response.data.access_token) {
-        const token = response.data.access_token;
-        localStorage.setItem('token', token);
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        setUser(response.data.user);
+      if (response.access_token) {
+        setUser(response.user);
         setIsAuthenticated(true);
         setLoading(false);
         return { success: true };
@@ -57,14 +58,13 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return { 
         success: false, 
-        error: error.response?.data?.error || 'Credenciales incorrectas' 
+        error: error.response?.data?.detail || 'Credenciales incorrectas' 
       };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    delete api.defaults.headers.common['Authorization'];
+    authService.logout();
     setUser(null);
     setIsAuthenticated(false);
   };

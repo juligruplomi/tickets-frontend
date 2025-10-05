@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useConfig } from '../context/ConfigContext';
-import { api } from '../services/api';
+import { gastosService } from '../services/api';
 
 function GastosPage() {
   const { user } = useAuth();
@@ -41,8 +41,7 @@ function GastosPage() {
   const loadGastos = async () => {
     try {
       setLoading(true);
-      const endpoint = user?.role === 'operario' ? '/gastos/mis-gastos' : '/gastos';
-      const response = await api.get(endpoint);
+      const response = await gastosService.getAll();
       setGastos(response.data);
     } catch (error) {
       console.error('Error loading gastos:', error);
@@ -92,7 +91,7 @@ function GastosPage() {
         }
       }
       
-      const response = await api.post('/gastos', gastoData);
+      const response = await gastosService.create(gastoData);
       setGastos([response.data, ...gastos]);
       setNewGasto({
         tipo_gasto: 'dieta',
@@ -120,7 +119,7 @@ function GastosPage() {
         updates.precio_km = parseFloat(updates.precio_km);
       }
       
-      const response = await api.put(`/gastos/${gastoId}`, updates);
+      const response = await gastosService.update(gastoId, updates);
       setGastos(gastos.map(g => g.id === gastoId ? response.data : g));
       setEditingGasto(null);
       alert('Gasto actualizado correctamente');
@@ -132,10 +131,9 @@ function GastosPage() {
 
   const aprobarGasto = async (gastoId, accion, observaciones = '') => {
     try {
-      const response = await api.put(`/gastos/${gastoId}/aprobar`, {
-        accion,
-        observaciones
-      });
+      const response = accion === 'aprobar' 
+        ? await gastosService.aprobar(gastoId)
+        : await gastosService.rechazar(gastoId, observaciones);
       setGastos(gastos.map(g => g.id === gastoId ? response.data : g));
       alert(`Gasto ${accion === 'aprobar' ? 'aprobado' : 'rechazado'} correctamente`);
     } catch (error) {
@@ -147,7 +145,7 @@ function GastosPage() {
   const deleteGasto = async (gastoId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este gasto?')) {
       try {
-        await api.delete(`/gastos/${gastoId}`);
+        await gastosService.delete(gastoId);
         setGastos(gastos.filter(g => g.id !== gastoId));
         alert('Gasto eliminado correctamente');
       } catch (error) {

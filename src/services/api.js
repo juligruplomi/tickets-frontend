@@ -1,86 +1,106 @@
+// Configuración de la API
 import axios from 'axios';
 
-// Configuración base de la API usando variable de entorno
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// URL del backend correcto en Vercel
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://tickets-alpha-pink.vercel.app';
 
-export const api = axios.create({
+console.log('🌐 API_BASE_URL:', API_BASE_URL);
+
+// Crear instancia de axios
+const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 30000,
 });
 
-// Interceptor para manejar errores
+// Interceptor para añadir token a todas las peticiones
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Interceptor para manejar errores de respuesta
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       // Token expirado o inválido
       localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
+      localStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
   }
 );
 
-// Funciones específicas para la API
-export const authAPI = {
-  login: (email, password) => {
-    // Cambiar a JSON en lugar de FormData
-    return api.post('/auth/login', {
-      username: email,
-      password: password
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+// ==================== FUNCIONES DE AUTENTICACIÓN ====================
+
+export const authService = {
+  login: async (email, password) => {
+    const response = await api.post('/auth/login', { email, password });
+    if (response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
   },
-  
-  me: () => 
-    api.get('/auth/me'),
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  },
+
+  getCurrentUser: () => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  },
+
+  isAuthenticated: () => {
+    return !!localStorage.getItem('token');
+  },
+
+  getMe: () => api.get('/auth/me'),
 };
 
-export const ticketsAPI = {
-  getAll: (params = {}) => 
-    api.get('/tickets', { params }),
-  
-  getById: (id) => 
-    api.get(`/tickets/${id}`),
-  
-  create: (data) => 
-    api.post('/tickets', data),
-  
-  update: (id, data) => 
-    api.put(`/tickets/${id}`, data),
-  
-  delete: (id) => 
-    api.delete(`/tickets/${id}`),
-  
-  updateStatus: (id, status) =>
-    api.patch(`/tickets/${id}/status`, { status }),
+// ==================== FUNCIONES DE USUARIOS ====================
+
+export const userService = {
+  getAll: () => api.get('/usuarios'),
+  getById: (id) => api.get(`/usuarios/${id}`),
+  create: (userData) => api.post('/usuarios', userData),
+  update: (id, userData) => api.put(`/usuarios/${id}`, userData),
+  delete: (id) => api.delete(`/usuarios/${id}`),
 };
 
-export const usersAPI = {
-  getAll: (params = {}) => 
-    api.get('/usuarios', { params }),
-  
-  getById: (id) => 
-    api.get(`/usuarios/${id}`),
-  
-  create: (data) => 
-    api.post('/usuarios', data),
-  
-  update: (id, data) => 
-    api.put(`/usuarios/${id}`, data),
-  
-  delete: (id) => 
-    api.delete(`/usuarios/${id}`),
+// ==================== FUNCIONES DE GASTOS ====================
+
+export const gastosService = {
+  getAll: (params = {}) => api.get('/gastos', { params }),
+  getById: (id) => api.get(`/gastos/${id}`),
+  create: (gastoData) => api.post('/gastos', gastoData),
+  update: (id, gastoData) => api.put(`/gastos/${id}`, gastoData),
+  delete: (id) => api.delete(`/gastos/${id}`),
+  aprobar: (id) => api.put(`/gastos/${id}`, { estado: 'aprobado' }),
+  rechazar: (id, comentarios) => api.put(`/gastos/${id}`, { estado: 'rechazado', comentarios }),
 };
 
-export const configAPI = {
-  get: () => 
-    api.get('/config'),
-  
-  update: (data) => 
-    api.put('/config', data),
+// ==================== FUNCIONES DE CONFIGURACIÓN ====================
+
+export const configService = {
+  getSystemConfig: () => api.get('/config/sistema'),
+  getAdminConfig: () => api.get('/config/admin'),
 };
+
+// Exportar la instancia de axios por si se necesita usar directamente
+export default api;
