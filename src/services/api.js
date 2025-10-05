@@ -102,5 +102,6 @@ export const configService = {
   getAdminConfig: () => api.get('/config/admin'),
 };
 
-// Exportar la instancia de axios por si se necesita usar directamente
+// Exportar tanto como default como named export
 export default api;
+export { api };
