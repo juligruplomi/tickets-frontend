@@ -240,14 +240,12 @@ function GastosPage() {
             </h2>
           </div>
           <div className="dashboard-controls">
-            {(user?.role === 'operario' || user?.role === 'administrador') && (
-              <button 
-                className="button button-primary"
-                onClick={() => setShowCreateModal(true)}
-              >
-                + Nuevo Gasto
-              </button>
-            )}
+            <button 
+              className="button button-primary"
+              onClick={() => setShowCreateModal(true)}
+            >
+              ➕ Nuevo Gasto
+            </button>
           </div>
         </div>
         
