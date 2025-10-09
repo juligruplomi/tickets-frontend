@@ -1,0 +1,562 @@
+/* ========================================
+   GASTOS PAGE - ESTILO APPLE
+   ======================================== */
+
+.gastos-page {
+  padding: var(--spacing-xl);
+  max-width: var(--container-2xl);
+  margin: 0 auto;
+  background: var(--bg-secondary);
+  min-height: 100vh;
+  font-family: var(--font-family);
+}
+
+/* Header */
+.gastos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+}
+
+.gastos-title {
+  font-size: var(--text-4xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+
+.btn-new-gasto {
+  padding: 12px 24px;
+  background: var(--apple-blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.btn-new-gasto:hover {
+  background: var(--apple-blue-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Filtros */
+.gastos-filters {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-6);
+  border: 1px solid var(--border-light);
+  display: flex;
+  gap: var(--spacing-4);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  flex: 1;
+  min-width: 200px;
+}
+
+.filter-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.filter-select {
+  padding: 10px 14px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  transition: all var(--transition-base);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px var(--apple-blue-light);
+}
+
+/* View controls */
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.view-toggle {
+  display: flex;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 2px;
+  border: 1px solid var(--border-light);
+}
+
+.view-btn {
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-sm);
+}
+
+.view-btn.active {
+  background: var(--bg-primary);
+  color: var(--apple-blue);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Grid view */
+.gastos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-6);
+}
+
+.gasto-card {
+  background: var(--bg-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.gasto-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--apple-blue);
+  transform: scaleY(0);
+  transition: transform var(--transition-base);
+}
+
+.gasto-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: var(--apple-blue);
+}
+
+.gasto-card:hover::before {
+  transform: scaleY(1);
+}
+
+/* Gasto header */
+.gasto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-4);
+}
+
+.gasto-id {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--apple-blue);
+}
+
+.gasto-badges {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+}
+
+.gasto-badge,
+.estado-badge {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+}
+
+.estado-pendiente {
+  background: var(--apple-orange);
+  color: white;
+}
+
+.estado-aprobado {
+  background: var(--apple-green);
+  color: white;
+}
+
+.estado-rechazado {
+  background: var(--apple-red);
+  color: white;
+}
+
+.estado-pagado {
+  background: var(--apple-blue);
+  color: white;
+}
+
+/* Gasto content */
+.gasto-content {
+  margin-bottom: var(--spacing-5);
+}
+
+.gasto-descripcion,
+.gasto-concepto {
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-3) 0;
+  line-height: var(--leading-snug);
+}
+
+.gasto-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.gasto-meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* Gasto amount */
+.gasto-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-4);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-4);
+}
+
+.amount-label {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-medium);
+}
+
+.amount-value {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--apple-blue);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Gasto actions */
+.gasto-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-light);
+}
+
+.approval-actions,
+.edit-actions {
+  display: flex;
+  gap: var(--spacing-2);
+  justify-content: center;
+}
+
+.btn-gasto {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: var(--font-semibold);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+}
+
+.btn-gasto-success {
+  background: var(--apple-green);
+  color: white;
+}
+
+.btn-gasto-success:hover {
+  background: #2ecc71;
+  transform: translateY(-1px);
+}
+
+.btn-gasto-danger {
+  background: var(--apple-red);
+  color: white;
+}
+
+.btn-gasto-danger:hover {
+  background: #e74c3c;
+  transform: translateY(-1px);
+}
+
+.btn-gasto-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+
+.btn-gasto-secondary:hover {
+  background: var(--border-medium);
+  transform: translateY(-1px);
+}
+
+/* List view */
+.gastos-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.gasto-list-item {
+  display: flex;
+  align-items: center;
+  background: var(--bg-primary);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-5);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  transition: all var(--transition-base);
+}
+
+.gasto-list-item:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--apple-blue);
+}
+
+.gasto-list-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.gasto-list-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-6);
+  flex-shrink: 0;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-backdrop);
+  padding: var(--spacing-4);
+  backdrop-filter: blur(var(--blur-sm));
+}
+
+.modal-content {
+  background: var(--bg-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-modal);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scaleIn 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-6);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.modal-title {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--bg-tertiary);
+  border-radius: 50%;
+  color: var(--text-primary);
+  font-size: var(--text-xl);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover {
+  background: var(--apple-red);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  padding: var(--spacing-6);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6);
+  border-top: 1px solid var(--border-light);
+}
+
+/* Form inside modal */
+.gasto-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-primary);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  padding: 12px 16px;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  transition: all var(--transition-base);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--apple-blue);
+  box-shadow: 0 0 0 3px var(--apple-blue-light);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gastos-page {
+    padding: var(--spacing-4);
+  }
+
+  .gastos-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-4);
+  }
+
+  .gastos-title {
+    font-size: var(--text-3xl);
+  }
+
+  .btn-new-gasto {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .gastos-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-item {
+    min-width: auto;
+  }
+
+  .gastos-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-4);
+  }
+
+  .gasto-card {
+    padding: var(--spacing-4);
+  }
+
+  .gasto-list-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-4);
+  }
+
+  .gasto-list-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-3);
+  }
+
+  .approval-actions,
+  .edit-actions {
+    flex-direction: column;
+  }
+
+  .modal-content {
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .gastos-title {
+    font-size: var(--text-2xl);
+  }
+
+  .gasto-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-3);
+  }
+
+  .gasto-badges {
+    align-self: flex-end;
+  }
+}
