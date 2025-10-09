@@ -47,7 +47,7 @@ function AdminRoute({ children }) {
     return <Navigate to="/login" />;
   }
   
-  if (user?.role !== 'administrador') {
+  if (user?.role !== 'administrador' && user?.role !== 'admin') {
     return <Navigate to="/dashboard" />;
   }
   

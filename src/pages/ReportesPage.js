@@ -23,7 +23,7 @@ function ReportesPage() {
 
   const loadUsuarios = async () => {
     try {
-      if (user?.role === 'administrador') {
+      if (user?.role === 'administrador' || user?.role === 'admin') {
         const response = await api.get('/usuarios');
         setUsuarios(response.data);
       }
@@ -100,7 +100,7 @@ function ReportesPage() {
 
   const totales = calcularTotales();
 
-  if (user?.role !== 'administrador' && user?.role !== 'supervisor' && user?.role !== 'contabilidad') {
+  if (user?.role !== 'administrador' && user?.role !== 'admin' && user?.role !== 'supervisor' && user?.role !== 'contabilidad') {
     return (
       <div className="container">
         <div className="card">
@@ -177,7 +177,7 @@ function ReportesPage() {
                 </select>
               </div>
 
-              {user?.role === 'administrador' && (
+              {(user?.role === 'administrador' || user?.role === 'admin') && (
                 <div className="filter-group">
                   <label>Usuario:</label>
                   <select
