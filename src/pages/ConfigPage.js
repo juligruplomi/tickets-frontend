@@ -83,37 +83,421 @@ function ConfigPage() {
     },
     idioma: {
       predeterminado: 'es',
-      idiomas_disponibles: ['es', 'en', 'ca'],
+      idiomas_disponibles: ['es', 'en', 'ca', 'de', 'it', 'pt'],
       traducciones: {
         es: {
+          // Navegación
           gastos: 'Gastos',
           nuevo_gasto: 'Nuevo Gasto',
+          mis_gastos: 'Mis Gastos',
+          crear_gasto: 'Crear Gasto',
+          editar_gasto: 'Editar Gasto',
+          eliminar_gasto: 'Eliminar Gasto',
+          aprobar_gasto: 'Aprobar Gasto',
+          rechazar_gasto: 'Rechazar Gasto',
           dashboard: 'Panel de Control',
           usuarios: 'Usuarios',
           configuracion: 'Configuración',
           reportes: 'Reportes',
+          cerrar_sesion: 'Cerrar Sesión',
+          
+          // Campos de formulario
+          tipo_gasto: 'Tipo de Gasto',
+          descripcion: 'Descripción',
+          importe: 'Importe',
+          fecha: 'Fecha',
+          estado: 'Estado',
+          justificante: 'Justificante',
+          observaciones: 'Observaciones',
+          categoria: 'Categoría',
+          proyecto: 'Proyecto',
+          cliente: 'Cliente',
+          
+          // Estados
+          pendiente: 'Pendiente',
+          aprobado: 'Aprobado',
+          rechazado: 'Rechazado',
+          pagado: 'Pagado',
+          
+          // Categorías
+          dietas: 'Dietas',
+          combustible: 'Combustible',
+          aparcamiento: 'Aparcamiento',
+          alojamiento: 'Alojamiento',
+          transporte: 'Transporte',
+          material_oficina: 'Material de Oficina',
+          formacion: 'Formación',
+          otros: 'Otros',
+          
+          // Acciones
           guardar: 'Guardar',
-          cancelar: 'Cancelar'
+          cancelar: 'Cancelar',
+          buscar: 'Buscar',
+          filtrar: 'Filtrar',
+          exportar: 'Exportar',
+          imprimir: 'Imprimir',
+          actualizar: 'Actualizar',
+          eliminar: 'Eliminar',
+          
+          // Mensajes
+          exito: 'Operación exitosa',
+          error: 'Error en la operación',
+          confirmacion: '¿Está seguro?',
+          sin_resultados: 'No se encontraron resultados',
+          cargando: 'Cargando...',
+          
+          // Configuración
+          empresa: 'Empresa',
+          notificaciones: 'Notificaciones',
+          idiomas: 'Idiomas',
+          tema: 'Tema',
+          oscuro: 'Oscuro',
+          claro: 'Claro'
         },
         en: {
+          // Navigation
           gastos: 'Expenses',
           nuevo_gasto: 'New Expense',
+          mis_gastos: 'My Expenses',
+          crear_gasto: 'Create Expense',
+          editar_gasto: 'Edit Expense',
+          eliminar_gasto: 'Delete Expense',
+          aprobar_gasto: 'Approve Expense',
+          rechazar_gasto: 'Reject Expense',
           dashboard: 'Dashboard',
           usuarios: 'Users',
           configuracion: 'Settings',
           reportes: 'Reports',
+          cerrar_sesion: 'Logout',
+          
+          // Form fields
+          tipo_gasto: 'Expense Type',
+          descripcion: 'Description',
+          importe: 'Amount',
+          fecha: 'Date',
+          estado: 'Status',
+          justificante: 'Receipt',
+          observaciones: 'Notes',
+          categoria: 'Category',
+          proyecto: 'Project',
+          cliente: 'Client',
+          
+          // States
+          pendiente: 'Pending',
+          aprobado: 'Approved',
+          rechazado: 'Rejected',
+          pagado: 'Paid',
+          
+          // Categories
+          dietas: 'Meals',
+          combustible: 'Fuel',
+          aparcamiento: 'Parking',
+          alojamiento: 'Accommodation',
+          transporte: 'Transport',
+          material_oficina: 'Office Supplies',
+          formacion: 'Training',
+          otros: 'Other',
+          
+          // Actions
           guardar: 'Save',
-          cancelar: 'Cancel'
+          cancelar: 'Cancel',
+          buscar: 'Search',
+          filtrar: 'Filter',
+          exportar: 'Export',
+          imprimir: 'Print',
+          actualizar: 'Update',
+          eliminar: 'Delete',
+          
+          // Messages
+          exito: 'Operation successful',
+          error: 'Operation failed',
+          confirmacion: 'Are you sure?',
+          sin_resultados: 'No results found',
+          cargando: 'Loading...',
+          
+          // Settings
+          empresa: 'Company',
+          notificaciones: 'Notifications',
+          idiomas: 'Languages',
+          tema: 'Theme',
+          oscuro: 'Dark',
+          claro: 'Light'
         },
         ca: {
+          // Navegació
           gastos: 'Despeses',
           nuevo_gasto: 'Nova Despesa',
+          mis_gastos: 'Les Meves Despeses',
+          crear_gasto: 'Crear Despesa',
+          editar_gasto: 'Editar Despesa',
+          eliminar_gasto: 'Eliminar Despesa',
+          aprobar_gasto: 'Aprovar Despesa',
+          rechazar_gasto: 'Rebutjar Despesa',
           dashboard: 'Tauler',
           usuarios: 'Usuaris',
           configuracion: 'Configuració',
           reportes: 'Informes',
+          cerrar_sesion: 'Tancar Sessió',
+          
+          // Camps de formulari
+          tipo_gasto: 'Tipus de Despesa',
+          descripcion: 'Descripció',
+          importe: 'Import',
+          fecha: 'Data',
+          estado: 'Estat',
+          justificante: 'Justificant',
+          observaciones: 'Observacions',
+          categoria: 'Categoria',
+          proyecto: 'Projecte',
+          cliente: 'Client',
+          
+          // Estats
+          pendiente: 'Pendent',
+          aprobado: 'Aprovat',
+          rechazado: 'Rebutjat',
+          pagado: 'Pagat',
+          
+          // Categories
+          dietas: 'Dietes',
+          combustible: 'Combustible',
+          aparcamiento: 'Aparcament',
+          alojamiento: 'Allotjament',
+          transporte: 'Transport',
+          material_oficina: 'Material d\'Oficina',
+          formacion: 'Formació',
+          otros: 'Altres',
+          
+          // Accions
           guardar: 'Desar',
-          cancelar: 'Cancel·lar'
+          cancelar: 'Cancel·lar',
+          buscar: 'Cercar',
+          filtrar: 'Filtrar',
+          exportar: 'Exportar',
+          imprimir: 'Imprimir',
+          actualizar: 'Actualitzar',
+          eliminar: 'Eliminar',
+          
+          // Missatges
+          exito: 'Operació exitosa',
+          error: 'Error en l\'operació',
+          confirmacion: 'Esteu segur?',
+          sin_resultados: 'No s\'han trobat resultats',
+          cargando: 'Carregant...',
+          
+          // Configuració
+          empresa: 'Empresa',
+          notificaciones: 'Notificacions',
+          idiomas: 'Idiomes',
+          tema: 'Tema',
+          oscuro: 'Fosc',
+          claro: 'Clar'
+        },
+        de: {
+          // Navigation
+          gastos: 'Ausgaben',
+          nuevo_gasto: 'Neue Ausgabe',
+          mis_gastos: 'Meine Ausgaben',
+          crear_gasto: 'Ausgabe Erstellen',
+          editar_gasto: 'Ausgabe Bearbeiten',
+          eliminar_gasto: 'Ausgabe Löschen',
+          aprobar_gasto: 'Ausgabe Genehmigen',
+          rechazar_gasto: 'Ausgabe Ablehnen',
+          dashboard: 'Dashboard',
+          usuarios: 'Benutzer',
+          configuracion: 'Einstellungen',
+          reportes: 'Berichte',
+          cerrar_sesion: 'Abmelden',
+          
+          // Formularfelder
+          tipo_gasto: 'Ausgabenart',
+          descripcion: 'Beschreibung',
+          importe: 'Betrag',
+          fecha: 'Datum',
+          estado: 'Status',
+          justificante: 'Beleg',
+          observaciones: 'Bemerkungen',
+          categoria: 'Kategorie',
+          proyecto: 'Projekt',
+          cliente: 'Kunde',
+          
+          // Stati
+          pendiente: 'Ausstehend',
+          aprobado: 'Genehmigt',
+          rechazado: 'Abgelehnt',
+          pagado: 'Bezahlt',
+          
+          // Kategorien
+          dietas: 'Verpflegung',
+          combustible: 'Kraftstoff',
+          aparcamiento: 'Parken',
+          alojamiento: 'Unterkunft',
+          transporte: 'Transport',
+          material_oficina: 'Büromaterial',
+          formacion: 'Schulung',
+          otros: 'Sonstige',
+          
+          // Aktionen
+          guardar: 'Speichern',
+          cancelar: 'Abbrechen',
+          buscar: 'Suchen',
+          filtrar: 'Filtern',
+          exportar: 'Exportieren',
+          imprimir: 'Drucken',
+          actualizar: 'Aktualisieren',
+          eliminar: 'Löschen',
+          
+          // Nachrichten
+          exito: 'Operation erfolgreich',
+          error: 'Fehler bei der Operation',
+          confirmacion: 'Sind Sie sicher?',
+          sin_resultados: 'Keine Ergebnisse gefunden',
+          cargando: 'Laden...',
+          
+          // Einstellungen
+          empresa: 'Unternehmen',
+          notificaciones: 'Benachrichtigungen',
+          idiomas: 'Sprachen',
+          tema: 'Theme',
+          oscuro: 'Dunkel',
+          claro: 'Hell'
+        },
+        it: {
+          // Navigazione
+          gastos: 'Spese',
+          nuevo_gasto: 'Nuova Spesa',
+          mis_gastos: 'Le Mie Spese',
+          crear_gasto: 'Crea Spesa',
+          editar_gasto: 'Modifica Spesa',
+          eliminar_gasto: 'Elimina Spesa',
+          aprobar_gasto: 'Approva Spesa',
+          rechazar_gasto: 'Rifiuta Spesa',
+          dashboard: 'Dashboard',
+          usuarios: 'Utenti',
+          configuracion: 'Impostazioni',
+          reportes: 'Report',
+          cerrar_sesion: 'Disconnetti',
+          
+          // Campi modulo
+          tipo_gasto: 'Tipo di Spesa',
+          descripcion: 'Descrizione',
+          importe: 'Importo',
+          fecha: 'Data',
+          estado: 'Stato',
+          justificante: 'Ricevuta',
+          observaciones: 'Osservazioni',
+          categoria: 'Categoria',
+          proyecto: 'Progetto',
+          cliente: 'Cliente',
+          
+          // Stati
+          pendiente: 'In Attesa',
+          aprobado: 'Approvato',
+          rechazado: 'Rifiutato',
+          pagado: 'Pagato',
+          
+          // Categorie
+          dietas: 'Pasti',
+          combustible: 'Carburante',
+          aparcamiento: 'Parcheggio',
+          alojamiento: 'Alloggio',
+          transporte: 'Trasporto',
+          material_oficina: 'Materiale d\'Ufficio',
+          formacion: 'Formazione',
+          otros: 'Altro',
+          
+          // Azioni
+          guardar: 'Salva',
+          cancelar: 'Annulla',
+          buscar: 'Cerca',
+          filtrar: 'Filtra',
+          exportar: 'Esporta',
+          imprimir: 'Stampa',
+          actualizar: 'Aggiorna',
+          eliminar: 'Elimina',
+          
+          // Messaggi
+          exito: 'Operazione riuscita',
+          error: 'Errore nell\'operazione',
+          confirmacion: 'Sei sicuro?',
+          sin_resultados: 'Nessun risultato trovato',
+          cargando: 'Caricamento...',
+          
+          // Impostazioni
+          empresa: 'Azienda',
+          notificaciones: 'Notifiche',
+          idiomas: 'Lingue',
+          tema: 'Tema',
+          oscuro: 'Scuro',
+          claro: 'Chiaro'
+        },
+        pt: {
+          // Navegação
+          gastos: 'Despesas',
+          nuevo_gasto: 'Nova Despesa',
+          mis_gastos: 'Minhas Despesas',
+          crear_gasto: 'Criar Despesa',
+          editar_gasto: 'Editar Despesa',
+          eliminar_gasto: 'Excluir Despesa',
+          aprobar_gasto: 'Aprovar Despesa',
+          rechazar_gasto: 'Rejeitar Despesa',
+          dashboard: 'Painel',
+          usuarios: 'Usuários',
+          configuracion: 'Configurações',
+          reportes: 'Relatórios',
+          cerrar_sesion: 'Sair',
+          
+          // Campos de formulário
+          tipo_gasto: 'Tipo de Despesa',
+          descripcion: 'Descrição',
+          importe: 'Valor',
+          fecha: 'Data',
+          estado: 'Estado',
+          justificante: 'Comprovante',
+          observaciones: 'Observações',
+          categoria: 'Categoria',
+          proyecto: 'Projeto',
+          cliente: 'Cliente',
+          
+          // Estados
+          pendiente: 'Pendente',
+          aprobado: 'Aprovado',
+          rechazado: 'Rejeitado',
+          pagado: 'Pago',
+          
+          // Categorias
+          dietas: 'Refeições',
+          combustible: 'Combustível',
+          aparcamiento: 'Estacionamento',
+          alojamiento: 'Hospedagem',
+          transporte: 'Transporte',
+          material_oficina: 'Material de Escritório',
+          formacion: 'Formação',
+          otros: 'Outros',
+          
+          // Ações
+          guardar: 'Salvar',
+          cancelar: 'Cancelar',
+          buscar: 'Buscar',
+          filtrar: 'Filtrar',
+          exportar: 'Exportar',
+          imprimir: 'Imprimir',
+          actualizar: 'Atualizar',
+          eliminar: 'Excluir',
+          
+          // Mensagens
+          exito: 'Operação bem-sucedida',
+          error: 'Erro na operação',
+          confirmacion: 'Tem certeza?',
+          sin_resultados: 'Nenhum resultado encontrado',
+          cargando: 'Carregando...',
+          
+          // Configurações
+          empresa: 'Empresa',
+          notificaciones: 'Notificações',
+          idiomas: 'Idiomas',
+          tema: 'Tema',
+          oscuro: 'Escuro',
+          claro: 'Claro'
         }
       }
     }
@@ -702,7 +1086,10 @@ function ConfigPage() {
                   >
                     {lang === 'es' && '🇪🇸 Español'}
                     {lang === 'en' && '🇬🇧 English'}
-                    {lang === 'ca' && '🏴󠁥󠁳󠁣󠁴󠁿 Català'}
+                    {lang === 'ca' && '🏴 Català'}
+                    {lang === 'de' && '🇩🇪 Deutsch'}
+                    {lang === 'it' && '🇮🇹 Italiano'}
+                    {lang === 'pt' && '🇵🇹 Português'}
                   </button>
                 ))}
               </div>
