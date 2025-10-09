@@ -31,7 +31,7 @@ function UsersPage() {
   });
 
   useEffect(() => {
-    if (user?.role === 'administrador') {
+    if (user?.role === 'administrador' || user?.role === 'admin') {
       loadUsers();
     }
   }, [user]);
@@ -187,7 +187,7 @@ function UsersPage() {
     return matchesRole && matchesSearch;
   });
 
-  if (user?.role !== 'administrador') {
+  if (user?.role !== 'administrador' && user?.role !== 'admin') {
     return (
       <div className="container">
         <div className="card">
