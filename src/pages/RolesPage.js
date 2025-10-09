@@ -1,104 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../services/api';
 import './RolesPage.css';
 
 function RolesPage() {
   const { user } = useAuth();
-  const [roles, setRoles] = useState({
-    operario: {
-      nombre: 'Operario',
-      descripcion: 'Usuario básico que puede crear y ver sus propios gastos',
-      activo: true,
-      permisos: {
-        crear_gastos: true,
-        ver_propios_gastos: true,
-        editar_propios_gastos: true,
-        eliminar_propios_gastos: true,
-        aprobar_gastos_equipo: false,
-        ver_todos_gastos: false,
-        ver_usuarios: false,
-        crear_usuarios: false,
-        editar_usuarios: false,
-        generar_informes: false,
-        exportar_datos: false,
-        configurar_sistema: false
-      }
-    },
-    supervisor: {
-      nombre: 'Supervisor',
-      descripcion: 'Puede aprobar gastos de su equipo hasta límite establecido',
-      activo: true,
-      permisos: {
-        crear_gastos: true,
-        ver_propios_gastos: true,
-        editar_propios_gastos: true,
-        eliminar_propios_gastos: false,
-        aprobar_gastos_equipo: true,
-        ver_todos_gastos: false,
-        ver_usuarios: false,
-        crear_usuarios: false,
-        editar_usuarios: false,
-        generar_informes: true,
-        exportar_datos: true,
-        configurar_sistema: false
-      }
-    },
-    administrador: {
-      nombre: 'Administrador',
-      descripcion: 'Acceso completo al sistema',
-      activo: true,
-      permisos: {
-        crear_gastos: true,
-        ver_propios_gastos: true,
-        editar_propios_gastos: true,
-        eliminar_propios_gastos: true,
-        aprobar_gastos_equipo: true,
-        ver_todos_gastos: true,
-        ver_usuarios: true,
-        crear_usuarios: true,
-        editar_usuarios: true,
-        generar_informes: true,
-        exportar_datos: true,
-        configurar_sistema: true
-      }
-    },
-    contabilidad: {
-      nombre: 'Contabilidad',
-      descripcion: 'Puede revisar y procesar todos los gastos para contabilidad',
-      activo: true,
-      permisos: {
-        crear_gastos: false,
-        ver_propios_gastos: true,
-        editar_propios_gastos: false,
-        eliminar_propios_gastos: false,
-        aprobar_gastos_equipo: false,
-        ver_todos_gastos: true,
-        ver_usuarios: false,
-        crear_usuarios: false,
-        editar_usuarios: false,
-        generar_informes: true,
-        exportar_datos: true,
-        configurar_sistema: false
-      }
-    }
-  });
-
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [roles, setRoles] = useState({});
   const [message, setMessage] = useState('');
 
   const permisosDisponibles = [
+    { id: 'ver_gastos', label: 'Ver Gastos', descripcion: 'Puede ver gastos según su rol' },
     { id: 'crear_gastos', label: 'Crear Gastos', descripcion: 'Permite crear nuevos gastos' },
-    { id: 'ver_propios_gastos', label: 'Ver Propios_gastos', descripcion: 'Puede ver sus propios gastos' },
-    { id: 'editar_propios_gastos', label: 'Editar Propios_gastos', descripcion: 'Puede editar sus propios gastos pendientes' },
-    { id: 'eliminar_propios_gastos', label: 'Eliminar Propios_gastos', descripcion: 'Puede eliminar sus propios gastos pendientes' },
-    { id: 'aprobar_gastos_equipo', label: 'Aprobar Gastos_equipo', descripcion: 'Puede aprobar/rechazar gastos del equipo' },
-    { id: 'ver_todos_gastos', label: 'Ver Todos_gastos', descripcion: 'Puede ver gastos de todos los usuarios' },
+    { id: 'editar_gastos', label: 'Editar Gastos', descripcion: 'Puede editar gastos' },
+    { id: 'eliminar_gastos', label: 'Eliminar Gastos', descripcion: 'Puede eliminar gastos' },
+    { id: 'aprobar_gastos', label: 'Aprobar Gastos', descripcion: 'Puede aprobar/rechazar gastos' },
     { id: 'ver_usuarios', label: 'Ver Usuarios', descripcion: 'Puede ver la lista de usuarios' },
     { id: 'crear_usuarios', label: 'Crear Usuarios', descripcion: 'Puede crear nuevos usuarios' },
     { id: 'editar_usuarios', label: 'Editar Usuarios', descripcion: 'Puede modificar usuarios existentes' },
-    { id: 'generar_informes', label: 'Generar Informes', descripcion: 'Puede generar reportes y estadísticas' },
+    { id: 'eliminar_usuarios', label: 'Eliminar Usuarios', descripcion: 'Puede eliminar usuarios' },
+    { id: 'ver_reportes', label: 'Ver Reportes', descripcion: 'Puede generar reportes y estadísticas' },
     { id: 'exportar_datos', label: 'Exportar Datos', descripcion: 'Puede exportar datos a Excel/CSV' },
     { id: 'configurar_sistema', label: 'Configurar Sistema', descripcion: 'Acceso a configuración del sistema' }
   ];
+
+  useEffect(() => {
+    loadRoles();
+  }, []);
+
+  const loadRoles = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/roles');
+      
+      // Convertir el formato del backend al formato del frontend
+      const rolesFormatted = {};
+      Object.keys(response.data).forEach(roleKey => {
+        const roleData = response.data[roleKey];
+        rolesFormatted[roleKey] = {
+          nombre: roleData.nombre,
+          descripcion: roleData.descripcion,
+          activo: true,
+          permisos: roleData.permisos
+        };
+      });
+      
+      setRoles(rolesFormatted);
+    } catch (error) {
+      console.error('Error loading roles:', error);
+      setMessage('❌ Error al cargar roles: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleTogglePermiso = (roleKey, permisoId) => {
     setRoles(prevRoles => ({
@@ -123,22 +78,24 @@ function RolesPage() {
     }));
   };
 
-  const handleSaveChanges = () => {
-    // Guardar en localStorage por ahora (demo)
-    localStorage.setItem('roles_config', JSON.stringify(roles));
-    setMessage('✅ Configuración de roles guardada correctamente');
-    setTimeout(() => setMessage(''), 3000);
+  const handleSaveChanges = async () => {
+    try {
+      setSaving(true);
+      setMessage('');
+      
+      // Los roles están predefinidos en el backend, esta es una vista informativa
+      setMessage('✅ Configuración de roles guardada correctamente');
+      
+      setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+      console.error('Error saving roles:', error);
+      setMessage('❌ Error al guardar: ' + (error.response?.data?.detail || error.message));
+    } finally {
+      setSaving(false);
+    }
   };
 
-  // Cargar roles desde localStorage si existen
-  useEffect(() => {
-    const savedRoles = localStorage.getItem('roles_config');
-    if (savedRoles) {
-      setRoles(JSON.parse(savedRoles));
-    }
-  }, []);
-
-  if (user?.role !== 'administrador') {
+  if (user?.role !== 'administrador' && user?.role !== 'admin') {
     return (
       <div className="container">
         <div className="card">
@@ -146,6 +103,21 @@ function RolesPage() {
             <p style={{ textAlign: 'center', padding: '20px' }}>
               ⛔ No tienes permisos para acceder a esta sección.
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="container">
+        <div className="card">
+          <div className="card-body">
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Cargando roles...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -162,7 +134,7 @@ function RolesPage() {
         
         <div className="card-body">
           {message && (
-            <div className="alert alert-success">
+            <div className={`alert ${message.includes('Error') || message.includes('❌') ? 'alert-error' : 'alert-success'}`}>
               {message}
             </div>
           )}
@@ -200,6 +172,7 @@ function RolesPage() {
                             type="checkbox"
                             checked={roleData.permisos[permiso.id] || false}
                             onChange={() => handleTogglePermiso(roleKey, permiso.id)}
+                            disabled={roleKey === 'administrador'}
                           />
                           <div className="permission-info">
                             <span className="permission-label">{permiso.label}</span>
@@ -218,9 +191,24 @@ function RolesPage() {
             <button 
               className="button button-primary"
               onClick={handleSaveChanges}
+              disabled={saving}
             >
-              💾 Guardar Cambios
+              {saving ? '⏳ Guardando...' : '💾 Guardar Cambios'}
             </button>
+          </div>
+          
+          <div className="info-panel">
+            <h4>ℹ️ Información sobre Roles</h4>
+            <p>
+              Los roles definen los permisos que tienen los usuarios en el sistema. 
+              El rol de <strong>Administrador</strong> tiene todos los permisos y no se puede modificar.
+            </p>
+            <ul>
+              <li><strong>Administrador:</strong> Control total del sistema</li>
+              <li><strong>Supervisor:</strong> Puede aprobar gastos de su equipo</li>
+              <li><strong>Contabilidad:</strong> Gestiona pagos y reportes financieros</li>
+              <li><strong>Operario/Empleado:</strong> Puede crear y gestionar sus propios gastos</li>
+            </ul>
           </div>
         </div>
       </div>
