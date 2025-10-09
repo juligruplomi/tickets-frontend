@@ -984,9 +984,98 @@ function ConfigPage() {
               </div>
             </div>
             <div className="config-section">
-              <h4 className="section-subtitle">⚙️ SMTP</h4>
-              <button onClick={configurarGmailDefecto} className="btn btn-secondary">
-                📧 Gmail por defecto
+              <h4 className="section-subtitle">⏰ Recordatorios Automáticos</h4>
+              <div className="form-group">
+                <label className="form-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={formData.notificaciones?.recordatorios?.habilitado}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      notificaciones: {
+                        ...prev.notificaciones,
+                        recordatorios: { ...prev.notificaciones?.recordatorios, habilitado: e.target.checked }
+                      }
+                    }))}
+                  />
+                  Habilitar recordatorios automáticos
+                </label>
+                <small style={{ display: 'block', marginTop: '8px', color: '#6c757d', fontSize: '0.9rem' }}>
+                  Envía recordatorios periódicos sobre gastos pendientes de aprobación
+                </small>
+              </div>
+              {formData.notificaciones?.recordatorios?.habilitado && (
+                <div className="form-grid" style={{ marginTop: '20px', padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                  <div className="form-group">
+                    <label>Frecuencia de envío:</label>
+                    <select
+                      value={formData.notificaciones?.recordatorios?.frecuencia}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        notificaciones: {
+                          ...prev.notificaciones,
+                          recordatorios: { ...prev.notificaciones?.recordatorios, frecuencia: e.target.value }
+                        }
+                      }))}
+                      className="form-control"
+                    >
+                      <option value="nunca">❌ Nunca</option>
+                      <option value="diario">📅 Diario</option>
+                      <option value="cada_2_dias">📆 Cada 2 días</option>
+                      <option value="semanal">🗓️ Semanal</option>
+                    </select>
+                    <small style={{ display: 'block', marginTop: '6px', color: '#6c757d' }}>
+                      Con qué frecuencia se enviarán los recordatorios
+                    </small>
+                  </div>
+                  <div className="form-group">
+                    <label>Hora de envío:</label>
+                    <input
+                      type="time"
+                      value={formData.notificaciones?.recordatorios?.hora_envio}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        notificaciones: {
+                          ...prev.notificaciones,
+                          recordatorios: { ...prev.notificaciones?.recordatorios, hora_envio: e.target.value }
+                        }
+                      }))}
+                      className="form-control"
+                    />
+                    <small style={{ display: 'block', marginTop: '6px', color: '#6c757d' }}>
+                      ⏰ Hora del día para enviar los recordatorios
+                    </small>
+                  </div>
+                  <div className="form-group">
+                    <label>Días de aviso previo:</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="30"
+                      value={formData.notificaciones?.recordatorios?.dias_aviso}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        notificaciones: {
+                          ...prev.notificaciones,
+                          recordatorios: { ...prev.notificaciones?.recordatorios, dias_aviso: parseInt(e.target.value) }
+                        }
+                      }))}
+                      className="form-control"
+                    />
+                    <small style={{ display: 'block', marginTop: '6px', color: '#6c757d' }}>
+                      ⏳ Avisar {formData.notificaciones?.recordatorios?.dias_aviso} días antes del vencimiento
+                    </small>
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="config-section">
+              <h4 className="section-subtitle">📧 Configuración SMTP</h4>
+              <div style={{ marginBottom: '15px', padding: '12px', backgroundColor: '#fff3cd', borderLeft: '4px solid #ffc107', borderRadius: '4px' }}>
+                <small>⚠️ <strong>Configuración avanzada:</strong> Necesaria para el envío de notificaciones por email. Si usas Gmail, habilita "Contraseñas de aplicación" en tu cuenta.</small>
+              </div>
+              <button onClick={configurarGmailDefecto} className="btn btn-secondary" style={{ marginBottom: '20px' }}>
+                📧 Configurar Gmail por defecto
               </button>
               <div className="form-grid" style={{ marginTop: '20px' }}>
                 <div className="form-group">
@@ -1071,7 +1160,10 @@ function ConfigPage() {
                 >
                   <option value="es">🇪🇸 Español</option>
                   <option value="en">🇬🇧 English</option>
-                  <option value="ca">🏴󠁥󠁳󠁣󠁴󠁿 Català</option>
+                  <option value="ca">🏴 Català</option>
+                  <option value="de">🇩🇪 Deutsch</option>
+                  <option value="it">🇮🇹 Italiano</option>
+                  <option value="pt">🇵🇹 Português</option>
                 </select>
               </div>
             </div>

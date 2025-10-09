@@ -601,6 +601,166 @@
   --border-radius-small: 4px;
 }
 
+/* Recordatorios - Estilos mejorados */
+.recordatorios-container {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-left: 4px solid var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.recordatorios-container:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateX(4px);
+}
+
+/* Categorías - Efectos mejorados */
+.category-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary-color);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover::before {
+  transform: scaleY(1);
+}
+
+.category-card:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+  border-color: var(--primary-color);
+}
+
+.category-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--background-color);
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Mejoras visuales para inputs de recordatorios */
+.form-grid input[type="time"],
+.form-grid input[type="number"] {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.form-grid small {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilos para el selector de frecuencia */
+.form-grid select option {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+/* Mejora visual para campos activos/inactivos */
+.category-fields .form-checkbox input:checked + label {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Añadir categoría - Animación */
+.add-category-card {
+  position: relative;
+}
+
+.add-category-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: var(--primary-color);
+  opacity: 0.1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.5s ease, height 0.5s ease;
+}
+
+.add-category-card:hover::after {
+  width: 200%;
+  height: 200%;
+}
+
+/* Estilos para botones de configuración SMTP */
+.btn-secondary {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-secondary:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Traducción - Highlight en edición */
+.translation-item input:focus {
+  transform: scale(1.02);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Mejora para mensajes de ayuda */
+.smtp-help {
+  animation: slideInLeft 0.4s ease;
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
   :root {
@@ -609,5 +769,13 @@
     --text-color: #ffffff;
     --border-color: #404040;
     --primary-color: #0084ff;
+  }
+  
+  .recordatorios-container {
+    background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+  }
+  
+  .category-icon {
+    background: #1a1a1a;
   }
 }
