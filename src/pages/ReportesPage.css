@@ -1,15 +1,19 @@
-/* ReportesPage.css - Diseño limpio estilo Apple */
+/* ReportesPage.css - Diseño limpio estilo Apple en modo claro */
 
 .reportes-card {
   margin: 20px auto;
   max-width: 1400px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e5e7;
 }
 
 .reportes-card .card-header {
   background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
   color: white;
   padding: 30px;
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
 }
 
 .reportes-card .card-header h2 {
@@ -25,20 +29,27 @@
   font-weight: 400;
 }
 
+.reportes-card .card-body {
+  background: #f5f5f7;
+  padding: 24px;
+  border-radius: 0 0 16px 16px;
+}
+
 /* Sección de Filtros */
 .filters-section {
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
+  background: white;
+  border: 1px solid #e5e5e7;
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .filters-section h3 {
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1d1d1f;
 }
 
 .filters-grid {
@@ -57,7 +68,24 @@
 .filter-group label {
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #1d1d1f;
+}
+
+.form-control {
+  padding: 10px 14px;
+  border: 1px solid #d2d2d7;
+  border-radius: 10px;
+  background: white;
+  color: #1d1d1f;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
 }
 
 .filter-actions {
@@ -65,6 +93,47 @@
   gap: 12px;
   justify-content: flex-start;
   flex-wrap: wrap;
+}
+
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button-primary {
+  background: #007aff;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+}
+
+.button-primary:hover {
+  background: #0051d5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.35);
+}
+
+.button-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button-secondary {
+  background: white;
+  color: #1d1d1f;
+  border: 1px solid #d2d2d7;
+}
+
+.button-secondary:hover {
+  background: #f5f5f7;
 }
 
 /* Sección de Totales */
@@ -76,7 +145,7 @@
   margin: 0 0 16px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1d1d1f;
 }
 
 .totales-grid {
@@ -87,14 +156,14 @@
 
 .total-card {
   background: white;
-  border: 1px solid #e5e7eb;
+  border: 1px solid #e5e5e7;
   border-radius: 12px;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .total-card:hover {
@@ -110,7 +179,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  background: #eff6ff;
   border-radius: 12px;
   flex-shrink: 0;
 }
@@ -123,7 +192,7 @@
 
 .total-label {
   font-size: 13px;
-  color: #6b7280;
+  color: #6e6e73;
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -132,17 +201,18 @@
 .total-amount {
   font-size: 24px;
   font-weight: 700;
-  color: #1f2937;
+  color: #1d1d1f;
   line-height: 1;
 }
 
 /* Sección de Exportar */
 .export-section {
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  background: white;
   border: 1px solid #bbf7d0;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .export-section h3 {
@@ -158,6 +228,19 @@
   flex-wrap: wrap;
 }
 
+.button-success {
+  background: #34c759;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(52, 199, 89, 0.25);
+}
+
+.button-success:hover {
+  background: #2ecc71;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.35);
+}
+
 /* Sección de Resultados */
 .results-section {
   margin-top: 24px;
@@ -167,14 +250,15 @@
   margin: 0 0 16px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1d1d1f;
 }
 
 .table-responsive {
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e5e7;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: white;
 }
 
 .report-table {
@@ -184,8 +268,8 @@
 }
 
 .report-table thead {
-  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-  border-bottom: 2px solid #e5e7eb;
+  background: #f5f5f7;
+  border-bottom: 2px solid #e5e5e7;
 }
 
 .report-table th {
@@ -193,18 +277,18 @@
   text-align: left;
   font-size: 13px;
   font-weight: 600;
-  color: #374151;
+  color: #1d1d1f;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .report-table tbody tr {
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid #f5f5f7;
   transition: background-color 0.2s ease;
 }
 
 .report-table tbody tr:hover {
-  background-color: #f9fafb;
+  background-color: #f5f5f7;
 }
 
 .report-table tbody tr:last-child {
@@ -214,8 +298,9 @@
 .report-table td {
   padding: 16px;
   font-size: 14px;
-  color: #1f2937;
+  color: #1d1d1f;
   vertical-align: middle;
+  background: white;
 }
 
 .report-table td.amount {
@@ -228,11 +313,11 @@
 .tipo-badge {
   display: inline-block;
   padding: 6px 12px;
-  background: #f3f4f6;
+  background: #f5f5f7;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: #374151;
+  color: #1d1d1f;
   text-transform: capitalize;
 }
 
@@ -274,10 +359,11 @@
   justify-content: center;
   padding: 60px 20px;
   gap: 20px;
+  background: #f5f5f7;
 }
 
 .loading-spinner {
-  border: 3px solid #f3f4f6;
+  border: 3px solid #e5e5e7;
   border-top: 3px solid #3b82f6;
   border-radius: 50%;
   width: 40px;
@@ -288,6 +374,11 @@
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+  color: #1d1d1f;
+  font-size: 16px;
 }
 
 /* Responsive Design */

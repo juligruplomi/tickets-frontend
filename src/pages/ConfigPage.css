@@ -37,6 +37,7 @@
   overflow-x: auto;
   padding-bottom: 8px;
   -webkit-overflow-scrolling: touch;
+  background: transparent;
 }
 
 .tab {
@@ -67,7 +68,7 @@
 }
 
 .tab:hover {
-  background: #f5f5f7;
+  background: white;
   color: #1d1d1f;
 }
 
@@ -112,7 +113,7 @@
   padding: 24px;
   border: 1px solid #e5e5e7;
   border-radius: 12px;
-  background: #f5f5f7;
+  background: white;
   transition: box-shadow 0.2s ease;
 }
 
@@ -165,10 +166,11 @@
   padding: 16px;
   border-radius: 12px;
   transition: background 0.2s ease;
+  background: white;
 }
 
 .form-checkbox:hover {
-  background: #e5e5e7;
+  background: #f5f5f7;
 }
 
 .form-checkbox input[type="checkbox"] {
@@ -239,12 +241,12 @@
   border-radius: 12px;
   text-align: center;
   transition: all 0.2s ease;
-  background: #f5f5f7;
+  background: white;
 }
 
 .logo-upload-section:hover {
   border-color: #007aff;
-  background: white;
+  background: #f5f5f7;
 }
 
 .logo-upload-section img {
@@ -353,7 +355,7 @@
   border: 2px dashed #d2d2d7;
   border-radius: 16px;
   padding: 32px;
-  background: #f5f5f7;
+  background: white;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
@@ -364,7 +366,7 @@
 
 .add-category-card:hover {
   border-color: #007aff;
-  background: white;
+  background: #f5f5f7;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
@@ -412,6 +414,7 @@
   margin-bottom: 24px;
   border-bottom: 1px solid #e5e5e7;
   overflow-x: auto;
+  background: transparent;
 }
 
 .language-tab {
@@ -440,11 +443,12 @@
 }
 
 .translations-content {
-  background: #f5f5f7;
+  background: white;
   padding: 24px;
   border-radius: 12px;
   max-height: 500px;
   overflow-y: auto;
+  border: 1px solid #e5e5e7;
 }
 
 .translations-grid {
@@ -500,13 +504,13 @@
 }
 
 .btn-secondary {
-  background: #f5f5f7;
+  background: white;
   color: #1d1d1f;
   border: 1px solid #d2d2d7;
 }
 
 .btn-secondary:hover {
-  background: #e5e5e7;
+  background: #f5f5f7;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -572,6 +576,23 @@
   background-color: #fef3c7;
   border: 1px solid #ff9500;
   color: #92400e;
+}
+
+/* Container */
+.container {
+  background: #f5f5f7;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e5e7;
+}
+
+.card-body {
+  background: white;
+  padding: 24px;
 }
 
 /* Responsive */
