@@ -2,7 +2,6 @@
    DARK MODE FIX - PARCHE DEFINITIVO
    ======================================== */
 
-/* Forzar dark mode en HTML */
 html.dark-mode {
   background-color: #000000 !important;
 }
@@ -17,7 +16,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Variables CSS forzadas */
 .dark-mode {
   --background-color: #000000 !important;
   --card-background: #1C1C1E !important;
@@ -28,7 +26,6 @@ html.dark-mode .App {
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.9) !important;
 }
 
-/* Navbar */
 .dark-mode .navbar {
   background: rgba(28, 28, 30, 0.95) !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -40,7 +37,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Cards */
 .dark-mode .card,
 .dark-mode .dashboard-card,
 .dark-mode .feature-card,
@@ -65,7 +61,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Formularios */
 .dark-mode .form-control,
 .dark-mode .form-input,
 .dark-mode .navbar-select,
@@ -82,7 +77,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Textos */
 .dark-mode h1,
 .dark-mode h2,
 .dark-mode h3,
@@ -102,7 +96,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Modales */
 .dark-mode .modal-overlay {
   background: rgba(0, 0, 0, 0.8) !important;
 }
@@ -116,7 +109,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Tablas */
 .dark-mode .table-row {
   background-color: #1C1C1E !important;
   border-bottom: 1px solid #48484A !important;
@@ -130,7 +122,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Welcome section */
 .dark-mode .welcome-section {
   background: linear-gradient(135deg, #1C1C1E, #2C2C2E) !important;
   border: 1px solid #48484A !important;
@@ -141,7 +132,6 @@ html.dark-mode .App {
   color: #FFFFFF !important;
 }
 
-/* Login */
 .dark-mode .login-container {
   background: linear-gradient(135deg, #000000, #1C1C1E) !important;
 }
@@ -151,7 +141,6 @@ html.dark-mode .App {
   border-color: #48484A !important;
 }
 
-/* Scrollbar */
 .dark-mode ::-webkit-scrollbar-track {
   background: #000000 !important;
 }
@@ -160,8 +149,135 @@ html.dark-mode .App {
   background: #48484A !important;
 }
 
-/* Footer */
 .dark-mode .footer-section {
   border-top: 1px solid #48484A !important;
   color: #98989D !important;
+}
+
+.dark-mode .config-page,
+.dark-mode .config-content,
+.dark-mode .config-section {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .config-form-group,
+.dark-mode .config-input-wrapper,
+.dark-mode .form-section {
+  background-color: #1C1C1E !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .config-label,
+.dark-mode .config-title,
+.dark-mode .config-description {
+  color: #FFFFFF !important;
+}
+
+.dark-mode input[type="file"] {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode input[type="color"] {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
+}
+
+.dark-mode .config-tab {
+  background-color: transparent !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .config-tab:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-mode .config-tab.active {
+  background-color: var(--primary-color) !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .language-tab {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .language-tab.active {
+  background-color: var(--primary-color) !important;
+  color: #FFFFFF !important;
+  border-color: var(--primary-color) !important;
+}
+
+.dark-mode textarea.form-control {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .permission-card,
+.dark-mode .role-card {
+  background-color: #1C1C1E !important;
+  border-color: #48484A !important;
+}
+
+.dark-mode .role-column {
+  background-color: #1C1C1E !important;
+  border: 1px solid #48484A !important;
+}
+
+.dark-mode .role-header {
+  background-color: #2C2C2E !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .permission-item {
+  background-color: #1C1C1E !important;
+  border: 1px solid #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .permission-label {
+  color: #FFFFFF !important;
+}
+
+.dark-mode .permission-description {
+  color: #98989D !important;
+}
+
+.dark-mode .report-filters,
+.dark-mode .report-summary {
+  background-color: #1C1C1E !important;
+  border-color: #48484A !important;
+}
+
+.dark-mode .report-card {
+  background-color: #1C1C1E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode input[type="date"] {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+  color-scheme: dark;
+}
+
+.dark-mode .report-table {
+  background-color: #1C1C1E !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .report-table th {
+  background-color: #2C2C2E !important;
+  color: #FFFFFF !important;
+  border-bottom: 2px solid #48484A !important;
+}
+
+.dark-mode .report-table td {
+  border-bottom: 1px solid #48484A !important;
+  color: #FFFFFF !important;
 }
