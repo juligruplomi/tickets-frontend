@@ -15,14 +15,22 @@
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Modo oscuro */
+/* Modo oscuro - ACTUALIZADO */
 .dark-mode {
-  --background-color: #1a1a1a;
-  --card-background: #2d2d2d;
-  --text-color: #ffffff;
-  --border-color: #404040;
-  --shadow: 0 4px 20px rgba(255, 255, 255, 0.05);
-  --shadow-hover: 0 8px 30px rgba(255, 255, 255, 0.08);
+  /* Fondos */
+  --background-color: #1C1C1E !important;
+  --card-background: #2C2C2E !important;
+  --secondary-color: #1C1C1E !important;
+  
+  /* Texto */
+  --text-color: #FFFFFF !important;
+  
+  /* Bordes */
+  --border-color: #3A3A3C !important;
+  
+  /* Sombras */
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+  --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.6) !important;
 }
 
 /* Tema Corporativo */
