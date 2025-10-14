@@ -5,6 +5,9 @@
 /* Importar el sistema de diseño */
 @import './styles/design-system.css';
 
+/* Importar parche definitivo dark mode */
+@import './styles/dark-mode-fix.css';
+
 /* ===== RESET MODERNO ===== */
 *, *::before, *::after {
   box-sizing: border-box;
