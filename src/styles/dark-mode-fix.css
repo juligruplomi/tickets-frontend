@@ -1,0 +1,167 @@
+/* ========================================
+   DARK MODE FIX - PARCHE DEFINITIVO
+   ======================================== */
+
+/* Forzar dark mode en HTML */
+html.dark-mode {
+  background-color: #000000 !important;
+}
+
+html.dark-mode body {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+html.dark-mode .App {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+}
+
+/* Variables CSS forzadas */
+.dark-mode {
+  --background-color: #000000 !important;
+  --card-background: #1C1C1E !important;
+  --secondary-color: #2C2C2E !important;
+  --text-color: #FFFFFF !important;
+  --border-color: #48484A !important;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.8) !important;
+  --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Navbar */
+.dark-mode .navbar {
+  background: rgba(28, 28, 30, 0.95) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-mode .navbar-brand,
+.dark-mode .nav-link,
+.dark-mode .user-name {
+  color: #FFFFFF !important;
+}
+
+/* Cards */
+.dark-mode .card,
+.dark-mode .dashboard-card,
+.dark-mode .feature-card,
+.dark-mode .stat-card,
+.dark-mode .gasto-card,
+.dark-mode .user-card,
+.dark-mode .ticket-card,
+.dark-mode .login-card {
+  background-color: #1C1C1E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .card-header,
+.dark-mode .dashboard-header {
+  background: linear-gradient(135deg, #1C1C1E 0%, #2C2C2E 100%) !important;
+  border-bottom: 1px solid #48484A !important;
+}
+
+.dark-mode .card-body {
+  background-color: #1C1C1E !important;
+  color: #FFFFFF !important;
+}
+
+/* Formularios */
+.dark-mode .form-control,
+.dark-mode .form-input,
+.dark-mode .navbar-select,
+.dark-mode .control-select {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .form-control option,
+.dark-mode .navbar-select option,
+.dark-mode .control-select option {
+  background-color: #1C1C1E !important;
+  color: #FFFFFF !important;
+}
+
+/* Textos */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6,
+.dark-mode p,
+.dark-mode label {
+  color: #FFFFFF !important;
+}
+
+.dark-mode .card-title,
+.dark-mode .section-title,
+.dark-mode .feature-card h4,
+.dark-mode .gasto-concepto,
+.dark-mode .ticket-title {
+  color: #FFFFFF !important;
+}
+
+/* Modales */
+.dark-mode .modal-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.dark-mode .modal-content {
+  background-color: #1C1C1E !important;
+  border: 1px solid #48484A !important;
+}
+
+.dark-mode .modal-header h3 {
+  color: #FFFFFF !important;
+}
+
+/* Tablas */
+.dark-mode .table-row {
+  background-color: #1C1C1E !important;
+  border-bottom: 1px solid #48484A !important;
+}
+
+.dark-mode .table-row:nth-child(even) {
+  background-color: #2C2C2E !important;
+}
+
+.dark-mode .table-cell {
+  color: #FFFFFF !important;
+}
+
+/* Welcome section */
+.dark-mode .welcome-section {
+  background: linear-gradient(135deg, #1C1C1E, #2C2C2E) !important;
+  border: 1px solid #48484A !important;
+}
+
+.dark-mode .welcome-title,
+.dark-mode .welcome-text {
+  color: #FFFFFF !important;
+}
+
+/* Login */
+.dark-mode .login-container {
+  background: linear-gradient(135deg, #000000, #1C1C1E) !important;
+}
+
+.dark-mode .test-user-btn {
+  background: #2C2C2E !important;
+  border-color: #48484A !important;
+}
+
+/* Scrollbar */
+.dark-mode ::-webkit-scrollbar-track {
+  background: #000000 !important;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #48484A !important;
+}
+
+/* Footer */
+.dark-mode .footer-section {
+  border-top: 1px solid #48484A !important;
+  color: #98989D !important;
+}
