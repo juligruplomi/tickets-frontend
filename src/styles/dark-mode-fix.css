@@ -281,3 +281,27 @@ html.dark-mode .App {
   border-bottom: 1px solid #48484A !important;
   color: #FFFFFF !important;
 }
+
+.dark-mode .category-card,
+.dark-mode .expense-category-card,
+.dark-mode .gasto-category-card {
+  background-color: #1C1C1E !important;
+  border-color: #48484A !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .category-header {
+  background-color: #2C2C2E !important;
+  color: #FFFFFF !important;
+}
+
+.dark-mode .category-name,
+.dark-mode .category-title {
+  color: #FFFFFF !important;
+}
+
+.dark-mode .category-icon-input,
+.dark-mode .category-color-input,
+.dark-mode .category-limit-input {
+  background-color: #2C2C2E !important;
+  border-color: #48484A !important;
