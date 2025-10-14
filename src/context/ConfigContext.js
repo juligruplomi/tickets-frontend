@@ -125,31 +125,20 @@ export function ConfigProvider({ children }) {
     switch (theme) {
       case 'corporate':
         root.classList.add('theme-corporate');
-        root.style.setProperty('--primary-color', '#003366');
-        root.style.setProperty('--accent-color', '#ff6600');
-        root.style.setProperty('--font-family', 'Georgia, serif');
+        // Las variables se aplican desde App.css con !important
         break;
       case 'modern':
         root.classList.add('theme-modern');
-        root.style.setProperty('--primary-color', '#667eea');
-        root.style.setProperty('--accent-color', '#764ba2');
-        root.style.setProperty('--font-family', 'Inter, sans-serif');
+        // Las variables se aplican desde App.css con !important
         break;
       case 'matrix':
         root.classList.add('theme-matrix');
-        root.style.setProperty('--primary-color', '#00ff00');
-        root.style.setProperty('--secondary-color', '#000000');
-        root.style.setProperty('--accent-color', '#00cc00');
-        root.style.setProperty('--background-color', '#000000');
-        root.style.setProperty('--card-background', '#111111');
-        root.style.setProperty('--text-color', '#00ff00');
-        root.style.setProperty('--border-color', '#003300');
-        root.style.setProperty('--font-family', 'Courier New, monospace');
+        // Las variables se aplican desde App.css con !important
         applyMatrixEffect();
         break;
       default:
         root.classList.add('theme-default');
-        root.style.setProperty('--font-family', '-apple-system, BlinkMacSystemFont, sans-serif');
+        // Usar las variables por defecto del design-system.css
         break;
     }
   };
@@ -215,20 +204,10 @@ export function ConfigProvider({ children }) {
     const root = document.documentElement;
     if (isDark) {
       root.classList.add('dark-mode');
-      if (currentTheme !== 'matrix') {
-        root.style.setProperty('--background-color', '#1a1a1a');
-        root.style.setProperty('--card-background', '#2d2d2d');
-        root.style.setProperty('--text-color', '#ffffff');
-        root.style.setProperty('--border-color', '#404040');
-      }
+      // NO sobrescribir las variables - dejar que el CSS las maneje
     } else {
       root.classList.remove('dark-mode');
-      if (currentTheme !== 'matrix') {
-        root.style.setProperty('--background-color', '#f5f5f5');
-        root.style.setProperty('--card-background', '#ffffff');
-        root.style.setProperty('--text-color', '#333333');
-        root.style.setProperty('--border-color', '#e0e0e0');
-      }
+      // NO sobrescribir las variables - dejar que el CSS las maneje
     }
   };
 
