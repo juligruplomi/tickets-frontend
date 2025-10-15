@@ -8,6 +8,9 @@
 /* Importar parche definitivo dark mode */
 @import './styles/dark-mode-fix.css';
 
+/* Importar fix de inputs del login */
+@import './styles/login-fix.css';
+
 /* ===== RESET MODERNO ===== */
 *, *::before, *::after {
   box-sizing: border-box;

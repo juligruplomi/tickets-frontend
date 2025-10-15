@@ -1,0 +1,22 @@
+/* Estilos específicos para inputs del login - FONDO GRIS CLARO */
+.login-container .form-input {
+  background-color: #F5F5F5 !important;
+  color: #000000 !important;
+  border: 1px solid #D0D0D0 !important;
+}
+
+.login-container .form-input::placeholder {
+  color: #999999 !important;
+}
+
+.login-container .form-input:focus {
+  background-color: #FFFFFF !important;
+  border-color: var(--primary-color, #007AFF) !important;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1) !important;
+}
+
+.login-container .form-input:disabled {
+  background-color: #E0E0E0 !important;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
