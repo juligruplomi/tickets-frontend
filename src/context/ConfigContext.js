@@ -1,3 +1,5 @@
+// INSTRUCCIÓN: Copia este contenido COMPLETO en C:\tickets-frontend\src\context\ConfigContext.js
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { api } from '../services/api';
 
@@ -74,23 +76,52 @@ export function ConfigProvider({ children }) {
       setLoading(true);
       const response = await api.get(`/config?lang=${lang}`);
       
-      // Actualizar configuración con los datos de la API
-      setConfig(response.data);
-      setCurrentLanguage(response.data.idioma?.actual || lang);
+      // El backend devuelve estructura plana, necesitamos adaptarla
+      const backendData = response.data;
+      
+      // Transformar estructura plana del backend a estructura anidada del frontend
+      const adaptedConfig = {
+        empresa: {
+          nombre: backendData.nombre_empresa || "GrupLomi",
+          logo_url: backendData.logo_url || "/logo.png",
+          colores: {
+            primario: backendData.color_primario || "#0066CC",
+            secundario: backendData.color_secundario || "#f8f9fa",
+            acento: backendData.color_acento || "#28a745"
+          }
+        },
+        gastos: {
+          tipos_gasto: backendData.categorias_gasto || config.gastos.tipos_gasto,
+          estados: config.gastos.estados
+        },
+        idioma: {
+          actual: backendData.idioma_principal || lang,
+          disponibles: Object.keys(backendData.idiomas || {}),
+          traducciones: config.idioma.traducciones
+        },
+        apariencia: {
+          modo_oscuro: backendData.modo_oscuro || false,
+          tema: backendData.tema || 'default'
+        }
+      };
+      
+      // Actualizar configuración con los datos adaptados
+      setConfig(adaptedConfig);
+      setCurrentLanguage(adaptedConfig.idioma.actual);
       
       // Aplicar modo oscuro si está configurado
-      if (response.data.apariencia?.modo_oscuro !== darkMode) {
-        setDarkMode(response.data.apariencia.modo_oscuro);
-        applyDarkMode(response.data.apariencia.modo_oscuro);
+      if (adaptedConfig.apariencia.modo_oscuro !== darkMode) {
+        setDarkMode(adaptedConfig.apariencia.modo_oscuro);
+        applyDarkMode(adaptedConfig.apariencia.modo_oscuro);
       }
       
       // Aplicar tema
-      const theme = response.data.apariencia?.tema || 'default';
+      const theme = adaptedConfig.apariencia.tema;
       setCurrentTheme(theme);
       applyTheme(theme);
       
       // Aplicar colores corporativos
-      applyCompanyColors(response.data.empresa?.colores);
+      applyCompanyColors(adaptedConfig.empresa.colores);
       
     } catch (err) {
       console.error('Error loading config:', err);
@@ -125,27 +156,22 @@ export function ConfigProvider({ children }) {
     switch (theme) {
       case 'corporate':
         root.classList.add('theme-corporate');
-        // Las variables se aplican desde App.css con !important
         break;
       case 'modern':
         root.classList.add('theme-modern');
-        // Las variables se aplican desde App.css con !important
         break;
       case 'matrix':
         root.classList.add('theme-matrix');
-        // Las variables se aplican desde App.css con !important
         applyMatrixEffect();
         break;
       default:
         root.classList.add('theme-default');
-        // Usar las variables por defecto del design-system.css
         break;
     }
   };
 
   // Efecto Matrix
   const applyMatrixEffect = () => {
-    // Crear lluvia de código Matrix
     const matrixContainer = document.getElementById('matrix-bg');
     if (matrixContainer) {
       matrixContainer.remove();
@@ -164,7 +190,6 @@ export function ConfigProvider({ children }) {
       overflow: hidden;
     `;
     
-    // Crear columnas de caracteres
     for (let i = 0; i < 100; i++) {
       const column = document.createElement('div');
       column.style.cssText = `
@@ -183,7 +208,6 @@ export function ConfigProvider({ children }) {
     
     document.body.appendChild(container);
     
-    // Agregar keyframes CSS para la animación
     if (!document.getElementById('matrix-styles')) {
       const style = document.createElement('style');
       style.id = 'matrix-styles';
@@ -204,10 +228,8 @@ export function ConfigProvider({ children }) {
     const root = document.documentElement;
     if (isDark) {
       root.classList.add('dark-mode');
-      // NO sobrescribir las variables - dejar que el CSS las maneje
     } else {
       root.classList.remove('dark-mode');
-      // NO sobrescribir las variables - dejar que el CSS las maneje
     }
   };
 
@@ -230,7 +252,7 @@ export function ConfigProvider({ children }) {
     applyDarkMode(newDarkMode);
   };
 
-  // Recargar configuración (útil después de cambios en el panel de admin)
+  // Recargar configuración
   const reloadConfig = () => {
     loadConfig(currentLanguage);
   };
