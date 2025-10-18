@@ -37,20 +37,59 @@ function UsersPage() {
     }
   }, [user]);
 
-  const handlePhotoUpload = (file, isEditing = false) => {
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const photoUrl = e.target.result;
-        if (isEditing) {
-          setEditingUser({...editingUser, foto_file: file, foto_url: photoUrl});
+// INSTRUCCIONES: 
+// 1. Busca en UsersPage.js la función handlePhotoUpload
+// 2. REEMPLAZA toda la función handlePhotoUpload con este código:
+
+const handlePhotoUpload = (file, isEditing = false) => {
+  if (file && file.type.startsWith('image/')) {
+    // Comprimir imagen antes de subirla
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // Crear canvas para redimensionar
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Calcular nuevas dimensiones (máximo 800x800)
+        let width = img.width;
+        let height = img.height;
+        const maxSize = 800;
+        
+        if (width > height) {
+          if (width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          }
         } else {
-          setNewUser({...newUser, foto_file: file, foto_url: photoUrl});
+          if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Dibujar imagen redimensionada
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convertir a base64 con calidad reducida (0.7 = 70%)
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        
+        // Actualizar estado con imagen comprimida
+        if (isEditing) {
+          setEditingUser({...editingUser, foto_file: file, foto_url: compressedDataUrl});
+        } else {
+          setNewUser({...newUser, foto_file: file, foto_url: compressedDataUrl});
         }
       };
-      reader.readAsDataURL(file);
-    }
-  };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   const loadUsers = async () => {
     try {
