@@ -34,17 +34,27 @@ function RolesPage() {
       setLoading(true);
       const response = await api.get('/roles');
       
-      // Convertir el formato del backend al formato del frontend
+      // El backend devuelve un array de roles: [{id, nombre, permisos: []}]
       const rolesFormatted = {};
-      Object.keys(response.data).forEach(roleKey => {
-        const roleData = response.data[roleKey];
-        rolesFormatted[roleKey] = {
-          nombre: roleData.nombre,
-          descripcion: roleData.descripcion,
-          activo: true,
-          permisos: roleData.permisos
-        };
-      });
+      
+      if (Array.isArray(response.data)) {
+        response.data.forEach(role => {
+          // Convertir array de permisos a objeto para los checkboxes
+          const permisosObj = {};
+          if (Array.isArray(role.permisos)) {
+            role.permisos.forEach(permiso => {
+              permisosObj[permiso] = true;
+            });
+          }
+          
+          rolesFormatted[role.id] = {
+            nombre: role.nombre,
+            descripcion: getDescripcionRol(role.id),
+            activo: true,
+            permisos: permisosObj
+          };
+        });
+      }
       
       setRoles(rolesFormatted);
     } catch (error) {
@@ -53,6 +63,16 @@ function RolesPage() {
     } finally {
       setLoading(false);
     }
+  };
+  
+  const getDescripcionRol = (roleId) => {
+    const descripciones = {
+      admin: 'Control total del sistema',
+      supervisor: 'Puede aprobar gastos de su equipo',
+      empleado: 'Puede crear y gestionar sus propios gastos',
+      contabilidad: 'Gestiona pagos y reportes financieros'
+    };
+    return descripciones[roleId] || '';
   };
 
   const handleTogglePermiso = (roleKey, permisoId) => {
@@ -83,8 +103,32 @@ function RolesPage() {
       setSaving(true);
       setMessage('');
       
-      // Los roles están predefinidos en el backend, esta es una vista informativa
-      setMessage('✅ Configuración de roles guardada correctamente');
+      // Enviar PUT a cada rol modificado
+      const updatePromises = Object.entries(roles).map(async ([roleKey, roleData]) => {
+        // Convertir permisos de objeto a array
+        const permisosArray = Object.keys(roleData.permisos).filter(p => roleData.permisos[p]);
+        
+        try {
+          await api.put(`/roles/${roleKey}`, {
+            permisos: permisosArray
+          });
+          return { roleKey, success: true };
+        } catch (error) {
+          console.error(`Error updating role ${roleKey}:`, error);
+          return { roleKey, success: false, error };
+        }
+      });
+      
+      const results = await Promise.all(updatePromises);
+      const failures = results.filter(r => !r.success);
+      
+      if (failures.length === 0) {
+        setMessage('✅ Configuración de roles guardada correctamente');
+        // Recargar roles para confirmar cambios
+        await loadRoles();
+      } else {
+        setMessage(`⚠️ Algunos roles no se guardaron: ${failures.map(f => f.roleKey).join(', ')}`);
+      }
       
       setTimeout(() => setMessage(''), 3000);
     } catch (error) {
