@@ -104,15 +104,44 @@ function GastosPage() {
     if (files && files.length > 0) {
       const file = files[0]; // Solo tomamos el primer archivo
       
-      // Convertir la imagen a base64
+      // Comprimir y convertir la imagen a base64
       const reader = new FileReader();
       reader.onload = (e) => {
-        const base64Image = e.target.result;
-        setNewGasto({
-          ...newGasto, 
-          archivos_adjuntos: [file.name],
-          foto_justificante: base64Image // Guardar el base64
-        });
+        const img = new Image();
+        img.onload = () => {
+          // Crear canvas para redimensionar
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Redimensionar si es muy grande (máx 800x800)
+          const maxSize = 800;
+          if (width > maxSize || height > maxSize) {
+            if (width > height) {
+              height = (height / width) * maxSize;
+              width = maxSize;
+            } else {
+              width = (width / height) * maxSize;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Comprimir a 70% de calidad
+          const base64Image = canvas.toDataURL('image/jpeg', 0.7);
+          
+          setNewGasto({
+            ...newGasto, 
+            archivos_adjuntos: [file.name],
+            foto_justificante: base64Image // Guardar el base64 comprimido
+          });
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
@@ -122,15 +151,44 @@ function GastosPage() {
     if (files && files.length > 0) {
       const file = files[0]; // Solo tomamos el primer archivo
       
-      // Convertir la imagen a base64
+      // Comprimir y convertir la imagen a base64
       const reader = new FileReader();
       reader.onload = (e) => {
-        const base64Image = e.target.result;
-        setEditingGasto({
-          ...editingGasto, 
-          archivos_adjuntos: [file.name],
-          foto_justificante: base64Image // Guardar el base64
-        });
+        const img = new Image();
+        img.onload = () => {
+          // Crear canvas para redimensionar
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          
+          // Redimensionar si es muy grande (máx 800x800)
+          const maxSize = 800;
+          if (width > maxSize || height > maxSize) {
+            if (width > height) {
+              height = (height / width) * maxSize;
+              width = maxSize;
+            } else {
+              width = (width / height) * maxSize;
+              height = maxSize;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Comprimir a 70% de calidad
+          const base64Image = canvas.toDataURL('image/jpeg', 0.7);
+          
+          setEditingGasto({
+            ...editingGasto, 
+            archivos_adjuntos: [file.name],
+            foto_justificante: base64Image // Guardar el base64 comprimido
+          });
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
