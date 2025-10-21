@@ -27,12 +27,52 @@ function GastosPage() {
     kilometros: '',
     precio_km: ''
   });
+  const [viewingImages, setViewingImages] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Función para cambiar el modo de vista
   const toggleViewMode = (mode) => {
     setViewMode(mode);
     localStorage.setItem('gastosViewMode', mode);
   };
+
+  // Funciones para el visor de imágenes
+  const openImageViewer = (gasto) => {
+    if (gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0) {
+      setViewingImages(gasto);
+      setCurrentImageIndex(0);
+    }
+  };
+
+  const closeImageViewer = () => {
+    setViewingImages(null);
+    setCurrentImageIndex(0);
+  };
+
+  const nextImage = () => {
+    if (viewingImages && currentImageIndex < viewingImages.archivos_adjuntos.length - 1) {
+      setCurrentImageIndex(currentImageIndex + 1);
+    }
+  };
+
+  const prevImage = () => {
+    if (viewingImages && currentImageIndex > 0) {
+      setCurrentImageIndex(currentImageIndex - 1);
+    }
+  };
+
+  const handleImageViewerKeyDown = (e) => {
+    if (e.key === 'ArrowRight') nextImage();
+    if (e.key === 'ArrowLeft') prevImage();
+    if (e.key === 'Escape') closeImageViewer();
+  };
+
+  useEffect(() => {
+    if (viewingImages) {
+      window.addEventListener('keydown', handleImageViewerKeyDown);
+      return () => window.removeEventListener('keydown', handleImageViewerKeyDown);
+    }
+  }, [viewingImages, currentImageIndex]);
 
   useEffect(() => {
     loadGastos();
@@ -352,6 +392,11 @@ function GastosPage() {
                               📏 {gasto.kilometros} km × {gasto.precio_km.toFixed(3)}€/km
                             </span>
                           )}
+                          {gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0 && (
+                            <span className="attachments-indicator">
+                              📎 {gasto.archivos_adjuntos.length} adjunto(s)
+                            </span>
+                          )}
                         </div>
                       </div>
                       
@@ -361,6 +406,17 @@ function GastosPage() {
                         </div>
                         
                         <div className="gasto-list-actions">
+                          {/* Botón para ver fotos */}
+                          {gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0 && (
+                            <button
+                              className="btn-compact btn-info"
+                              onClick={() => openImageViewer(gasto)}
+                              title="Ver fotos del ticket"
+                            >
+                              👁️
+                            </button>
+                          )}
+                          
                           {/* Acciones de aprobación */}
                           {gasto.estado === 'pendiente' && canApprove(gasto) && (
                             <div className="approval-actions-compact">
@@ -469,12 +525,16 @@ function GastosPage() {
                       {/* Mostrar archivos adjuntos */}
                       {gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0 && (
                         <div className="gasto-attachments">
-                          <strong>📎 Adjuntos:</strong>
-                          <ul>
-                            {gasto.archivos_adjuntos.map((archivo, index) => (
-                              <li key={index}>{archivo}</li>
-                            ))}
-                          </ul>
+                          <div className="attachments-header">
+                            <strong>📎 Adjuntos: {gasto.archivos_adjuntos.length}</strong>
+                            <button
+                              className="button button-sm button-info"
+                              onClick={() => openImageViewer(gasto)}
+                              title="Ver fotos"
+                            >
+                              👁️ Ver fotos
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -895,6 +955,113 @@ function GastosPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal visor de imágenes */}
+      {viewingImages && (
+        <div className="modal-overlay image-viewer-overlay" onClick={closeImageViewer}>
+          <div className="image-viewer-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="image-viewer-header">
+              <div className="image-viewer-title">
+                <h3>👁️ Fotos del Ticket #{viewingImages.id}</h3>
+                <p className="image-counter">
+                  Imagen {currentImageIndex + 1} de {viewingImages.archivos_adjuntos.length}
+                </p>
+              </div>
+              <button 
+                className="image-viewer-close"
+                onClick={closeImageViewer}
+                title="Cerrar (ESC)"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="image-viewer-body">
+              {/* Controles de navegación */}
+              {viewingImages.archivos_adjuntos.length > 1 && (
+                <>
+                  <button
+                    className="image-nav-btn prev-btn"
+                    onClick={prevImage}
+                    disabled={currentImageIndex === 0}
+                    title="Imagen anterior (←)"
+                  >
+                    ←
+                  </button>
+                  <button
+                    className="image-nav-btn next-btn"
+                    onClick={nextImage}
+                    disabled={currentImageIndex === viewingImages.archivos_adjuntos.length - 1}
+                    title="Imagen siguiente (→)"
+                  >
+                    →
+                  </button>
+                </>
+              )}
+              
+              {/* Imagen principal */}
+              <div className="image-viewer-content">
+                <img
+                  src={viewingImages.archivos_adjuntos[currentImageIndex]}
+                  alt={`Ticket ${viewingImages.id} - Imagen ${currentImageIndex + 1}`}
+                  className="viewer-image"
+                  onError={(e) => {
+                    e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f0f0f0" width="400" height="300"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" fill="%23999" font-size="18" font-family="Arial"%3EImagen no disponible%3C/text%3E%3C/svg%3E';
+                  }}
+                />
+              </div>
+              
+              {/* Información del gasto */}
+              <div className="image-viewer-info">
+                <div className="info-row">
+                  <strong>Tipo:</strong>
+                  <span>{getTipoGastoInfo(viewingImages.tipo_gasto).icon} {getTipoGastoInfo(viewingImages.tipo_gasto).nombre}</span>
+                </div>
+                <div className="info-row">
+                  <strong>Descripción:</strong>
+                  <span>{viewingImages.descripcion}</span>
+                </div>
+                <div className="info-row">
+                  <strong>Importe:</strong>
+                  <span>{viewingImages.importe.toFixed(2)}€</span>
+                </div>
+                <div className="info-row">
+                  <strong>Fecha:</strong>
+                  <span>{new Date(viewingImages.fecha_gasto).toLocaleDateString()}</span>
+                </div>
+                {viewingImages.obra && (
+                  <div className="info-row">
+                    <strong>Obra:</strong>
+                    <span>{viewingImages.obra}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Miniaturas */}
+            {viewingImages.archivos_adjuntos.length > 1 && (
+              <div className="image-thumbnails">
+                {viewingImages.archivos_adjuntos.map((img, index) => (
+                  <div
+                    key={index}
+                    className={`thumbnail ${index === currentImageIndex ? 'active' : ''}`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  >
+                    <img src={img} alt={`Miniatura ${index + 1}`} />
+                    <span className="thumbnail-number">{index + 1}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div className="image-viewer-footer">
+              <p className="viewer-hint">
+                💡 Usa las flechas del teclado (← →) para navegar | ESC para cerrar
+              </p>
+            </div>
           </div>
         </div>
       )}
