@@ -219,11 +219,17 @@ function GastosPage() {
 
       // Validar archivos para dieta y aparcamiento
       if (['dieta', 'aparcamiento'].includes(newGasto.tipo_gasto)) {
-        if (!newGasto.archivos_adjuntos || newGasto.archivos_adjuntos.length === 0) {
+        if (!newGasto.foto_justificante) {
           alert(`Es obligatorio adjuntar una foto del ticket para ${newGasto.tipo_gasto}`);
           return;
         }
       }
+      
+      // Debug: ver qué estamos enviando
+      console.log('Datos del gasto a enviar:', {
+        ...gastoData,
+        foto_justificante: gastoData.foto_justificante ? `[base64 ${gastoData.foto_justificante.length} chars]` : null
+      });
       
       const response = await gastosService.create(gastoData);
       setGastos([response.data, ...gastos]);
@@ -242,7 +248,8 @@ function GastosPage() {
       alert('Gasto creado correctamente');
     } catch (error) {
       console.error('Error creating gasto:', error);
-      alert('Error al crear el gasto: ' + (error.response?.data?.error || 'Error desconocido'));
+      console.error('Error details:', error.response?.data);
+      alert('Error al crear el gasto: ' + (error.response?.data?.error || error.response?.data?.details || 'Error desconocido'));
     }
   };
 
