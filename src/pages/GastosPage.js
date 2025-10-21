@@ -23,6 +23,7 @@ function GastosPage() {
     importe: '',
     fecha_gasto: new Date().toISOString().split('T')[0],
     archivos_adjuntos: [],
+    foto_justificante: null,
     // Campos específicos para combustible
     kilometros: '',
     precio_km: ''
@@ -38,7 +39,16 @@ function GastosPage() {
 
   // Funciones para el visor de imágenes
   const openImageViewer = (gasto) => {
-    if (gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0) {
+    // Verificar si tiene foto_justificante
+    if (gasto.foto_justificante) {
+      // Crear un objeto temporal con la foto en formato array para compatibilidad
+      setViewingImages({
+        ...gasto,
+        archivos_adjuntos: [gasto.foto_justificante]
+      });
+      setCurrentImageIndex(0);
+    } else if (gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0) {
+      // Fallback para el formato antiguo
       setViewingImages(gasto);
       setCurrentImageIndex(0);
     }
@@ -90,14 +100,40 @@ function GastosPage() {
     }
   };
 
-  const handleFileUpload = (files) => {
-    const fileNames = Array.from(files).map(file => file.name);
-    setNewGasto({...newGasto, archivos_adjuntos: fileNames});
+  const handleFileUpload = async (files) => {
+    if (files && files.length > 0) {
+      const file = files[0]; // Solo tomamos el primer archivo
+      
+      // Convertir la imagen a base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        setNewGasto({
+          ...newGasto, 
+          archivos_adjuntos: [file.name],
+          foto_justificante: base64Image // Guardar el base64
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleEditFileUpload = (files) => {
-    const fileNames = Array.from(files).map(file => file.name);
-    setEditingGasto({...editingGasto, archivos_adjuntos: fileNames});
+  const handleEditFileUpload = async (files) => {
+    if (files && files.length > 0) {
+      const file = files[0]; // Solo tomamos el primer archivo
+      
+      // Convertir la imagen a base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target.result;
+        setEditingGasto({
+          ...editingGasto, 
+          archivos_adjuntos: [file.name],
+          foto_justificante: base64Image // Guardar el base64
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const createGasto = async (e) => {
@@ -140,6 +176,7 @@ function GastosPage() {
         importe: '',
         fecha_gasto: new Date().toISOString().split('T')[0],
         archivos_adjuntos: [],
+        foto_justificante: null,
         kilometros: '',
         precio_km: ''
       });
@@ -392,9 +429,9 @@ function GastosPage() {
                               📏 {gasto.kilometros} km × {gasto.precio_km.toFixed(3)}€/km
                             </span>
                           )}
-                          {gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0 && (
+                          {(gasto.foto_justificante || (gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0)) && (
                             <span className="attachments-indicator">
-                              📎 {gasto.archivos_adjuntos.length} adjunto(s)
+                              📎 1 adjunto
                             </span>
                           )}
                         </div>
@@ -407,7 +444,7 @@ function GastosPage() {
                         
                         <div className="gasto-list-actions">
                           {/* Botón para ver fotos */}
-                          {gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0 && (
+                          {(gasto.foto_justificante || (gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0)) && (
                             <button
                               className="btn-compact btn-info"
                               onClick={() => openImageViewer(gasto)}
@@ -523,16 +560,16 @@ function GastosPage() {
                       </div>
                       
                       {/* Mostrar archivos adjuntos */}
-                      {gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0 && (
+                      {(gasto.foto_justificante || (gasto.archivos_adjuntos && gasto.archivos_adjuntos.length > 0)) && (
                         <div className="gasto-attachments">
                           <div className="attachments-header">
-                            <strong>📎 Adjuntos: {gasto.archivos_adjuntos.length}</strong>
+                            <strong>📎 Adjuntos: 1</strong>
                             <button
                               className="button button-sm button-info"
                               onClick={() => openImageViewer(gasto)}
                               title="Ver fotos"
                             >
-                              👁️ Ver fotos
+                              👁️ Ver foto
                             </button>
                           </div>
                         </div>
