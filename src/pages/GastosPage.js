@@ -226,10 +226,10 @@ function GastosPage() {
       }
       
       // Debug: ver qué estamos enviando
-      console.log('Datos del gasto a enviar:', {
-        ...gastoData,
-        foto_justificante: gastoData.foto_justificante ? `[base64 ${gastoData.foto_justificante.length} chars]` : null
-      });
+      console.log('Datos del gasto a enviar:', gastoData);
+      console.log('foto_justificante presente?', !!gastoData.foto_justificante);
+      console.log('foto_justificante length:', gastoData.foto_justificante?.length || 0);
+      console.log('archivos_adjuntos:', gastoData.archivos_adjuntos);
       
       const response = await gastosService.create(gastoData);
       setGastos([response.data, ...gastos]);
