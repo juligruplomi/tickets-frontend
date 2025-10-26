@@ -114,8 +114,8 @@ function GastosPage() {
           let width = img.width;
           let height = img.height;
           
-          // Redimensionar si es muy grande (máx 800x800)
-          const maxSize = 800;
+          // Redimensionar a mucho más pequeño (máx 400x400)
+          const maxSize = 400;
           if (width > maxSize || height > maxSize) {
             if (width > height) {
               height = (height / width) * maxSize;
@@ -132,8 +132,14 @@ function GastosPage() {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Comprimir a 70% de calidad
-          const base64Image = canvas.toDataURL('image/jpeg', 0.7);
+          // Comprimir a 50% de calidad (más compresión)
+          const base64Image = canvas.toDataURL('image/jpeg', 0.5);
+          
+          console.log('Foto comprimida:', {
+            originalSize: file.size,
+            base64Length: base64Image.length,
+            dimensions: `${width}x${height}`
+          });
           
           setNewGasto({
             ...newGasto, 
@@ -161,8 +167,8 @@ function GastosPage() {
           let width = img.width;
           let height = img.height;
           
-          // Redimensionar si es muy grande (máx 800x800)
-          const maxSize = 800;
+          // Redimensionar a mucho más pequeño (máx 400x400)
+          const maxSize = 400;
           if (width > maxSize || height > maxSize) {
             if (width > height) {
               height = (height / width) * maxSize;
@@ -179,8 +185,14 @@ function GastosPage() {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Comprimir a 70% de calidad
-          const base64Image = canvas.toDataURL('image/jpeg', 0.7);
+          // Comprimir a 50% de calidad (más compresión)
+          const base64Image = canvas.toDataURL('image/jpeg', 0.5);
+          
+          console.log('Foto editada comprimida:', {
+            originalSize: file.size,
+            base64Length: base64Image.length,
+            dimensions: `${width}x${height}`
+          });
           
           setEditingGasto({
             ...editingGasto, 
