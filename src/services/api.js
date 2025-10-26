@@ -12,7 +12,9 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000,
+  timeout: 60000, // 60 segundos para permitir subida de fotos grandes
+  maxContentLength: 10000000, // 10MB máximo
+  maxBodyLength: 10000000, // 10MB máximo
 });
 
 // Interceptor para añadir token a todas las peticiones
@@ -88,7 +90,11 @@ export const userService = {
 export const gastosService = {
   getAll: (params = {}) => api.get('/gastos', { params }),
   getById: (id) => api.get(`/gastos/${id}`),
-  create: (gastoData) => api.post('/gastos', gastoData),
+  createGasto: (gastoData) => {
+    // Para gastos con foto, aumentar timeout
+    const config = gastoData.foto_justificante ? { timeout: 90000 } : {};
+    return api.post('/gastos', gastoData, config);
+  },
   update: (id, gastoData) => api.put(`/gastos/${id}`, gastoData),
   delete: (id) => api.delete(`/gastos/${id}`),
   aprobar: (id) => api.put(`/gastos/${id}`, { estado: 'aprobado' }),

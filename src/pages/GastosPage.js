@@ -104,6 +104,12 @@ function GastosPage() {
     if (files && files.length > 0) {
       const file = files[0]; // Solo tomamos el primer archivo
       
+      console.log('Procesando foto:', {
+        nombre: file.name,
+        tamañoOriginal: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+        tipo: file.type
+      });
+      
       // Comprimir y convertir la imagen a base64
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -114,8 +120,19 @@ function GastosPage() {
           let width = img.width;
           let height = img.height;
           
-          // Redimensionar a mucho más pequeño (máx 400x400)
-          const maxSize = 400;
+          // Redimensionar según el tamaño original
+          let maxSize = 400;
+          let quality = 0.5;
+          
+          // Si la imagen original es muy grande, reducir más
+          if (file.size > 10 * 1024 * 1024) { // > 10MB
+            maxSize = 300;
+            quality = 0.4;
+          } else if (file.size > 5 * 1024 * 1024) { // > 5MB
+            maxSize = 350;
+            quality = 0.45;
+          }
+          
           if (width > maxSize || height > maxSize) {
             if (width > height) {
               height = (height / width) * maxSize;
@@ -132,23 +149,44 @@ function GastosPage() {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Comprimir a 50% de calidad (más compresión)
-          const base64Image = canvas.toDataURL('image/jpeg', 0.5);
+          // Comprimir
+          const base64Image = canvas.toDataURL('image/jpeg', quality);
+          
+          const compressedSizeKB = (base64Image.length / 1024).toFixed(2);
+          const reductionPercent = (100 - (base64Image.length / file.size * 100)).toFixed(1);
           
           console.log('Foto comprimida:', {
-            originalSize: file.size,
-            base64Length: base64Image.length,
-            dimensions: `${width}x${height}`
+            originalSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+            base64Length: `${compressedSizeKB} KB`,
+            dimensions: `${Math.round(width)}x${Math.round(height)}`,
+            quality: `${quality * 100}%`,
+            reducción: `${reductionPercent}%`
           });
+          
+          if (base64Image.length > 500000) { // Si es > 500KB, advertir
+            console.warn('⚠️ Foto muy grande después de compresión. Puede tardar en subir.');
+          }
           
           setNewGasto({
             ...newGasto, 
             archivos_adjuntos: [file.name],
-            foto_justificante: base64Image // Guardar el base64 comprimido
+            foto_justificante: base64Image
           });
         };
+        
+        img.onerror = () => {
+          console.error('❌ Error al cargar la imagen');
+          alert('Error al procesar la imagen. Inténtalo con otra foto.');
+        };
+        
         img.src = e.target.result;
       };
+      
+      reader.onerror = () => {
+        console.error('❌ Error al leer el archivo');
+        alert('Error al leer el archivo. Inténtalo de nuevo.');
+      };
+      
       reader.readAsDataURL(file);
     }
   };
@@ -243,7 +281,7 @@ function GastosPage() {
       console.log('foto_justificante length:', gastoData.foto_justificante?.length || 0);
       console.log('archivos_adjuntos:', gastoData.archivos_adjuntos);
       
-      const response = await gastosService.create(gastoData);
+      const response = await gastosService.createGasto(gastoData);
       setGastos([response.data, ...gastos]);
       setNewGasto({
         tipo_gasto: 'dieta',
