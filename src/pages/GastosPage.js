@@ -120,17 +120,18 @@ function GastosPage() {
           let width = img.width;
           let height = img.height;
           
-          // Redimensionar según el tamaño original
-          let maxSize = 400;
-          let quality = 0.5;
+          // Balance entre calidad y tamaño
+          // 800px es suficiente para leer texto en tickets
+          let maxSize = 800;
+          let quality = 0.7; // 70% calidad por defecto
           
-          // Si la imagen original es muy grande, reducir más
-          if (file.size > 10 * 1024 * 1024) { // > 10MB
-            maxSize = 300;
-            quality = 0.4;
-          } else if (file.size > 5 * 1024 * 1024) { // > 5MB
-            maxSize = 350;
-            quality = 0.45;
+          // Solo para imágenes MUY grandes, reducir un poco más
+          if (file.size > 20 * 1024 * 1024) { // > 20MB
+            maxSize = 700;
+            quality = 0.65;
+          } else if (file.size > 10 * 1024 * 1024) { // > 10MB
+            maxSize = 750;
+            quality = 0.68;
           }
           
           if (width > maxSize || height > maxSize) {
@@ -163,8 +164,10 @@ function GastosPage() {
             reducción: `${reductionPercent}%`
           });
           
-          if (base64Image.length > 500000) { // Si es > 500KB, advertir
+          // Advertir si es muy grande (> 1MB base64)
+          if (base64Image.length > 1000000) {
             console.warn('⚠️ Foto muy grande después de compresión. Puede tardar en subir.');
+            alert('⚠️ La foto es muy grande y puede tardar en subir. Se recomienda usar una foto más pequeña.');
           }
           
           setNewGasto({
@@ -205,8 +208,18 @@ function GastosPage() {
           let width = img.width;
           let height = img.height;
           
-          // Redimensionar a mucho más pequeño (máx 400x400)
-          const maxSize = 400;
+          // Balance entre calidad y tamaño (igual que handleFileUpload)
+          let maxSize = 800;
+          let quality = 0.7;
+          
+          if (file.size > 20 * 1024 * 1024) {
+            maxSize = 700;
+            quality = 0.65;
+          } else if (file.size > 10 * 1024 * 1024) {
+            maxSize = 750;
+            quality = 0.68;
+          }
+          
           if (width > maxSize || height > maxSize) {
             if (width > height) {
               height = (height / width) * maxSize;
@@ -223,19 +236,24 @@ function GastosPage() {
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
           
-          // Comprimir a 50% de calidad (más compresión)
-          const base64Image = canvas.toDataURL('image/jpeg', 0.5);
+          const base64Image = canvas.toDataURL('image/jpeg', quality);
           
           console.log('Foto editada comprimida:', {
-            originalSize: file.size,
-            base64Length: base64Image.length,
-            dimensions: `${width}x${height}`
+            originalSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
+            base64Length: `${(base64Image.length / 1024).toFixed(2)} KB`,
+            dimensions: `${Math.round(width)}x${Math.round(height)}`,
+            quality: `${quality * 100}%`
           });
+          
+          if (base64Image.length > 1000000) {
+            console.warn('⚠️ Foto muy grande después de compresión.');
+            alert('⚠️ La foto es muy grande y puede tardar en subir.');
+          }
           
           setEditingGasto({
             ...editingGasto, 
             archivos_adjuntos: [file.name],
-            foto_justificante: base64Image // Guardar el base64 comprimido
+            foto_justificante: base64Image
           });
         };
         img.src = e.target.result;
