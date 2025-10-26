@@ -104,11 +104,7 @@ function GastosPage() {
     if (files && files.length > 0) {
       const file = files[0]; // Solo tomamos el primer archivo
       
-      console.log('Procesando foto:', {
-        nombre: file.name,
-        tamañoOriginal: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-        tipo: file.type
-      });
+      console.log('📸 Procesando foto:', file.name, `(${(file.size / 1024 / 1024).toFixed(2)} MB)`);
       
       // Comprimir y convertir la imagen a base64
       const reader = new FileReader();
@@ -153,16 +149,8 @@ function GastosPage() {
           // Comprimir
           const base64Image = canvas.toDataURL('image/jpeg', quality);
           
-          const compressedSizeKB = (base64Image.length / 1024).toFixed(2);
-          const reductionPercent = (100 - (base64Image.length / file.size * 100)).toFixed(1);
-          
-          console.log('Foto comprimida:', {
-            originalSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-            base64Length: `${compressedSizeKB} KB`,
-            dimensions: `${Math.round(width)}x${Math.round(height)}`,
-            quality: `${quality * 100}%`,
-            reducción: `${reductionPercent}%`
-          });
+          const compressedSizeKB = (base64Image.length / 1024).toFixed(0);
+          console.log('✅ Foto lista:', `${compressedSizeKB} KB`, `(${Math.round(width)}x${Math.round(height)})`);
           
           // Advertir si es muy grande (> 1MB base64)
           if (base64Image.length > 1000000) {
@@ -238,12 +226,8 @@ function GastosPage() {
           
           const base64Image = canvas.toDataURL('image/jpeg', quality);
           
-          console.log('Foto editada comprimida:', {
-            originalSize: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-            base64Length: `${(base64Image.length / 1024).toFixed(2)} KB`,
-            dimensions: `${Math.round(width)}x${Math.round(height)}`,
-            quality: `${quality * 100}%`
-          });
+          const compressedSizeKB = (base64Image.length / 1024).toFixed(0);
+          console.log('✅ Foto editada lista:', `${compressedSizeKB} KB`);
           
           if (base64Image.length > 1000000) {
             console.warn('⚠️ Foto muy grande después de compresión.');
@@ -293,11 +277,13 @@ function GastosPage() {
         }
       }
       
-      // Debug: ver qué estamos enviando
-      console.log('Datos del gasto a enviar:', gastoData);
-      console.log('foto_justificante presente?', !!gastoData.foto_justificante);
-      console.log('foto_justificante length:', gastoData.foto_justificante?.length || 0);
-      console.log('archivos_adjuntos:', gastoData.archivos_adjuntos);
+      // Debug: ver qué estamos enviando (solo en desarrollo)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Datos del gasto a enviar:', gastoData);
+        console.log('foto_justificante presente?', !!gastoData.foto_justificante);
+        console.log('foto_justificante length:', gastoData.foto_justificante?.length || 0);
+        console.log('archivos_adjuntos:', gastoData.archivos_adjuntos);
+      }
       
       const response = await gastosService.createGasto(gastoData);
       setGastos([response.data, ...gastos]);
