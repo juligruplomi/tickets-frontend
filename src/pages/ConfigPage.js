@@ -555,6 +555,25 @@ function ConfigPage() {
     setMessage('');
     
     try {
+      // 1. GUARDAR CONFIGURACIÓN DE EMPRESA
+      await api.put('/config/empresa', {
+        nombre: formData.empresa.nombre,
+        logo_url: formData.empresa.logo_url,
+        colores: formData.empresa.colores
+      });
+
+      // 2. GUARDAR CONFIGURACIÓN GENERAL DEL SISTEMA
+      await api.put('/config/sistema', {
+        nombre_empresa: formData.empresa.nombre,
+        logo_url: formData.empresa.logo_url,
+        color_primario: formData.empresa.colores.primario,
+        color_secundario: formData.empresa.colores.secundario,
+        color_acento: formData.empresa.colores.acento,
+        idioma_principal: formData.idioma.predeterminado,
+        modo_oscuro: false // Por ahora siempre false, puedes agregar un toggle si quieres
+      });
+
+      // 3. GUARDAR CONFIGURACIÓN DE GASTOS
       await api.put('/config/gastos', {
         categorias: formData.gastos.categorias.map(c => c.nombre),
         limite_aprobacion_supervisor: formData.gastos.configuracion.limite_maximo_gasto,
@@ -562,6 +581,7 @@ function ConfigPage() {
         campos_obligatorios: ['tipo_gasto', 'descripcion', 'importe', 'fecha_gasto']
       });
 
+      // 4. GUARDAR CONFIGURACIÓN DE NOTIFICACIONES
       await api.put('/config/notificaciones', {
         email_enabled: formData.notificaciones.email.habilitado,
         notificar_nuevo_gasto: formData.notificaciones.eventos.nuevo_gasto.habilitado,
@@ -569,6 +589,7 @@ function ConfigPage() {
         notificar_rechazo: formData.notificaciones.eventos.gasto_rechazado.habilitado
       });
 
+      // 5. GUARDAR CONFIGURACIÓN SMTP (si hay usuario configurado)
       if (formData.notificaciones.smtp.usuario) {
         await api.put('/config/smtp', {
           smtp_host: formData.notificaciones.smtp.servidor,
@@ -579,12 +600,17 @@ function ConfigPage() {
         });
       }
 
-      setMessage('✅ Configuración guardada correctamente');
-      setTimeout(() => setMessage(''), 3000);
+      setMessage('✅ Configuración guardada correctamente en todos los apartados');
+      
+      // Recargar configuración para ver los cambios
+      setTimeout(() => {
+        loadConfig();
+        setMessage('');
+      }, 2000);
       
     } catch (error) {
       console.error('Error saving config:', error);
-      setMessage('❌ Error al guardar: ' + (error.response?.data?.detail || error.message));
+      setMessage('❌ Error al guardar: ' + (error.response?.data?.error || error.response?.data?.detail || error.message));
     } finally {
       setLoading(false);
     }
