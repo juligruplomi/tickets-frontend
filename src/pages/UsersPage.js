@@ -174,6 +174,7 @@ const handlePhotoUpload = (file, isEditing = false) => {
 
   const getRoleDisplayName = (role) => {
     const roles = {
+      'admin': 'Administrador',
       'administrador': 'Administrador',
       'supervisor': 'Supervisor',
       'operario': 'Operario',
@@ -184,6 +185,7 @@ const handlePhotoUpload = (file, isEditing = false) => {
 
   const getRoleColor = (role) => {
     const colors = {
+      'admin': '#dc3545',
       'administrador': '#dc3545',
       'supervisor': '#fd7e14',
       'operario': '#28a745',
@@ -205,7 +207,7 @@ const handlePhotoUpload = (file, isEditing = false) => {
 
   const getAvailableRoles = () => {
     return [
-      { value: 'administrador', label: 'Administrador' },
+      { value: 'admin', label: 'Administrador' },
       { value: 'supervisor', label: 'Supervisor' },
       { value: 'operario', label: 'Operario' },
       { value: 'contabilidad', label: 'Contabilidad' }
@@ -213,7 +215,7 @@ const handlePhotoUpload = (file, isEditing = false) => {
   };
 
   const getSupervisors = () => {
-    return users.filter(u => u.role === 'supervisor' || u.role === 'administrador');
+    return users.filter(u => u.role === 'supervisor' || u.role === 'admin' || u.role === 'administrador');
   };
 
   const filteredUsers = users.filter(userData => {
@@ -301,7 +303,7 @@ const handlePhotoUpload = (file, isEditing = false) => {
                 style={{ maxWidth: '200px' }}
               >
                 <option value="todos">Todos los roles</option>
-                <option value="administrador">Administradores</option>
+                <option value="admin">Administradores</option>
                 <option value="supervisor">Supervisores</option>
                 <option value="operario">Operarios</option>
                 <option value="contabilidad">Contabilidad</option>
