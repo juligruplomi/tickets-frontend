@@ -11,18 +11,16 @@ function RolesPage() {
   const [message, setMessage] = useState('');
 
   const permisosDisponibles = [
-    { id: 'ver_gastos', label: 'Ver Gastos', descripcion: 'Puede ver gastos según su rol' },
-    { id: 'crear_gastos', label: 'Crear Gastos', descripcion: 'Permite crear nuevos gastos' },
-    { id: 'editar_gastos', label: 'Editar Gastos', descripcion: 'Puede editar gastos' },
-    { id: 'eliminar_gastos', label: 'Eliminar Gastos', descripcion: 'Puede eliminar gastos' },
-    { id: 'aprobar_gastos', label: 'Aprobar Gastos', descripcion: 'Puede aprobar/rechazar gastos' },
-    { id: 'ver_usuarios', label: 'Ver Usuarios', descripcion: 'Puede ver la lista de usuarios' },
-    { id: 'crear_usuarios', label: 'Crear Usuarios', descripcion: 'Puede crear nuevos usuarios' },
-    { id: 'editar_usuarios', label: 'Editar Usuarios', descripcion: 'Puede modificar usuarios existentes' },
-    { id: 'eliminar_usuarios', label: 'Eliminar Usuarios', descripcion: 'Puede eliminar usuarios' },
-    { id: 'ver_reportes', label: 'Ver Reportes', descripcion: 'Puede generar reportes y estadísticas' },
-    { id: 'exportar_datos', label: 'Exportar Datos', descripcion: 'Puede exportar datos a Excel/CSV' },
-    { id: 'configurar_sistema', label: 'Configurar Sistema', descripcion: 'Acceso a configuración del sistema' }
+    { id: 'crear', label: 'Crear', descripcion: 'Puede crear nuevos registros' },
+    { id: 'leer', label: 'Leer', descripcion: 'Puede ver información' },
+    { id: 'leer_propio', label: 'Leer Propio', descripcion: 'Solo puede ver sus propios registros' },
+    { id: 'actualizar', label: 'Actualizar', descripcion: 'Puede modificar registros' },
+    { id: 'eliminar', label: 'Eliminar', descripcion: 'Puede eliminar registros' },
+    { id: 'aprobar', label: 'Aprobar', descripcion: 'Puede aprobar/rechazar gastos' },
+    { id: 'supervisar', label: 'Supervisar', descripcion: 'Puede supervisar equipos' },
+    { id: 'exportar', label: 'Exportar', descripcion: 'Puede exportar datos' },
+    { id: 'validar', label: 'Validar', descripcion: 'Puede validar información financiera' },
+    { id: 'configurar', label: 'Configurar', descripcion: 'Acceso a configuración del sistema' }
   ];
 
   useEffect(() => {
