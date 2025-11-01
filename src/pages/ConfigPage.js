@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../services/api';
+import { useConfig } from '../context/ConfigContext';
 import './ConfigPage.css';
 
 function ConfigPage() {
+  const { reloadConfig } = useConfig(); // Añadir esto para usar la recarga del contexto
   const [activeTab, setActiveTab] = useState('empresa');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -513,16 +515,23 @@ function ConfigPage() {
       const response = await api.get('/config/sistema');
       
       if (response.data) {
+        // Preservar valores actuales del formulario y solo actualizar con valores del servidor
         setFormData(prev => ({
           ...prev,
           empresa: {
             ...prev.empresa,
-            nombre: response.data.empresa_nombre || prev.empresa.nombre
+            nombre: response.data.nombre_empresa || response.data.empresa_nombre || prev.empresa.nombre,
+            logo_url: response.data.logo_url || prev.empresa.logo_url,
+            colores: {
+              primario: response.data.color_primario || prev.empresa.colores?.primario || '#0066CC',
+              secundario: response.data.color_secundario || prev.empresa.colores?.secundario || '#f8f9fa',
+              acento: response.data.color_acento || prev.empresa.colores?.acento || '#28a745'
+            }
           },
           gastos: {
             ...prev.gastos,
-            categorias: response.data.categorias_gastos?.map((cat, index) => ({
-              nombre: cat,
+            categorias: response.data.categorias_gasto?.map((cat, index) => ({
+              nombre: cat.nombre || cat,
               color: prev.gastos.categorias[index]?.color || '#6c757d',
               icono: prev.gastos.categorias[index]?.icono || '📋',
               limite_diario: prev.gastos.categorias[index]?.limite_diario || 50,
@@ -530,18 +539,28 @@ function ConfigPage() {
             })) || prev.gastos.categorias,
             configuracion: {
               ...prev.gastos.configuracion,
-              limite_maximo_gasto: response.data.limite_aprobacion_supervisor || 1000,
-              requiere_justificante_siempre: response.data.requiere_justificante || true
+              limite_maximo_gasto: response.data.limite_aprobacion_supervisor || prev.gastos.configuracion.limite_maximo_gasto,
+              requiere_justificante_siempre: response.data.requiere_justificante ?? prev.gastos.configuracion.requiere_justificante_siempre
             }
           },
           notificaciones: {
             ...prev.notificaciones,
             email: {
               ...prev.notificaciones.email,
-              habilitado: response.data.notificaciones?.email_enabled || false
+              habilitado: response.data.notificaciones?.email_enabled ?? prev.notificaciones.email.habilitado
             }
+          },
+          idioma: {
+            ...prev.idioma,
+            predeterminado: response.data.idioma_principal || prev.idioma.predeterminado
           }
         }));
+        
+        console.log('Configuración cargada:', {
+          nombre: response.data.nombre_empresa || response.data.empresa_nombre,
+          logo: response.data.logo_url ? 'Logo cargado' : 'Sin logo',
+          idioma: response.data.idioma_principal
+        });
       }
     } catch (error) {
       console.error('Error loading config:', error);
@@ -570,7 +589,7 @@ function ConfigPage() {
         color_secundario: formData.empresa.colores.secundario,
         color_acento: formData.empresa.colores.acento,
         idioma_principal: formData.idioma.predeterminado,
-        modo_oscuro: false // Por ahora siempre false, puedes agregar un toggle si quieres
+        modo_oscuro: false
       });
 
       // 3. GUARDAR CONFIGURACIÓN DE GASTOS
@@ -602,11 +621,15 @@ function ConfigPage() {
 
       setMessage('✅ Configuración guardada correctamente en todos los apartados');
       
-      // Recargar configuración para ver los cambios
+      // Recargar configuración global para aplicar cambios inmediatamente
+      if (reloadConfig) {
+        reloadConfig();
+      }
+      
+      // Recargar también la configuración local para ver los cambios en el formulario
       setTimeout(() => {
         loadConfig();
-        setMessage('');
-      }, 2000);
+      }, 500);
       
     } catch (error) {
       console.error('Error saving config:', error);
@@ -619,16 +642,64 @@ function ConfigPage() {
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Verificar que sea una imagen
+      if (!file.type.startsWith('image/')) {
+        alert('❌ Por favor selecciona un archivo de imagen válido');
+        return;
+      }
+      
+      // Verificar tamaño (máx 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        alert('❌ El archivo es demasiado grande. Máximo 2MB');
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
-        setFormData(prev => ({
-          ...prev,
-          empresa: {
-            ...prev.empresa,
-            logo_url: e.target.result,
-            logo_file: file
+        const img = new Image();
+        img.onload = () => {
+          // Crear canvas para redimensionar (máx 400x200 para logos)
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 400;
+          const maxHeight = 200;
+          
+          // Mantener aspect ratio
+          if (width > maxWidth || height > maxHeight) {
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            width = width * ratio;
+            height = height * ratio;
           }
-        }));
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          // Dibujar imagen redimensionada
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convertir a base64 con buena calidad (0.9 = 90%)
+          const compressedDataUrl = canvas.toDataURL('image/png', 0.9);
+          
+          // Actualizar estado con imagen comprimida
+          setFormData(prev => ({
+            ...prev,
+            empresa: {
+              ...prev.empresa,
+              logo_url: compressedDataUrl,
+              logo_file: file
+            }
+          }));
+          
+          console.log('Logo cargado correctamente:', {
+            originalSize: (file.size / 1024).toFixed(2) + ' KB',
+            compressedSize: (compressedDataUrl.length / 1024).toFixed(2) + ' KB',
+            dimensions: `${width}x${height}`
+          });
+        };
+        img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
