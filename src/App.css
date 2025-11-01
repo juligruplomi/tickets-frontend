@@ -2901,3 +2901,40 @@ input[type="file"]:focus {
     padding: 0.125rem 0.375rem;
   }
 }
+
+/* Estilos para logo + nombre en navbar */
+.navbar-brand-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar-brand-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+  .navbar-brand-content {
+    gap: 0.5rem;
+  }
+  
+  .navbar-brand-text {
+    font-size: 1.1rem;
+  }
+  
+  .navbar-logo {
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar-brand-text {
+    font-size: 1rem;
+  }
+  
+  .navbar-logo {
+    height: 24px;
+  }
+}

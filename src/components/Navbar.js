@@ -17,13 +17,16 @@ function Navbar() {
       <div className="navbar-content">
         <Link to="/dashboard" className="navbar-brand">
           {config?.empresa?.logo_url ? (
-            <img 
-              src={config.empresa.logo_url} 
-              alt={config.empresa.nombre}
-              className="navbar-logo"
-            />
+            <div className="navbar-brand-content">
+              <img 
+                src={config.empresa.logo_url} 
+                alt={config.empresa.nombre}
+                className="navbar-logo"
+              />
+              <span className="navbar-brand-text">{config.empresa.nombre || 'GrupLomi'}</span>
+            </div>
           ) : (
-            `💰 ${config?.empresa?.nombre || 'GrupLomi'}`
+            <span className="navbar-brand-text">💰 {config?.empresa?.nombre || 'GrupLomi'}</span>
           )}
         </Link>
         
