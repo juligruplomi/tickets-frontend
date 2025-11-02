@@ -6,6 +6,17 @@ import { gastosService } from '../services/api';
 function GastosPage() {
   const { user } = useAuth();
   const { config, t } = useConfig();
+  
+  // 🔍 DEBUG: Ver qué usuario recibe React
+  console.log('🔍 DEBUG GastosPage - Usuario desde useAuth():', {
+    user: user,
+    id: user?.id,
+    role: user?.role,
+    email: user?.email,
+    tipoDeId: typeof user?.id,
+    userCompleto: JSON.stringify(user, null, 2)
+  });
+  
   const [gastos, setGastos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -372,20 +383,40 @@ function GastosPage() {
   };
 
   const canApprove = (gasto) => {
-    if (user?.role === 'administrador') return true;
+    if (user?.role === 'admin' || user?.role === 'administrador') return true;
     if (user?.role === 'supervisor' && gasto.supervisor_asignado === user.id) return true;
     if (user?.role === 'contabilidad') return true;
     return false;
   };
 
   const canEdit = (gasto) => {
-    if (user?.role === 'administrador') return true;
+    console.log('🔍 canEdit llamado:', {
+      gastoId: gasto.id,
+      gastoCreador: gasto.creado_por,
+      gastoEstado: gasto.estado,
+      userId: user?.id,
+      userRole: user?.role,
+      esAdmin: (user?.role === 'admin' || user?.role === 'administrador'),
+      esCreadorYPendiente: (gasto.creado_por === user?.id && gasto.estado === 'pendiente')
+    });
+    
+    if (user?.role === 'admin' || user?.role === 'administrador') return true;
     if (gasto.creado_por === user?.id && gasto.estado === 'pendiente') return true;
     return false;
   };
 
   const canDelete = (gasto) => {
-    if (user?.role === 'administrador') return true;
+    console.log('🔍 canDelete llamado:', {
+      gastoId: gasto.id,
+      gastoCreador: gasto.creado_por,
+      gastoEstado: gasto.estado,
+      userId: user?.id,
+      userRole: user?.role,
+      esAdmin: (user?.role === 'admin' || user?.role === 'administrador'),
+      esCreadorYPendiente: (gasto.creado_por === user?.id && gasto.estado === 'pendiente')
+    });
+    
+    if (user?.role === 'admin' || user?.role === 'administrador') return true;
     if (gasto.creado_por === user?.id && gasto.estado === 'pendiente') return true;
     return false;
   };
